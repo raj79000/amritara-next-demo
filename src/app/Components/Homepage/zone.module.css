@@ -1,0 +1,46 @@
+.ZonetabHome{
+    align-items: center;
+    justify-content: center;
+}
+.TabCardWrapper{
+    margin-bottom: 1px;
+}
+.TabContent{
+    padding: 10px;
+}
+.TabCardTitle{
+    font-size: 16px;
+    margin-bottom: 10px;
+    margin-top: 1rem;
+}
+.TabCard{
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--primary-shadow);
+    padding: 10px;
+    margin-bottom: 10px;
+        min-height: 316px;
+}
+.TabCardImg{
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+
+}
+.InActiveTab{
+       background-color: var(--black) !important;
+    color: var(--white) !important;
+    padding: 5px 10px!important;
+    margin: 2px!important;
+    margin-bottom: -1px!important;
+    font-size: 14px!important;
+}
+.ActiveTab{
+    background-color: var(--white)!important;
+    color: var(--black)!important;
+    padding: 5px 10px!important;
+    margin: 2px!important;
+    margin-bottom: -1px!important;
+    font-size: 14px!important;
+}

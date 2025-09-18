@@ -1,0 +1,319 @@
+
+.contact_frm input[type="text"],
+.contact_frm input[type="email"],
+.contact_frm input[type="tel"],
+.contact_frm textarea {
+  border: none;
+  border-bottom: 2px solid rgb(128, 126, 126);
+  background: transparent;
+  outline: none;
+  width: 100%;
+  text-transform: capitalize;
+  padding: .8rem 0.4rem;
+}
+
+.contact_frm figure img{ border:4px solid #f2f2f2; border-radius:10px; position:relative}
+/* .contact-addres .item{ height:270px;} */
+.contact_frm figure img::before{
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  left: -6%;
+  top: -6%;
+  z-index: -1;
+  border: 9px solid #b18c60;
+  border-radius: 1rem;
+}
+.aside {
+  background-image: linear-gradient(
+    to left bottom,
+    #4c533f,
+    #000,
+    #4c533f,
+    #000,
+    #4c533f
+  );
+  animation: animateClr 5s infinite cubic-bezier(0.62, 0.28, 0.23, 0.99);
+  background-size: 400%;
+}
+
+@keyframes animateClr {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+ion-icon:not([name="logo-codepen"]) {
+  border: 1px solid currentColor;
+  border-radius: 20%;
+  padding: 1rem;
+}
+
+
+.whatsapp-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25D366;
+  color: white;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  cursor: pointer;
+}
+.whatsapp-icon:hover {
+  background-color: #1ebea5;
+}
+
+
+/* address css */
+.section-head {
+  margin-bottom: 60px;
+  }
+  .section-head h4 {
+  position: relative;
+  padding:0;
+  color:#000000;
+  line-height: 1;
+  letter-spacing:0.3px;
+  font-size: 34px;
+  font-weight: 700;  
+  text-align:center;
+  text-transform:none;
+  margin-bottom:30px;
+  }
+  .section-head h4:before {
+  content: '';
+  width: 60px;
+  height: 3px;
+  background: #000000;
+  position: absolute;
+  left: 0px;
+  bottom: -10px;
+  right:0;  
+  margin:0 auto;
+  }
+  .section-head h4 span {
+  font-weight: 700;
+  padding-bottom: 5px;
+  color:#000000
+  }
+  p.service_text{
+  color:#cccccc !important;
+  font-size:16px;
+  line-height:28px;
+  text-align:center;    
+  }
+  .section-head p, p.awesome_line{
+  color:#818181;
+  font-size:16px;
+  line-height:28px;
+  text-align:center;  
+  }
+  
+  .extra-text {
+  font-size:34px;
+  font-weight: 700;
+  color:#2f2f2f;
+  margin-bottom: 25px;
+  position:relative;
+  text-transform: none;
+  }
+  .contact_frm input, .contact_frm textarea{
+    outline: 1px solid #818181!important;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 14px;
+    color: #000;
+    margin-bottom: 16px;
+  }
+  .contact-addres .item a{
+    color: #000;
+  }
+  .extra-text::before {
+  content: '';
+  width: 60px;
+  height: 3px;
+  background: #000;
+  position: absolute;
+  left: 0px;
+  bottom: -10px;
+  right: 0;
+  margin: 0 auto;
+  }
+  .extra-text span {
+  font-weight: 700;
+  color:#000;
+  }
+  .item {
+    background: #fff;
+    text-align: center;
+    padding: 30px 10px;
+    box-shadow: 0 0px 15px rgba(0, 0, 0, 0.07);
+    border-radius: 2px;
+    border: 2px solid rgba(0, 0, 0, 0.07);
+    margin-bottom: 30px;
+    transition: all 0.4s ease-in-out;
+        height: 100%;
+  }
+  
+  .item:hover {
+    background: #000;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px); /* Adds a subtle lift effect */
+  }
+  
+  .item:hover h6,
+  .item:hover p,
+  .item:hover .icon,
+  .item:hover a {
+    color: #fff;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .item:hover .icon {
+   
+    color: #ffffff;
+    transform: scale(1.1); /* Slightly enlarges the icon */
+  }
+  
+  .item:hover .item, .item:hover span.icon{
+  color:#fff;
+  border-radius:10px;
+  -webkit-transition: all .5s ease 0;
+  transition: all .5s ease 0;
+  transition: all 0.5s ease 0s;
+  }
+  .item:hover h6, .item:hover p{
+  color:#fff;
+  -webkit-transition: all .5s ease 0;
+  transition: all .5s ease 0;
+  transition: all 0.5s ease 0s;
+  }
+ 
+  .item .feature_box_col_one{
+  /* background:rgba(247, 198, 5, 0.20); */
+  color:#000
+  }
+  .item .feature_box_col_two{
+  /* background:rgba(255, 77, 28, 0.15); */
+  color:#000
+  }
+  .item .feature_box_col_three{
+  /* background:rgba(0, 147, 38, 0.15); */
+  color:#000
+  }
+  .item .feature_box_col_four{
+  /* background:rgba(0, 108, 255, 0.15); */
+  color:#000
+  }
+  .item .feature_box_col_five{
+  /* background:rgba(146, 39, 255, 0.15); */
+  color:#000
+  }
+  .item .feature_box_col_six{
+  /* background:rgba(23, 39, 246, 0.15); */
+  color:#000
+  }
+  .item p{
+  font-size:14px;
+  line-height:26px;
+  }
+  .item h6 {
+    margin-bottom: 20px;
+    color: #000;
+    font-size: 18px;
+    font-weight: 700 !important;
+  }
+  .mission p {
+  margin-bottom: 10px;
+  font-size: 15px;
+  line-height: 28px;
+  font-weight: 500;
+  }
+  .mission i {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  background: #000;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 25px;
+  }
+  .mission .small-text {
+  margin-left: 10px;
+  font-size: 13px;
+  color: #666;
+  }
+  .skills {
+  padding-top:0px;
+  }
+  .skills .prog-item {
+  margin-bottom: 25px;
+  }
+  .skills .prog-item:last-child {
+  margin-bottom: 0;
+  }
+  .skills .prog-item p {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 10px;
+  }
+  .skills .prog-item .skills-progress {
+  width: 100%;
+  height: 10px;
+  background: #e0e0e0;
+  border-radius:20px;
+  position: relative;
+  }
+  .skills .prog-item .skills-progress span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: #000;
+  width: 10%;
+  border-radius: 10px;
+  -webkit-transition: all 1s;
+  transition: all 1s;
+  }
+  .skills .prog-item .skills-progress span:after {
+  content: attr(data-value);
+  position: absolute;
+  top: -5px;
+  right: 0;
+  font-size: 10px;
+  font-weight:600;    
+  color: #fff;
+  background:rgba(0, 0, 0, 0.9);
+  padding: 3px 7px;
+  border-radius: 30px;
+  } 
+
+  .item .icon {
+    font-size: 40px;
+    margin-bottom:25px;
+    color: #000;   
+    width: 90px;
+    height: 90px;
+    line-height: 96px;
+    border-radius: 50px;
+    }
+    

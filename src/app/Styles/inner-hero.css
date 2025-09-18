@@ -1,0 +1,75 @@
+.hero-section-inner {
+  position: relative;
+  width: 100%;
+  line-height: normal;
+}
+
+.hero-section-inner::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(1, 2, 11, 0.3);
+  z-index: 1;
+}
+
+.hero-section-inner .inner-hero-image {
+  width: 100%;
+  height: 80vh;
+  object-fit: cover;
+  position: relative;
+  min-width: 100%;
+  background-color: aliceblue;
+  min-height: 400px;
+}
+
+.hero-section-inner .inner-hero-content {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.inner-hero-content .inner-banner-heading {
+  font-size: 37px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.inner-hero-content .banner-breadcrumb {
+  display: inline-block;
+}
+
+.inner-hero-content .banner-breadcrumb .breadcrumb {
+  background: transparent;
+  padding: 0;
+}
+
+.inner-hero-content .banner-breadcrumb .breadcrumb-item {
+  padding: .1rem;
+  color: var(--white);
+}
+
+.inner-hero-content .banner-breadcrumb .breadcrumb-item svg {
+  font-size: 14px;
+  height: 18px;
+}
+
+.inner-hero-content .banner-breadcrumb .breadcrumb-item a {
+  text-transform: capitalize;
+  color: var(--white);
+}
+
+.inner-hero-content .banner-breadcrumb .breadcrumb-item.active {
+  color: var(--white);
+}
+
+.inner-hero-content .breadcrumb-item+.breadcrumb-item::before {
+  display: none;
+}

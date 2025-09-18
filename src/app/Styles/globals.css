@@ -1,0 +1,138 @@
+body {
+	background: #fff;
+	color: #000;
+	font-family: 'Montserrat' sans-serif;
+}
+
+.mtspace5 {
+	margin-top: 5em;
+}
+
+.swiper-button-prev:after {
+	font-size: 16px;
+}
+
+.modal {
+	z-index: 999999999999999999999 !important;
+}
+
+.dynamic-inner-footer .dynamic-contact-info p {
+	text-transform: capitalize !important;
+	display: flex;
+	align-items: center;
+}
+
+.dynamic-inner-footer .contact-info i,
+.dynamic-inner-footer .contact-info svg {
+	margin-right: 0px;
+	color: var(--primary-color);
+	height: 13px;
+	padding: 4px;
+	width: 17px;
+}
+
+.pushed-wrapper {
+	position: relative;
+}
+
+.pushed-image {
+	background-size: cover;
+	background-repeat: no-repeat;
+	height: 200px;
+	width: 100%;
+}
+
+.pushed-header {
+	margin-bottom: 10px;
+}
+
+.pushed-header span {
+	display: block;
+}
+
+.pushed-header .header-1 {
+	font-weight: 600;
+	font-size: 1.1rem;
+}
+.no-image-bg{
+	background-color: antiquewhite!important;
+	min-height: 200px;
+}
+.two-line-text {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    text-align: left;
+    font-size: 12px !important;
+}
+.two-line-text span {
+    margin-bottom: 0;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 1.4;
+    list-style-type: disc;
+    display: block;
+}
+
+.pushed-header .header-3 {
+	color: #111;
+	font-size: 14px;
+	font-weight: 400;
+	text-align: justify;
+}
+
+.pushed-content {
+	position: relative;
+	padding: 15px 15px 40px 15px;
+	background: #fff;
+	font-size: 1rem;
+}
+
+.pushed-box {
+	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+	background-color: #fff;
+	padding: 2rem;
+}
+
+.pushed-header {
+	padding: 0px 15px;
+}
+
+.new-type-dine-sec .box-btn {
+	font-size: 10px;
+	padding: 1px 10px !important;
+	line-height: 1.5rem;
+}
+
+.inner-no-banner-sec {
+	margin-top: 12rem;
+}
+
+.property-book-now-header {
+	margin-top: .5rem !important;
+}
+
+@media (min-width: 768px) {
+
+	.pushed-image {
+		height: 70vh;
+		width: 60% !important;
+	}
+
+	.pushed-content {
+		border-radius: 0px 20px;
+		min-height: 200px;
+		border: 3px solid #225476;
+		box-shadow: 2px 4px 12px 0px rgba(0, 0, 0, 0.42);
+	}
+
+	.pushed-box {
+		position: absolute;
+		left: 55% !important;
+		top: 50% !important;
+		max-width: 45% !important;
+		transform: translateY(-50%);
+	}
+}

@@ -1,0 +1,38 @@
+
+.about_img_box{
+    border: 15px solid;
+    border-color: transparent var(--red) transparent var(--red);
+}
+.text-primary{
+    color: var(--red)!important;
+}
+.about .about_text{
+    font-weight: 500;
+    color: var(--grey);
+}
+
+  .about{
+    padding: 0;
+    height: 100vh;
+    align-items: center;
+    padding: 0;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    background-image: url(/img/about-bg1.webp);
+    background-size: cover;
+    width: 100%;
+  }
+
+  .about .about_main_box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+}
+.about_main_box .morelink{
+  font-weight: 600;
+  cursor: pointer;
+}

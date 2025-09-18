@@ -1,0 +1,448 @@
+.brandassobanner {
+  background-size: 100%;
+
+  .stats {
+    bottom: -4rem
+  }
+}
+
+
+/* our brand vertical slider */
+.slider-container {
+  position: relative;
+  width: 90%;
+  height: 420px;
+  overflow: hidden;
+  font-family: sans-serif;
+  margin: auto;
+}
+
+.slides-wrapper {
+  display: flex;
+  flex-direction: column;
+  transition: transform 1s ease-in-out;
+  height: 100%;
+}
+
+.slides-wrapper .flip-card-back {
+  position: relative;
+  z-index: 1;
+}
+
+.slides-wrapper .flip-card {
+  width: 80%;
+}
+
+.slide {
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 5%;
+  color: white;
+}
+
+.slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.slide-content {
+  position: relative;
+  max-width: 600px;
+  z-index: 1;
+}
+
+.slide-content h1 {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  letter-spacing: 4px;
+}
+
+.slide-content p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.slide-content button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.slide-content button:hover {
+  background: #e0e0e0;
+}
+
+.after-slider {
+  padding: 4rem 2rem;
+  background-color: #f2f2f2;
+  text-align: center;
+}
+
+.cta-button {
+  background-color: white;
+  color: black;
+  padding: 0.2rem 1rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cta-button:hover {
+  background-color: #ccc;
+}
+
+.stats {
+  position: absolute;
+  bottom: 0rem;
+  right: 4rem;
+  display: flex;
+  gap: 3rem;
+  text-align: center;
+  animation: fadeInUp 1s ease;
+}
+
+.stats h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+}
+
+/* brand association */
+.brandassobanner {
+  background-size: cover;
+  height: 400px;
+  background-position: bottom;
+}
+
+.association p {
+  font-size: 14px;
+  color: #272727;
+  line-height: 26px;
+}
+
+/* styles/globals.css */
+.zoom-on-hover {
+  transition: transform 0.4s ease;
+}
+
+.zoom-on-hover:hover {
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+.logo-white {
+  filter: brightness(0) invert(1);
+  max-width: 200px;
+  /* adjust as needed */
+}
+
+.pr6 {
+  padding-right: 3em;
+}
+
+.bg-lght {
+  background: #f5f5f5;
+}
+
+.pysp5 {
+  padding: 1em 0em;
+}
+
+.bg-btm {
+  background-color: #d0d2d3 !important;
+}
+
+.pysp5 .swiper-button-prev,
+.pysp5 .swiper-button-next {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 26px;
+  color: #fff;
+  /* font-size: 10px; */
+  border-radius: 50%;
+}
+
+.pysp5 .swiper-button-prev:after,
+.pysp5 .swiper-button-next:after {
+  font-size: 26px !important;
+}
+
+.contactbrand p {
+  font-size: 16px !important;
+}
+
+.w70 {
+  width: 70%;
+}
+
+.property-header-book-now-mob {
+  display: none;
+  position: absolute;
+  right: 10px;
+  background-color: #000;
+  color: #fff;
+  top: 10px;
+  z-index: 999999;
+}
+
+.modal .react-datepicker-wrapper {
+  display: block !important;
+  padding: 0 !important;
+  border: 0 !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+}
+
+.modal .react-datepicker-wrapper .react-datepicker__input-container {
+  display: block !important;
+  padding: 0 !important;
+  border: 0 !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+}
+
+.modal .react-datepicker-wrapper .react-datepicker__input-container .form-control {
+  border-radius: 0 !important;
+  width: 100% !important;
+}
+
+@media (max-width:991px) {
+  .property-header-main .logo-for-mobile {
+    display: block !important;
+    position: absolute;
+    left: 47%;
+    transform: translateX(-50%);
+    top: 20px;
+  }
+
+  .property-header-book-now-mob {
+    display: block;
+    padding: 5px 7px;
+  }
+
+  .property-logo-desktop {
+    display: none !important;
+  }
+
+
+}
+
+@media (max-width:767px) {
+  .this-exp-for-desk {
+    display: none;
+  }
+
+  .property-room-page-sec .px-4.roombtn {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+  }
+
+  .dynamic-inner-footer .dynamic-contact-info p {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .home-experience-sec-main .experience-item-list-box .experience-card-image {
+    height: 300px !important;
+    object-fit: cover;
+  }
+
+  .exp-filter-icon {
+    display: block;
+  }
+
+  .navbar {
+    height: auto !important;
+    /* width: 40vh; */
+  }
+  .header-display-flex {
+    margin-top: 0rem!important;
+}
+
+  .hero-banner {
+    height: 70vh !important;
+  }
+
+  .bottom-10 {
+    bottom: -5em !important;
+  }
+  .navbar-brand {
+    margin-left: 0em!important;
+}
+
+  .navbar {
+    height: auto !important;
+  }
+
+  .mobile-none {
+    display: block;
+  }
+
+  .desk-none {
+    display: none;
+  }
+
+  #google_translate_element {
+    width: 17em;
+  }
+
+  .home-page-class button {
+    bottom: 20em;
+    position: relative;
+  }
+
+  .react-datepicker__input-container .form-control {
+    width: 118%;
+  }
+
+  footer .col-md-3.justify-content-end {
+    justify-content: center !important;
+  }
+
+  .ftr_logo {
+    padding-right: 2em;
+    border-right: none;
+    filter: brightness(1.8);
+    float: left;
+    left: auto;
+    position: relative;
+    width: 200px !important;
+  }
+
+  .header_booking_engine .btn {
+    width: 150px;
+  }
+
+  .global-heading-sec .global-heading2 {
+    font-size: 16px;
+  }
+
+  .header_booking_engine .col-md-2,
+  select {
+    width: 100% !important;
+  }
+
+  .n-hotel-slider .owl-nav button.owl-prev,
+  .offers-slider .owl-nav button.owl-prev {
+    left: 0px;
+  }
+
+  .contact-info .inline-itemx-box {
+    display: block;
+  }
+
+  div#thumbs {
+
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  div#thumbs .brand-logo-item img {
+    width: 105px;
+  }
+
+  .contactbrand .w70 {
+    width: 100% !important;
+  }
+
+  .brand-association-team-sec .text-end {
+    text-align: left !important;
+  }
+
+  .brands-sliderr .brand-slider-item .brand-item-description {
+    width: calc(100% - 5%);
+  }
+
+  .brands-sliderr .brand-slider-item img {
+    height: 70vh;
+  }
+
+  .footer .contact-info p {
+    margin-bottom: 21px;
+  }
+
+  .global-heading-sec .global-heading {
+    font-size: 21px;
+  }
+
+  img.sidebar-icon-img {
+    display: none;
+  }
+
+
+
+}
+
+
+@media screen and (device-width: 1024px) and (orientation: landscape),
+screen and (device-width: 1180px) and (orientation: landscape),
+screen and (device-width: 1194px) and (orientation: landscape),
+screen and (device-width: 1366px) and (orientation: landscape) {
+
+  /* .banner-section{height:calc(100vh + 0px);} */
+  .navbar-expand-md .navbar-nav .nav-link {
+    padding: 30px 10px;
+  }
+
+  .discover-slider img,
+  .offer-slider .winter-box img {
+    height: 400px;
+  }
+
+  .h-95vh-important {
+    height: 95vh !important;
+  }
+
+  .h-55vh-important {
+    height: 55vh !important;
+  }
+
+  .h-60vh-important {
+    height: 60vh !important;
+  }
+
+  .ml8 {
+    margin-left: 2em;
+    margin-right: 2em;
+  }
+
+  .navbar .navbar-nav li a {
+    font-size: .8em;
+  }
+
+  .event-sec img {
+    height: 350px;
+  }
+
+  .hotel-slider img {
+    height: 300px;
+  }
+
+  .expsld img {
+    width: 100%;
+  }
+
+  .expm10 {
+    margin: .2em 1em;
+  }
+}
+
+
+
+
+/* media for ipad air */
+@media screen and (device-width: 820px) and (orientation: portrait),
+screen and (device-width: 834px) and (orientation: portrait),
+screen and (device-width: 1024px) and (orientation: portrait) {}

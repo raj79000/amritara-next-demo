@@ -1,0 +1,93 @@
+.footer{
+    padding: 1rem 0;
+    background-color: var(--white);
+    color: var(--black);
+    padding-bottom: 1rem;
+    border-top: 1px solid #d8d8d854;
+}
+.linkstyle{
+    color: var(--black);
+    text-decoration: none;
+    font-weight: var(--secondary-font-weight);
+}
+.footerHeading{
+    font-size: 21px;
+    font-family: var(--font-body);
+    font-weight: var(--secondary-font-weight);
+    color: var(--red);
+}
+.fcoldata{
+    margin-bottom: 0;
+    font-weight: var(--secondary-font-weight);
+}
+.footerLogo{
+        width: 140px;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    text-align: center;
+    filter: brightness(1.1);
+}
+.linkstyle2{
+    color: var(--black);
+    text-decoration: none;
+    font-weight: var(--secondary-font-weight);
+    font-size: 17px;
+}
+.footerLogoD{
+    text-align: center;
+}
+
+.footerHeading2{
+    font-size: 17px;
+    font-family: var(--font-body);
+    font-weight: var(--primary-font-weight);
+    color: var(--black);
+    margin-top: 2rem;
+}
+.footerHeadingR{
+    color: var(--black);
+    font-size: 20px;
+    font-family: var(--font-body);
+    font-weight: var(--primary-font-weight);
+}
+.footerInput{
+    font-size: 14px;
+    font-weight: var(--secondary-font-weight);
+    height: 100%;
+    outline: 1px solid var(--grey);
+    border: none;
+    padding: 7px 8px;
+    font-weight: var(--primary-font-weight);
+        width: 55%;
+}
+.footerSButton{
+    background-color: var(--red);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: var(--secondary-font-weight);
+    height: 100%;
+    /* width: 100%; */
+    outline: none;
+    border: none;
+    padding: 6px 15px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+.fCheckText{
+    text-transform: uppercase;
+    font-size: 14px;
+    margin-left: 6px;
+}
+.SocialLinkFooter{
+    margin-bottom: 1rem;;
+}
+.socialLink{
+    margin-left: 8px;
+}
+.footerContactData {
+    text-align: right;
+        margin-top: 4rem;
+
+}

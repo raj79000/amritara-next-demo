@@ -1,0 +1,370 @@
+   /* styles.css */
+
+.readmore{ color:#00664e;}
+
+
+
+/* homepage css */
+
+.home-page-class button{    bottom: 11em;
+    position: relative;
+    padding: 4px 10px !important;
+    border: 1px solid #fff;
+    color: #fff;
+    /* border-radius: 50%; */
+    background-color: transparent !important;border-radius:0px !important;}
+.banner-section {
+position: relative;
+/* height: calc(107vh + 0px);
+    margin-top: -90px; */
+/* overflow: hidden; */
+
+
+}
+.banner-section .banner-image{
+position: relative;
+}
+.banner-section img.bannerrr, .banner-section video.video-banner {
+filter: brightness(1.07);
+height: 100vh;
+object-fit: cover;
+width: 100%;
+}
+
+
+.banner-section img{ 
+    /* object-position: 28% 24%;
+    height: 65vh; */
+    object-fit: cover;}
+
+
+/* 3 tabs */
+.stat-box {
+  transition: all 0.3s ease;
+  background:#eaeaec;
+  font-family:var(--font-billmake);
+  cursor: default;
+}
+.stat-box h2{
+    font-family:var(--font-billmake); font-size:2.5rem;
+}
+.stat-box:hover {
+  background-color: #2b2b33 !important;
+  color: #ffffff !important;
+}
+
+.stat-box:hover h2,
+.stat-box:hover p {
+  color: #ffffff !important;
+}
+
+
+.winter-box img {
+  transition: filter 0.3s ease-in-out;
+  width: 100%;
+  height: auto;
+  border-radius: 0px;
+}
+
+/* Apply grayscale to inactive slides */
+.winter-box.inactive img {
+  filter: grayscale(100%) brightness(0.7);
+}
+
+/* Full color and sharp for active center slide */
+.winter-box.active img {
+  filter: none;
+}
+
+.winter-box {
+  position: relative;
+  overflow: hidden;
+}
+
+box2 {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+.box-btn {
+  margin-right: 10px;
+  font-size: .8rem;
+  padding: 4px 10px !important;
+}
+.discover-slider .winter-box {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0px;
+}
+
+.discover-slider .overlay-heading {
+  position: absolute;
+  top: 15px;              /* Position near the top */
+  left: 50%;              /* Center horizontally */
+  transform: translateX(-50%);
+  z-index: 2;
+  background: transparent;  /* No background overlay */
+}
+
+.discover-slider .overlay-heading h5 {
+  color: white;
+  font-size: 1.8rem;
+   font-family:var(--font-billmake);
+  text-align: center;
+  margin: 0;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); /* optional shadow for readability */
+}
+
+.discover-slider .winter-box.active {
+  border: 2px solid #fff; /* Or any color you like */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  border-radius: 0px;
+  transition: all 0.3s ease-in-out;
+    position: relative;
+  border: 2px solid transparent;
+}
+.discover-slider .winter-box {
+  transition: all 0.3s ease-in-out;
+}
+
+.discover-slider .winter-box.active::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 1px solid white;
+  pointer-events: none;
+}
+.discover-slider .winter-box.inactive img {
+  filter: grayscale(100%);
+  opacity: 0.8;
+}
+
+
+
+/* offer sliders */
+.offer-slider .winter-box img {
+  transition: all 0.4s ease;
+    height:300px;
+}
+
+.offer-slider .winter-box.inactive img {
+  filter: grayscale(100%);
+
+  opacity: 0.8;
+}
+
+.offer-slider .winter-box.active {
+  position: relative;
+  border: 2px solid white;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+  transition: all 0.4s ease;
+}
+
+.offer-slider .winter-box.active::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  /* border: 1px solid white; */
+  pointer-events: none;
+  z-index: 2;
+}
+
+.expsld label{ display:flex; margin-bottom:10px;}
+
+
+.media-slider .swiper-slide{ margin-top:0px !important;}
+.media-slider .swiper-slide .winter-box{ margin-top:0px !important;}
+
+.expsld img{ height: auto; width: 100%;}
+.expsld h4{ font-size:1rem;}
+.hotel-slider img{ height:200px;}
+.discover-slider img{ height:300px;}
+
+
+/* accordian css */
+.accordion-item {
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 0px;
+    /* background-color: #ffffff; */
+    box-shadow:10px 10px 20px #f2f2f2;
+}
+
+.accordion-title {
+    background-color: #ffffff;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.accordion-content {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .7s ease-in-out
+}
+
+.accordion-content p {
+    padding: 10px;
+    margin: 0;
+    background-color: #fafafa
+}
+
+.accordion-title h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #403b3b
+}
+.accordion-title span{
+    font-size: 20px;
+    font-weight: bold;
+}
+.accordion-item:not(:first-of-type){ border-top:1px solid #ddd;}
+
+/* city page css */
+.input_box{ border:1px solid #b3aaaa !important;}
+.cityexpr .winter-box img, .cityexpr .winter-box.hotel-box{ border-radius:0px;}
+.seacrhdest .border-dark{ border:1px solid #000;}
+.cityexpr .winter-box img{ height: 260px;}
+.cityexpr .winter-box-content{
+    position: relative;
+    bottom: 4em;
+    /* height: 100px; */
+    width: 85%;
+    background: #fff;
+    }
+
+ .cityexpr .hotel-box-content{ margin-top:5px;}
+ .cityexpr .winter-box-heading{ font-family:var(--font-montserrat);}
+  .cityexpr .winter-box-btn{ margin-top:5px;}
+
+  
+  /* room page css */
+.roomacomo .winter-box img, .roomacomo .winter-box.hotel-box{ border-radius:0px;}
+
+.roomacomo .winter-box img{ height: 260px;}
+.hotellist .winter-box img{ height: 300px !important;}
+.roomacomo .winter-box-content{
+   position: relative;
+    bottom: 1em;
+    width: 95%;
+    float: right;
+    background: #fff;
+    right: 0;
+     min-height: 192px;;
+    }    
+ .roomacomo .hotel-box-content{ margin-top:5px;}
+ .roomacomo .winter-box-heading, .roomacomo h3{ 
+  font-family:var(--font-montserrat);
+}
+ .roomacomo h3{ font-size:1rem;}
+ .roomacomo .winter-box-btn{ margin-top:5px;}
+
+ .roomacomo .winter-box-content a{ line-height:16px; margin-top:10px;} 
+ .roomacomo .winter-box-content a.underline{ text-decoration:underline;}
+
+  .roombtn .leftarrow,  .roombtn .rightarrow{ color:#000; background:rgba(255, 255, 255, .8); padding:0px 10px 5px 10px; border-radius:50%; font-weight:500; line-height:24px;}
+
+   .roombtn .leftarrow{ left:8%;}
+   .roombtn .rightarrow{ right:8%;}
+
+.overv-dine h4{ font-family:var(--font-billmake); }
+
+/* .brandsec h2,.brandsec span{ font-family:var(--font-billmake); color: var(--brown) } */
+
+.brandsec .brandlogo{width: 80px;
+    height: 84px;
+    object-fit: contain;
+}
+
+
+/* accomodation */
+/* === Fade effect for side slides === */
+
+.roomacomo .swiper-slide {
+  opacity: 0.4;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.roomacomo .swiper-slide.swiper-slide-active,
+.roomacomo .swiper-slide.swiper-slide-next,
+.roomacomo .swiper-slide.swiper-slide-prev {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.navbar-nav>li>a.know-more{text-decoration:none;}
+
+.accommodation-box-content .font10{ font-size:9px; font-weight:300; text-transform: capitalize;}
+.accommodation-box-content h3{ font-family:var(--font-billmake);}
+.accommodation-box-content .acc-price{
+  font-weight: 500;
+  color: var(--primary-color);
+  font-size: 1.6rem; line-height:28px;
+}
+.accommodation-box-content .winter-box-btn .box-btn{
+    font-size: 8px !important;}
+/* hotel page css */
+.inputbox{font-size: 12px; line-height: 16px;
+    padding-left: 4em;}
+
+.h65vh{ height:65vh !important}
+.facilities-slider h4{ font-size:1.2rem;}
+
+.swiper-button-prev,
+.swiper-button-next {
+  font-size: 14px !important;
+letter-spacing: 0;
+font-variant: initial;
+line-height: 1;
+text-transform: none !important;
+  color: #fff !important;
+  top: 40%;
+  width: 40px!important;
+  height: 40px!important;
+  background: #000 !important;;
+  border-radius: 50%;
+padding: 8px!important;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 14px!important;
+}
+/* .global-slider-arrow{
+
+} */
+
+.our-hotels-page .form-select{
+ border: none;
+    border-bottom: 1px solid #000;
+    padding: 7px 10px;
+    font-size: 14px;
+    font-weight: var(--primary-font-weight);
+    text-transform: capitalize;
+    border-radius: 0;
+    background-color: transparent;
+}   
+
+.images-slider .swiper-button-prev::after, .swiper-button-next::after{font-size: 16px !important;}
+.images-slider .swiper-button-prev, .images-slider .swiper-button-next{ width:40px; height:40px;}
+.cityexpr1 .accommodation-box-content .acc-price{ font-size: 16px; font-weight:600;}
+.cityexpr1 .accommodation-box-content .winter-box-heading{ font-family: var(--font-montserrat) !important; text-transform:capitalize;}
+.cityexpr1 .winter-box.hotel-box{ border-radius:0px;}
+.winter-box-text { font-size:14px !important; text-transform:none;}
+.modal-title {
+    font-size: 18px!important;
+}
+.bottom-modal-content .property-amenitiess h6 {
+    font-size: 18px!important;
+
+}
