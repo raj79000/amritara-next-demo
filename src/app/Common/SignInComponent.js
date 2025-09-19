@@ -11,15 +11,54 @@ const SignInComponent = () => {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [agree, setAgree] = useState(false);
+  const [error, setError] = useState("");
 
   const { requestOtp, loginWithOtp } = useAuth();
 
+  const onlyDigits = (v) => v.replace(/\D/g, "");
+  const isSixDigit = (v) => /^[0-9]{6}$/.test(v);
+  const isValidMobile = (v) => /^[0-9]{10}$/.test(v);
+  const isValidEmail = (v) =>
+    // very light email check; your backend will do the final validation anyway
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+  const canSend =
+    agree &&
+    !loading &&
+    ((activeTab === "mobile" && isValidMobile(inputValue)) ||
+      (activeTab === "email" && isValidEmail(inputValue)));
+
   const handleSendOtp = async () => {
     try {
+      setError("");
+
+      // Basic presence & format checks
       if (!inputValue) {
-        alert(`Please enter your ${activeTab === "mobile" ? "mobile number" : "email"}`);
+        setError(
+          `Please enter your ${
+            activeTab === "mobile" ? "mobile number" : "email"
+          }.`
+        );
         return;
       }
+      if (activeTab === "mobile" && !isValidMobile(inputValue)) {
+        setError("Please enter a valid 10-digit mobile number.");
+        return;
+      }
+      if (activeTab === "email" && !isValidEmail(inputValue)) {
+        setError("Please enter a valid email address.");
+        return;
+      }
+
+      // Mandatory T&C / Privacy checkbox
+      if (!agree) {
+        setError(
+          "Please check T&C and Privacy Policy before requesting an OTP."
+        );
+        return;
+      }
+
       setLoading(true);
       if (activeTab === "mobile") {
         await requestOtp(inputValue, "");
@@ -38,6 +77,10 @@ const SignInComponent = () => {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
+    if (!isSixDigit(otp)) {
+      alert("OTP must be 6 digits.");
+      return;
+    }
     try {
       setLoading(true);
       const { isNewUser } =
@@ -46,10 +89,9 @@ const SignInComponent = () => {
           : await loginWithOtp("", otp, inputValue, mobilePrefix);
 
       if (isNewUser) {
-        // Go to profile completion (prefill will read from sessionStorage.pendingIdentity)
         router.replace("/complete-profile");
       } else {
-        router.replace("/dashboard"); // existing user → dashboard
+        router.replace("/members/dashboard");
       }
     } catch (err) {
       console.error(err);
@@ -60,60 +102,75 @@ const SignInComponent = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
-      <div className="card shadow-lg border-0 rounded-4" style={{ width: "100%", maxWidth: 420 }}>
-        <div className="card-body p-4">
-          <h3 className="text-center mb-4 fw-bold text-primary">Welcome Back</h3>
+    <section className="signin-section">
+      <div className="signin-container">
+        <div className="signin-card">
+          <h3 className="signin-title">Welcome</h3>
 
-          <ul className="nav nav-pills mb-3 justify-content-center">
-            <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === "mobile" ? "active" : ""}`}
-                type="button"
-                onClick={() => { setActiveTab("mobile"); setInputValue(""); setOtpSent(false); }}
-              >
-                📱 Mobile
-              </button>
-            </li>
-            <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === "email" ? "active" : ""}`}
-                type="button"
-                onClick={() => { setActiveTab("email"); setInputValue(""); setOtpSent(false); }}
-              >
-                📧 Email
-              </button>
-            </li>
-          </ul>
+          {/* Tabs */}
+          <div className="signin-tabs">
+            <button
+              className={`signin-tab ${
+                activeTab === "mobile" ? "active" : ""
+              }`}
+              type="button"
+              onClick={() => {
+                setActiveTab("mobile");
+                setInputValue("");
+                setOtpSent(false);
+                setError("");
+              }}
+            >
+              Mobile Number
+            </button>
+            <button
+              className={`signin-tab ${
+                activeTab === "email" ? "active" : ""
+              }`}
+              type="button"
+              onClick={() => {
+                setActiveTab("email");
+                setInputValue("");
+                setOtpSent(false);
+                setError("");
+              }}
+            >
+              Email Address
+            </button>
+          </div>
 
+          {/* Step 1: Send OTP */}
           {!otpSent ? (
-            <>
+            <div className="signin-form">
               {activeTab === "mobile" && (
-                <div className="mb-2 d-flex gap-2">
+                <div className="signin-input-group">
                   <select
-                    className="form-select"
-                    style={{ maxWidth: 110 }}
+                    className="signin-select"
                     value={mobilePrefix}
                     onChange={(e) => setMobilePrefix(e.target.value)}
                   >
                     <option value="+91">+91</option>
-                    {/* add more if needed */}
+                    {/* Add more if needed */}
                   </select>
                   <input
                     type="tel"
-                    className="form-control form-control-lg"
+                    className="signin-input"
                     placeholder="Phone No"
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={10}
+                    onChange={(e) => setInputValue(onlyDigits(e.target.value))}
                     disabled={loading}
                   />
                 </div>
               )}
+
               {activeTab === "email" && (
-                <div className="mb-2">
+                <div className="signin-input-group">
                   <input
                     type="email"
-                    className="form-control form-control-lg"
+                    className="signin-input"
                     placeholder="Email"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
@@ -121,36 +178,75 @@ const SignInComponent = () => {
                   />
                 </div>
               )}
-              <button type="button" onClick={handleSendOtp} className="btn btn-primary w-100 btn-lg" disabled={loading}>
-                {loading ? "Sending..." : "Send OTP"}
+
+              {/* Mandatory T&C / Privacy */}
+              <div className="signin-checkbox">
+                <input
+                  id="agree"
+                  type="checkbox"
+                  checked={agree}
+                  onChange={(e) => setAgree(e.target.checked)}
+                  disabled={loading}
+                />
+                <label htmlFor="agree">
+                  I agree to the{" "}
+                  <a href="/term-and-condition" className="signin-link">
+                    Terms &amp; Conditions
+                  </a>{" "}
+                  and{" "}
+                  <a href="/privacy-policy" className="signin-link">
+                    Privacy Policy
+                  </a>
+                  .
+                </label>
+              </div>
+
+              {error && <div className="signin-error">{error}</div>}
+
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                className="signin-button primary"
+                disabled={!canSend}
+                title={
+                  agree
+                    ? undefined
+                    : "Please accept Terms & Privacy to continue"
+                }
+              >
+                {loading ? "Processing..." : "Continue"}
               </button>
-            </>
+            </div>
           ) : (
-            <form onSubmit={handleVerifyOtp}>
-              <div className="mb-3">
+            /* Step 2: Verify OTP */
+            <form className="signin-form" onSubmit={handleVerifyOtp}>
+              <div className="signin-input-group">
                 <input
                   type="text"
-                  className="form-control form-control-lg"
-                  placeholder="Enter OTP"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  className="signin-input"
+                  placeholder="Enter 6-digit OTP"
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
+                  onChange={(e) => setOtp(onlyDigits(e.target.value))}
                   disabled={loading}
                 />
               </div>
-              <button type="submit" className="btn btn-success w-100 btn-lg" disabled={loading}>
+              <button
+                type="submit"
+                className="signin-button success"
+                disabled={loading || !isSixDigit(otp)}
+              >
                 {loading ? "Verifying..." : "Verify OTP & Continue"}
               </button>
             </form>
           )}
 
-          <p className="text-center mt-4 small text-muted">
-            By continuing, you agree to our{" "}
-            <a href="/privacy" className="text-decoration-none text-primary fw-semibold">Privacy Policy</a> &amp;{" "}
-            <a href="/terms" className="text-decoration-none text-primary fw-semibold">Terms</a>.
-          </p>
+         
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

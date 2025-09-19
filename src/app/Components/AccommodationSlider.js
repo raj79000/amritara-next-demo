@@ -156,7 +156,8 @@ export default function AccommodationSlider({
                         : [{ roomImage: "/amritara-dummy-room.jpeg" }]
                       ).map((img, imgIdx) => (
                         <SwiperSlide key={imgIdx}>
-                          <Image
+                          <div className="no-image-box">
+                             <Image
                             // src="/amritara-dummy-room.jpeg"
                             src={img.roomImage || "/amritara-dummy-room.jpeg"}
                             alt={room.roomName}
@@ -165,6 +166,8 @@ export default function AccommodationSlider({
                             quality={100}
                             className="w-100 object-cover"
                           />
+                          </div>
+                         
                         </SwiperSlide>
                       ))}
                     </Swiper>

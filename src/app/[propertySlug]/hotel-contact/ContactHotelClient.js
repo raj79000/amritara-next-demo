@@ -9,59 +9,49 @@ import "swiper/css/pagination";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faGlobe,
-  faEnvelope,
-  faMobileAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faGlobe, faEnvelope, faMobileAlt } from "@fortawesome/free-solid-svg-icons";
 import "./contactus.css";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import HotelContactForm from "./HotelContactForm";
 import PropertyMainHeader from "@/app/Common/PropertyMainHeader";
 
-export default function ContactHotelClient() {
+export default function ContactHotelClient({ brandSlug, propertySlug, propertyId }) {
   const [propertyData, setPropertyData] = useState(null);
   const [bannerImages, setBannerImages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { brandSlug, propertySlug } = useParams();
 
-  const [propertyId, setPropertyId] = useState(null);
-  const [showFilterBar, setShowFilterBar] = useState(false);
   const [cityDetails, setCityDetails] = useState(null);
-  const [roomDetails, setRoomDetails] = useState(null);
-  const [isOpenFilterBar, openFilterBar] = useState(false);
-  const [isOpen, setOpen] = useState(false);
+  const [staahPropertyId, setStaahPropertyId] = useState(null);
 
-  const handleBookNowClick = async () => {
-    setOpen(!isOpen);
-    openFilterBar(!isOpenFilterBar);
-    setShowFilterBar(!showFilterBar);
-  };
   useEffect(() => {
     if (!propertySlug) return;
 
-    // Helper: Get PropertyId by matching slug from the full property list
     const fetchPropertyIdFromSlug = async (slug) => {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`
         );
         const json = await res.json();
+
         if (json.errorMessage !== "success") {
           console.error("Property list fetch error:", json);
           return null;
         }
+
         const found = json.data.find((p) => p.propertySlug === slug);
 
-        const label = found?.cityName;
-        const value = found?.cityId;
-        const property_Id = found?.staahPropertyId;
-        setCityDetails({ label, value, property_Id });
-        setPropertyId(found?.staahPropertyId);
+        if (!found) return null;
 
-        return found?.propertyId || null;
+        setCityDetails({
+          label: found.cityName,
+          value: found.cityId,
+          property_Id: found.staahPropertyId,
+        });
+
+        setStaahPropertyId(found.staahPropertyId);
+
+        return found.propertyId || null;
       } catch (error) {
         console.error("Error fetching property list:", error);
         return null;
@@ -71,25 +61,25 @@ export default function ContactHotelClient() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const propertyId = await fetchPropertyIdFromSlug(propertySlug);
-        if (!propertyId) {
+        // use propertyId from props if available, otherwise resolve from slug
+        const finalPropertyId = propertyId || (await fetchPropertyIdFromSlug(propertySlug));
+        if (!finalPropertyId) {
           setPropertyData(null);
           setLoading(false);
           return;
         }
 
         const result = await fetch(
-          `http://loyaltypulsedemo.ownyourcustomers.in/cms/property/GetPropertyByFilter?PropertyId=${propertyId}`
+          `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyByFilter?PropertyId=${finalPropertyId}`
         );
         const json = await result.json();
         const property = json?.data?.[0] || null;
+
         setPropertyData(property);
 
-        // Banner images
+        // banner images
         const images = property?.images || [];
-        const validImageUrls = images
-          .map((img) => img.propertyImage)
-          .filter(Boolean);
+        const validImageUrls = images.map((img) => img.propertyImage).filter(Boolean);
         setBannerImages(validImageUrls);
       } catch (error) {
         console.error("Error fetching property data:", error);
@@ -100,18 +90,17 @@ export default function ContactHotelClient() {
     };
 
     fetchData();
-  }, [propertySlug]);
+  }, [propertySlug, propertyId]);
 
   if (loading) return <div>Loading hotel details...</div>;
   if (!propertyData) return <div>No property data found.</div>;
-  console.log("propertyData",propertyData);
 
   return (
     <>
       <PropertyMainHeader
         brand_slug={brandSlug}
         id={propertyData.propertyId}
-        onSubmit={handleBookNowClick}
+        onSubmit={() => {}}
       />
       <section className="position-relative banner-section d-none">
         {/* Banner Image */}

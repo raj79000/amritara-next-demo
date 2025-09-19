@@ -47,7 +47,7 @@ export default function HotelContactForm({ cityId, propertyId, longitude, latitu
       };
 
       const res = await fetch(
-        "https://clarkscms.cinuniverse.com/Api/common/EnquireNow",
+        `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/common/EnquireNow`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -83,6 +83,7 @@ export default function HotelContactForm({ cityId, propertyId, longitude, latitu
       <div className="container-md">
         <div className="row shadow p-3 rounded-lg">
           <div className="col-lg-7 col-md-7 px-5 py-0 rounded-3">
+            <h4 className="text-center mb-3">Contact Us</h4>
             <form className="row mb-3" onSubmit={handleSubmit}>
               <div className="col-md-6">
                 <input
@@ -151,7 +152,7 @@ export default function HotelContactForm({ cityId, propertyId, longitude, latitu
                   required
                   placeholder="Write your message"
                   cols={30}
-                  rows={3}
+                  rows={2}
                   className="w-full p-2 border form-control"
                 />
               </div>

@@ -20,6 +20,7 @@ const DiningSlider = ({ propertyId, hotelName }) => {
   const [showModal, setShowModal] = useState(false);
 
 
+
   // Fetch propertySlug
   useEffect(() => {
     const fetchPropertySlug = async () => {
@@ -55,12 +56,15 @@ const DiningSlider = ({ propertyId, hotelName }) => {
             const bg = entry.bannerImages?.[0]?.bannerImage || "/images/img-5.jpg";
 
             entry.dineDetails?.forEach((dine) => {
+              const dineImageUrl = dine.dineImages?.[0]?.dineImage || "/images/img-5.jpg";
+              console.log("Dine Image URL:", dineImageUrl);
+
               dineItems.push({
-                bg,
-                thumb: dine.dineImages?.[0]?.dineImage || "/images/img-5.jpg",
-                title: dine.dineTitle,
-                description: dine.dineDesc,
-                timing: `${dine.openingHours} - ${dine.closingHours}`,
+          bg,
+          thumb: dineImageUrl,
+          title: dine.dineTitle,
+          description: dine.dineDesc,
+          timing: `${dine.openingHours} - ${dine.closingHours}`,
               });
             });
           });
@@ -68,8 +72,8 @@ const DiningSlider = ({ propertyId, hotelName }) => {
           setSlides(dineItems);
 
           setBannerData({
-            title: json.data[0].dineBannerTitle || "",
-            desc: json.data[0].dineBannerDesc || "",
+            title: json.data[0]?.dineBannerTitle || "",
+            desc: json.data[0]?.dineBannerDesc || "",
           });
         } 
         // else {
@@ -87,6 +91,8 @@ const DiningSlider = ({ propertyId, hotelName }) => {
 
 // if (loading) return <p>Loading...</p>;
 // if (!slides.length) return null;
+
+const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
 
   return (
     <>

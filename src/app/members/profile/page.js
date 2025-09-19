@@ -1,67 +1,46 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import MainHeader from "../Common/MainHeader";
+import MainHeader from "@/app/Common/MainHeader";
 
-export default function CompleteProfilePage() {
+export default function MemberProfilePage() {
   const router = useRouter();
   const { user, saveProfileAndRefresh } = useAuth();
-
-  // read identity used at OTP time
-  const pendingIdentity = useMemo(() => {
-    try { return JSON.parse(sessionStorage.getItem("pendingIdentity") || "{}"); }
-    catch { return {}; }
-  }, []);
-
-  const loggedMobile = pendingIdentity?.mobile || "";
-  const loggedEmail = pendingIdentity?.email || "";
-  const loggedPrefix = pendingIdentity?.mobilePrefix || "+91";
 
   useEffect(() => {
     if (!user) router.replace("/signin");
   }, [user, router]);
 
-  const [agree, setAgree] = useState(false);
-  const [error, setError] = useState("");
-
-  const baseUser = user || {};
   const [form, setForm] = useState({
-    FirstName: baseUser.FirstName || "",
-    LastName: baseUser.LastName || "",
-    MobilePrifix: (loggedMobile ? loggedPrefix : baseUser.MobilePrifix) || "+91",
-    MobileNo: loggedMobile || baseUser.MobileNo || "",
-    EmailId: loggedEmail || baseUser.EmailId || "",
-    City: baseUser.City || "",
-    Country: baseUser.Country || "India",
-    PrivacyPolicyAcceptance: "N",
+    FirstName: user?.FirstName || "",
+    LastName: user?.LastName || "",
+    MobilePrifix: user?.MobilePrifix || "+91",
+    MobileNo: user?.MobileNo || "",
+    EmailId: user?.EmailId || "",
+    City: user?.City || "",
+    Country: user?.Country || "India",
   });
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-  };
+  const [saving, setSaving] = useState(false);
+  const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
-    if (!agree) {
-      setError("please check T&C and privacy policy for profile completion");
-      return;
-    }
-
     try {
-      const payload = { ...form, PrivacyPolicyAcceptance: "Y" };
-      await saveProfileAndRefresh(payload);
-      sessionStorage.removeItem("pendingIdentity");
-      alert("Profile completed successfully.");
+      setSaving(true);
+      await saveProfileAndRefresh(form);
+      alert("Profile updated.");
       router.replace("/members/dashboard");
     } catch (err) {
       console.error(err);
-      setError("Failed to save profile. Please try again.");
+      alert("Failed to update profile.");
+    } finally {
+      setSaving(false);
     }
   };
+
+  if (!user) return null;
 
   return (
     <>
@@ -70,9 +49,7 @@ export default function CompleteProfilePage() {
         <div className="container" style={{ maxWidth: 900 }}>
           <div className="card shadow-sm border-0 rounded-4 mt-4">
             <div className="card-body p-4">
-              <h2 className="mb-1">Create Your Amritara Rewards Profile</h2>
-              <p className="text-muted mb-4">Kindly complete your details to activate loyalty benefits.</p>
-
+              <h2 className="mb-1">Edit Profile</h2>
               <form onSubmit={onSubmit} className="row g-3">
                 <div className="col-md-6">
                   <label className="form-label">First Name</label>
@@ -92,7 +69,6 @@ export default function CompleteProfilePage() {
                       style={{ maxWidth: 130 }}
                       value={form.MobilePrifix}
                       onChange={onChange}
-                      disabled={!!loggedMobile}
                     >
                       <option value="+91">+91</option>
                     </select>
@@ -103,7 +79,6 @@ export default function CompleteProfilePage() {
                       onChange={onChange}
                       placeholder="Phone No"
                       required
-                      readOnly={!!loggedMobile}
                     />
                   </div>
                 </div>
@@ -118,7 +93,6 @@ export default function CompleteProfilePage() {
                     className="form-control"
                     placeholder="name@example.com"
                     required
-                    readOnly={!!loggedEmail}
                   />
                 </div>
 
@@ -134,32 +108,15 @@ export default function CompleteProfilePage() {
                   <input name="City" value={form.City} onChange={onChange} className="form-control" placeholder="City" />
                 </div>
 
-                <div className="col-12 mt-2">
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="agree"
-                      checked={agree}
-                      onChange={(e) => setAgree(e.target.checked)}
-                    />
-                    <label className="form-check-label" htmlFor="agree">
-                      I have read and agree to the{" "}
-                      <a href="/privacy-policy" className="text-decoration-none">Privacy Policy</a> and{" "}
-                      <a href="/term-and-condition" className="text-decoration-none">Terms &amp; Conditions</a>.
-                    </label>
-                  </div>
-                  {error && <div className="text-danger mt-2">{error}</div>}
-                </div>
-
                 <div className="col-12 d-flex gap-2 mt-3">
-                  <button className="btn btn-primary px-4" type="submit">Submit</button>
-                  <button type="button" className="btn btn-outline-secondary" onClick={() => router.replace("/signin")}>
+                  <button className="btn btn-primary px-4" type="submit" disabled={saving}>
+                    {saving ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button type="button" className="btn btn-outline-secondary" onClick={() => router.back()}>
                     Cancel
                   </button>
                 </div>
               </form>
-
             </div>
           </div>
         </div>

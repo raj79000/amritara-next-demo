@@ -1,16 +1,18 @@
 "use client";
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   generateToken, getOtp, verifyOtp, signIn,
   signup, profileInfo, updateProfile,
 } from "@/lib/api/auth";
 
-/* ---------- utils ---------- */
+/* ---------- Utils ---------- */
 const truthy = (v) => v !== undefined && v !== null && String(v).trim() !== "";
 
 const normalizeUser = (raw = {}) => {
   const u = raw || {};
-  const PPA = (u.PrivacyPolicyAcceptance ?? u.PPAcceptance ?? u.IsTermsAccepted ?? "").toString().toUpperCase();
+  const PPA = (u.PrivacyPolicyAcceptance ?? u.PPAcceptance ?? u.IsTermsAccepted ?? "")
+    .toString()
+    .toUpperCase();
   return {
     MemberId: u.MembershipId ?? u.MemberId ?? u.Id ?? u.MemberID ?? null,
     FirstName: u.FirstName ?? u.GivenName ?? u.Name?.split?.(" ")?.[0] ?? "",
@@ -32,15 +34,16 @@ const isProfileComplete = (nu) =>
   (truthy(nu.EmailId) || truthy(nu.MobileNo)) &&
   nu.PrivacyPolicyAcceptance === "Y";
 
-const isTestMode = () => typeof window !== "undefined" && process.env.NEXT_PUBLIC_AUTH_TEST_MODE === "true";
+const isTestMode = () =>
+  typeof window !== "undefined" && process.env.NEXT_PUBLIC_AUTH_TEST_MODE === "true";
 const isValidOtp = (otp) => /^[0-9]{6}$/.test(String(otp || "").trim());
 
-/* ---------- context ---------- */
+/* ---------- Context ---------- */
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);   // normalized
-  const [token, setToken] = useState(null); // session-scoped
+  const [user, setUser] = useState(null);   // normalized user
+  const [token, setToken] = useState(null); // session-scoped bearer
 
   useEffect(() => {
     const u = sessionStorage.getItem("user");
@@ -64,10 +67,11 @@ export function AuthProvider({ children }) {
   };
 
   /**
-   * OTP login:
-   * - Verify (or test mode allow 123456)
-   * - SignIn
-   * - If MembershipId exists, fetch ProfileInfo to decide completeness
+   * OTP login flow:
+   *  - verify (or allow 123456 in test mode)
+   *  - signIn
+   *  - if MembershipId present → fetch ProfileInfo for full picture
+   *  - decide new/existing via isProfileComplete
    */
   const loginWithOtp = async (mobile = "", otp, email = "", mobilePrefix = "+91") => {
     const authToken = await ensureToken();
@@ -80,17 +84,14 @@ export function AuthProvider({ children }) {
       if (v?.Success === false) throw new Error(v?.Message || "OTP verification failed.");
     }
 
-    // Sign in (returns something; we’ll normalize)
     const signRes = await signIn({ MobileNo: mobile, EmailId: email, Otp: otp });
     const signed = normalizeUser(signRes?.Data || signRes || {});
 
     let resolved = signed;
 
-    // If we got a MembershipId, fetch full profile for accurate completeness
     if (truthy(signed.MemberId)) {
       const profRes = await profileInfo(authToken, signed.MemberId);
       const prof = normalizeUser(profRes?.Data || profRes || {});
-      // prefer data from ProfileInfo, but keep fallbacks from SignIn
       resolved = {
         ...signed,
         ...prof,
@@ -98,7 +99,6 @@ export function AuthProvider({ children }) {
         MobilePrifix: prof.MobilePrifix || signed.MobilePrifix || mobilePrefix,
       };
     } else {
-      // keep identity used during login in case they’re new
       resolved = {
         ...resolved,
         MobilePrifix: mobile ? mobilePrefix : resolved.MobilePrifix,
@@ -107,35 +107,25 @@ export function AuthProvider({ children }) {
       };
     }
 
-    // persist for this tab
     setUser(resolved);
     sessionStorage.setItem("user", JSON.stringify(resolved));
     sessionStorage.setItem("pendingIdentity", JSON.stringify({ mobile, email, mobilePrefix }));
 
-    const newUser = !isProfileComplete(resolved);
-    return { user: resolved, isNewUser: newUser };
-  };
-
-  const updateUser = (updates) => {
-    setUser((prev) => {
-      const next = { ...(prev || {}), ...updates };
-      sessionStorage.setItem("user", JSON.stringify(next));
-      return next;
-    });
+    const isNewUser = !isProfileComplete(resolved);
+    return { user: resolved, isNewUser };
   };
 
   /**
    * Save profile:
-   * - If MemberId present → UpdateProfile
-   * - Else → signup (create)
-   * Always return normalized + accepted (“Y”) locally.
+   *  - If MemberId exists → UpdateProfile (requires MembershipId)
+   *  - Else → signup (create)
+   * Always normalize + mark acceptance “Y” locally so routing is correct next time.
    */
   const saveProfileAndRefresh = async (form) => {
     const authToken = await ensureToken();
-
     let raw;
+
     if (truthy(user?.MemberId)) {
-      // existing member
       raw = await updateProfile(authToken, {
         MembershipId: user.MemberId,
         FirstName: form.FirstName,
@@ -144,11 +134,9 @@ export function AuthProvider({ children }) {
         EmailId: form.EmailId,
         Country: form.Country,
         City: form.City,
-        // optional fields supported by UpdateProfile if you add them:
-        // Gender, Address, DateofBirth: "dd-mm-yyyy", WeddingAnniversary: "dd-mm-yyyy"
+        // Optionals supported by API can be added here (Gender, DateofBirth, etc.)
       });
     } else {
-      // brand-new member
       raw = await signup(authToken, {
         FirstName: form.FirstName,
         LastName: form.LastName,
@@ -162,7 +150,6 @@ export function AuthProvider({ children }) {
     }
 
     const server = normalizeUser(raw?.Data || raw || {});
-    // Make sure we reflect the latest form + acceptance locally
     const merged = {
       ...server,
       FirstName: form.FirstName ?? server.FirstName,
@@ -175,8 +162,17 @@ export function AuthProvider({ children }) {
       PrivacyPolicyAcceptance: "Y",
     };
 
-    updateUser(merged);
+    setUser(merged);
+    sessionStorage.setItem("user", JSON.stringify(merged));
     return merged;
+  };
+
+  const updateUser = (updates) => {
+    setUser((prev) => {
+      const next = { ...(prev || {}), ...updates };
+      sessionStorage.setItem("user", JSON.stringify(next));
+      return next;
+    });
   };
 
   const logout = () => {
@@ -188,7 +184,7 @@ export function AuthProvider({ children }) {
   };
 
   const value = useMemo(
-    () => ({ user, token, requestOtp, loginWithOtp, logout, updateUser, saveProfileAndRefresh }),
+    () => ({ user, token, requestOtp, loginWithOtp, saveProfileAndRefresh, updateUser, logout }),
     [user, token]
   );
 

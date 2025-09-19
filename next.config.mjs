@@ -49,7 +49,7 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "loyaltypulsedemo.ownyourcustomers.in",
-        pathname: "/cms/images/upload/**",
+        pathname: "/cms/images/uploads/**",
       },
     ],
   }

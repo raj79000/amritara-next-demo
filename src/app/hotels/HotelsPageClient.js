@@ -158,7 +158,7 @@ export default function HotelsPageClient() {
                     <div className="hotel-card-body">
                         <Image
                             // src={NoImagePlaceholder}
-                            src={hotel.image && hotel.image !== "" ? hotel.image : "" + NoImagePlaceholder}
+                            src={hotel?.images?.[0]?.propertyImage || NoImagePlaceholder}
                             alt={hotel.propertyName}
                             className="card-img-top"
                             width={800}

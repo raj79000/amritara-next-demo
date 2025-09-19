@@ -18,7 +18,7 @@ const HomePage = () => {
       <BannerSec></BannerSec>
       <AboutSec></AboutSec>
       <NestedSwiper></NestedSwiper>
-      {/* <UntoldStories></UntoldStories> */}
+      <UntoldStories></UntoldStories>
       <ZonesList></ZonesList>
       <NewOfferSlider></NewOfferSlider>
 

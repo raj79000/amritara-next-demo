@@ -2,21 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import PropertyHeader from "@/app/Components/PropertyHeader";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import Image from "next/image";
 import "swiper/css/pagination";
 import Link from "next/link";
-import { Search, X } from "lucide-react";
 
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import PropertyMainHeader from "@/app/Common/PropertyMainHeader";
 import AccommodationSlider from "@/app/Components/AccommodationSlider";
 import GalleryModal from "@/app/Components/GalleryModal";
 import DiningSlider from "@/app/Components/DiningSlider";
-import EventWedding from "@/app/Components/EventWedding";
 import LatestOffers from "@/app/Components/LatestOffers";
 import OverExp from "@/app/Components/OverExp";
 import Nearbycity from "@/app/Components/Nearbycity";
@@ -219,7 +216,7 @@ export default function ClientOverviewPage({
 
       <DiningSlider propertyId={propertyData.propertyId} />
 
-      <EventWedding propertyId={propertyData.propertyId} />
+      {/* <EventWedding propertyId={propertyData.propertyId} /> */}
 
       
       <section className="sec-padding" data-aos="fade-up">
