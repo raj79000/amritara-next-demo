@@ -143,18 +143,18 @@ const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
                           <div className="row">
                             <div
                               className="pushed-image"
-                              style={{ backgroundImage: `url(${slide.thumb})` }}
+                              style={{ backgroundImage: `url(${slide.thumb})`, backgroundColor: '#f0f0f0' }}
                             ></div>
                             <div className="pushed-box">
                               <div className="pushed-header">
                                 <span className="header-1"> {slide.title}</span>
                                 <span className="header-3 d-inline-block">
                                   {/* {slide.description} */}
-                                  {slide?.description.length > 150 ? (
+                                  {stripHtml(slide?.description).length > 150 ? (
                               <>
                                 {showFullText1
-                                  ? slide?.description
-                                  : slide?.description.slice(0, 150) + "..."}
+                                  ? stripHtml(slide?.description)
+                                  : stripHtml(slide?.description).slice(0, 150) + "..."}
                                 <span
                                   onClick={() => setShowFullText1(!showFullText1)}
                                   style={{
@@ -168,7 +168,7 @@ const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
                                 </span>
                               </>
                             ) : (
-                              slide?.description
+                              stripHtml(slide?.description)
                             )}
                                 </span>
                                 {slide.timing && slide.timing.trim() && (
