@@ -3,11 +3,11 @@ import RoomHotelClient from "./RoomHotelClient";
 
 export default async function accomodationPage({ params }) {
  const resolvedParams = await params;
-  const { brand_slug } = resolvedParams;
+  const { brand_slug, propertyId } = resolvedParams;
 
   return (
     <>
-      <RoomHotelClient brand_slug={brand_slug} />   
+      <RoomHotelClient brand_slug={brand_slug} propertyId={propertyId} />   
      
     </>
   );

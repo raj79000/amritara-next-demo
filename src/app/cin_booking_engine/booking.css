@@ -4317,26 +4317,7 @@ display: none;
         align-items: flex-end;
     } */
 
-    .navbar .navbar-nav li.nav-item:last-child {
-        display: none;
-    }
 
-    .navbar .navbar-toggler img {
-        width: 22px;
-        height: 22px;
-    }
-
-    .navbar .navbar-toggler,
-    .navbar .navbar-toggler:focus {
-        border: none;
-        background-color: transparent;
-        box-shadow: none;
-    }
-
-    nav.navbar {
-        padding: 8px 0 !important;
-        background: linear-gradient(179deg, #fff 0%, #605f5f00 83%);
-    }
 
     #search a span {
         display: block;

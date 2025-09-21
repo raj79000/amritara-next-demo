@@ -274,7 +274,7 @@ export default function GalleryHotelClient({ propertySlug, id }) {
       <section className="inner-no-banner-sec">
         <div className="container">
           <div className="global-heading-sec text-center">
-            <h2 className="global-heading">Gallery</h2>
+            <h2 className="global-heading">Our Gallery</h2>
           </div>
 
           {/* {loading ? (

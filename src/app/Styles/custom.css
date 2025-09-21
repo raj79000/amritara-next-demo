@@ -1357,6 +1357,20 @@ font-weight: bold;
 
 }
 
+.inner-banner-section-slider{
+  height:100vh !important;
+}
+.inner-banner-section-slider .slider-banner-inner img{
+  height:100vh !important;
+  object-fit:cover;
+}
+
+
+
+
+
+
+
 .discover-slider .winter-box .image-overlay .discover-hoverable-content .link-explore {
   color: #fff;
   font-weight: 400;
@@ -2002,3 +2016,4 @@ button {
   outline: none;
   display: inline-block !important;
 }
+

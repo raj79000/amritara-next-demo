@@ -364,6 +364,24 @@ padding: 8px!important;
 .modal-title {
     font-size: 18px!important;
 }
+
+/* property-inner-zigzag-section  */
+.property-inner-zigzag-section {
+  padding: 3rem 0;
+}
+.property-inner-zigzag-section .pushed-wrapper .row:nth-child(even){
+ flex-direction: row-reverse;
+}
+
+@media (min-width: 768px) {
+  .property-inner-zigzag-section .pushed-wrapper .row:nth-child(even) .pushed-box {
+        right: 55% !important;
+    }
+  
+}
+
+/* property-inner-zigzag-section  */
+
 .bottom-modal-content .property-amenitiess h6 {
     font-size: 18px!important;
 

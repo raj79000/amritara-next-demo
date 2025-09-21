@@ -199,57 +199,7 @@ const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
                         </div>
                       </div>
 
-                      {/* <div
-                        className="relative bg-cover bg-center bg-no-repeat h-[400px] flex items-center justify-center"
-                        style={{ backgroundImage: `url(${slide.bg})` }}
-                      >
-                        <div className="absolute inset-0 bg-black/50 z-0" />
-
-                        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between">
-                         
-                          <div className="w-full md:w-1/3">
-                            {slide.thumb && (
-                              <Image
-                                src={slide.thumb}
-                                alt="Dining Thumbnail"
-                                width={400}
-                                height={300}
-                                className="shadow-lg object-cover"
-                              />
-                            )}
-                          </div>
-
-                          <div className="w-full md:w-2/3 p-3 md:p-10 bg-white bg-opacity-90 text-black">
-                            <h4 className="text-2xl md:text-3xl font-serif mb-2 mt-4">
-                              {slide.title}
-                            </h4>
-                            <p className="text-sm md:text-base text-gray-700 mb-4 leading-relaxed">
-                              {slide.description}
-                            </p>
-                            {slide.timing && slide.timing.trim() && (
-                              <p className="text-sm font-semibold mb-6">
-                                <strong>Timings:</strong> {slide.timing}
-                              </p>
-                            )}
-                            <div className="flex mt-3 gap-2">
-                              {brandSlug && propertySlug && (
-                                <Link
-                                  href={`/${brandSlug}/${propertySlug}/restaurants`}
-                                  className="box-btn know-more"
-                                >
-                                  EXPLORE MORE
-                                </Link>
-                              )}
-                              <button
-                                className="box-btn book-now"
-                                onClick={() => setShowModal(true)}
-                              >
-                                BOOK A TABLE
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div> */}
+                     
                     </SwiperSlide>
                   ))}
                 </Swiper>

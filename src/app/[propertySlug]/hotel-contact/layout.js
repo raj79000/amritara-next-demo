@@ -4,7 +4,7 @@ import React from "react";
 
 async function getPropertyIdFromSlug(propertySlug) {
   try {
-    const res = await fetch("https://clarkscms.cinuniverse.com/Api/property/GetPropertyList", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
       cache: "no-store",
     });
     const json = await res.json();
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }) {
 
   try {
     const metaRes = await fetch(
-      `https://clarkscms.cinuniverse.com/Api/property/GetPropertyMetaTags?propertyId=${propertyId}`,
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
       { cache: "no-store" }
     );
     const metaJson = await metaRes.json();
@@ -55,14 +55,14 @@ export async function generateMetadata({ params }) {
     );
 
     return {
-      title: contactMeta?.metaTitle || "Clarks Hotels And Resorts | Contact",
-      description: contactMeta?.metaDescription || "Clarks Hotels And Resorts | Contact Description",
+      title: contactMeta?.metaTitle || "Amritara Hotels And Resorts | Contact",
+      description: contactMeta?.metaDescription || "Amritara Hotels And Resorts | Contact Description",
       openGraph: {
-        title: contactMeta?.metaTitle || "Clarks Hotels And Resorts | Contact",
-        description: contactMeta?.metaDescription || "Clarks Hotels And Resorts | Contact Description",
+        title: contactMeta?.metaTitle || "Amritara Hotels And Resorts | Contact",
+        description: contactMeta?.metaDescription || "Amritara Hotels And Resorts | Contact Description",
       },
       alternates: {
-        canonical: `/${brandSlug}/${propertySlug}/contact`,
+        canonical: `${propertySlug}/hotel-contact`,
       },
     };
   } catch (error) {

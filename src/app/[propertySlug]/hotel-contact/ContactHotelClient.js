@@ -102,7 +102,7 @@ export default function ContactHotelClient({ brandSlug, propertySlug, propertyId
         id={propertyData.propertyId}
         onSubmit={() => {}}
       />
-      <section className="position-relative banner-section d-none">
+      <section className="position-relative banner-section">
         {/* Banner Image */}
         <div className="w-100 overflow-hidden rounded-0 mtspace5">
           {bannerImages.length > 0 ? (
@@ -181,46 +181,7 @@ export default function ContactHotelClient({ brandSlug, propertySlug, propertyId
             <div className="bg-light pb-3 pt-3">
               <div className="container-md contact-addres">
                 <div className="row">
-                  <div className="col-12 col-lg-4 col-sm-4">
-                    <div className="item">
-                      <span className="icon feature_box_col_three">
-                        <FontAwesomeIcon icon={faMobileAlt} />
-                      </span>
-                      <h6>Reservation Phone</h6>
-                      <p>
-                        <Link
-                          className="text-lowercase"
-                          href={`tel:${
-                            propertyData?.contactDetails?.[0]?.contactNo1 || ""
-                          }`}
-                        >
-                          {propertyData?.contactDetails[0]?.contactNo1 || ""}
-                        </Link>
-                      </p>
-                      <p>
-                        <Link
-                          className="text-lowercase"
-                          href={`tel:${
-                            propertyData?.contactDetails?.[0]?.contactNo2 || ""
-                          }`}
-                        >
-                          {propertyData?.contactDetails[0]?.contactNo2 || ""}
-                        </Link>
-                      </p>
-                      <p>
-                        <Link
-                          className="text-lowercase"
-                          href={`tel:${
-                            propertyData?.contactDetails?.[0]?.tollFreeNumber ||
-                            ""
-                          }`}
-                        >
-                          {propertyData?.contactDetails[0]?.tollFreeNumber ||
-                            ""}
-                        </Link>
-                      </p>
-                    </div>
-                  </div>
+                  
                   <div className="col-12 col-lg-4 col-sm-4">
                     <div className="item">
                       <span className="icon feature_box_col_two">
@@ -270,6 +231,46 @@ export default function ContactHotelClient({ brandSlug, propertySlug, propertyId
                         >
                           {propertyData?.contactDetails?.[0]
                             ?.reservationEmail || ""}
+                        </Link>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="col-12 col-lg-4 col-sm-4">
+                    <div className="item">
+                      <span className="icon feature_box_col_three">
+                        <FontAwesomeIcon icon={faMobileAlt} />
+                      </span>
+                      <h6>Reservation Phone</h6>
+                      <p>
+                        <Link
+                          className="text-lowercase"
+                          href={`tel:${
+                            propertyData?.contactDetails?.[0]?.contactNo1 || ""
+                          }`}
+                        >
+                          {propertyData?.contactDetails[0]?.contactNo1 || ""}
+                        </Link>
+                      </p>
+                      <p>
+                        <Link
+                          className="text-lowercase"
+                          href={`tel:${
+                            propertyData?.contactDetails?.[0]?.contactNo2 || ""
+                          }`}
+                        >
+                          {propertyData?.contactDetails[0]?.contactNo2 || ""}
+                        </Link>
+                      </p>
+                      <p>
+                        <Link
+                          className="text-lowercase"
+                          href={`tel:${
+                            propertyData?.contactDetails?.[0]?.tollFreeNumber ||
+                            ""
+                          }`}
+                        >
+                          {propertyData?.contactDetails[0]?.tollFreeNumber ||
+                            ""}
                         </Link>
                       </p>
                     </div>
