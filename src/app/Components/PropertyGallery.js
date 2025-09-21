@@ -40,7 +40,7 @@ function HotelGallery({ galleryData }) {
             .map(({ id, src, caption, category }) => (
               <div
                 key={id}
-                className="col-lg-4 col-md-4 col-sm-4 col-12 mb-4 no-image-bg"
+                className="col-lg-4 col-md-4 col-sm-4 col-12 mb-4 "
               >
                 <Item
                   original={src}
@@ -54,16 +54,16 @@ function HotelGallery({ galleryData }) {
                       ref={ref}
                       onClick={open}
                       src={src}
-                      className="img-fluid"
+                      className="img-fluid img-thumbnail"
                       width={600}
                       height={400}
                       alt={caption || category}
                       style={{
                         width: "100%",
-                        height: "250px",
+                        height: "260px",
                         objectFit: "cover",
                         cursor: "pointer",
-                        borderRadius: "8px",
+                        borderRadius: "0px",
                         transition: "transform 0.3s ease",
                       }}
                     />

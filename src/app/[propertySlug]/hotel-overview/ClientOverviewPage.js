@@ -18,6 +18,7 @@ import LatestOffers from "@/app/Components/LatestOffers";
 import OverExp from "@/app/Components/OverExp";
 import Nearbycity from "@/app/Components/Nearbycity";
 import PropertyFaq from "./PropertyFaq";
+import PropertyGalleryOverview from "@/app/Components/PropertyGalleryOverview";
 
 export default function ClientOverviewPage({
   propertySlug: slugFromProps,
@@ -237,13 +238,6 @@ export default function ClientOverviewPage({
             <div className="row justify-content-center mb-4">
               <div className="col-md-9 md-offset-1">
                 <h2 className="global-heading pt-4">Experiences</h2>
-                <p className="mb-2">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry&apos;s
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a type
-                  specimen book.
-                </p>
               </div>
             </div>
           </div>
@@ -254,30 +248,12 @@ export default function ClientOverviewPage({
           </div>
         </div>
       </section>
- 
-      <section className="Nearby-attractions sec-padding" data-aos="fade-up">
-        <div className="container">
-          <div className="global-heading-sec text-center">
-            <div className="row justify-content-center mb-4">
-              <div className="col-md-9 md-offset-1">
-                <h2 className="global-heading">NEAR BY ATTRACTIONS</h2>
-                <p className="mb-2">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry&apos;s
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a type
-                  specimen book.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="winter-sec">
-            <div className="row">
-              <Nearbycity />
-            </div>
-          </div>
-        </div>
-      </section>
+
+      {/* <Nearbycity /> */}
+   
+      
+      <PropertyGalleryOverview propertyId={propertyData.propertyId}></PropertyGalleryOverview>
+
       <PropertyFaq propertyId={propertyData.propertyId} />
 
     </>

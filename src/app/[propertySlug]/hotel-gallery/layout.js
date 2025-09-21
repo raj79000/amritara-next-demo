@@ -1,54 +1,80 @@
-// app/[brandSlug]/[propertySlug]/gallery/layout.js
+// app/[propertySlug]/gallery/layout.js
 
 export async function generateMetadata({ params }) {
   const { propertySlug } = params;
 
+  // Define static fallback metadata
+  const fallbackMeta = {
+    title: "Gallery | Amritara Hotels",
+    description: "Explore stunning visuals from Amritara Hotels.",
+    keywords: "",
+    openGraph: {
+      title: "Gallery | Amritara Hotels",
+      description: "Explore stunning visuals from Amritara Hotels.",
+    },
+  };
+
   try {
-    // Step 1: Get propertyId from slug
-    const res = await fetch("https://clarkscms.cinuniverse.com/Api/property/GetPropertyList", {
-      cache: "no-store",
-    });
-    const json = await res.json();
-    if (json.errorMessage !== "success") throw new Error("Property list fetch failed");
-
-    const property = json.data.find(
-      (p) => p.propertySlug.toLowerCase() === propertySlug.toLowerCase()
-    );
-    const propertyId = property?.propertyId;
-
-    if (!propertyId) {
-      return {
-        title: "Gallery | Clarks Hotels",
-        description: "Explore stunning visuals from Clarks Hotels.",
-      };
-    }
-
-    // Step 2: Get meta data by propertyId
-    const metaRes = await fetch(
-      `https://clarkscms.cinuniverse.com/Api/property/GetPropertyMetaTags?propertyId=${propertyId}`,
+    // Step 1: Get property list
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`,
       { cache: "no-store" }
     );
+
+    if (!res.ok) {
+      console.warn("Property list request failed", res.status);
+      return fallbackMeta;
+    }
+
+    const json = await res.json();
+    const properties = Array.isArray(json?.data) ? json.data : [];
+
+    const property = properties.find(
+      (p) => p.propertySlug?.toLowerCase() === propertySlug.toLowerCase()
+    );
+
+    if (!property?.propertyId) {
+      console.warn(`No propertyId found for slug: ${propertySlug}`);
+      return fallbackMeta;
+    }
+
+    // Step 2: Get metadata for this property
+    const metaRes = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${property.propertyId}`,
+      { cache: "no-store" }
+    );
+
+    if (!metaRes.ok) {
+      console.warn("Metadata request failed", metaRes.status);
+      return fallbackMeta;
+    }
+
     const metaJson = await metaRes.json();
-    if (metaJson.errorMessage !== "success") throw new Error("Meta tag fetch failed");
+    const metas = Array.isArray(metaJson?.data) ? metaJson.data : [];
 
-    // Step 3: Filter for "Gallery"
-    const galleryMeta = metaJson.data.find((item) => item.pageType === "Gallery");
+    // Step 3: Look for Gallery page metadata
+    const galleryMeta = metas.find(
+      (item) => item.pageType?.toLowerCase() === "gallery"
+    );
 
+    if (!galleryMeta) {
+      console.warn(`No Gallery metadata found for propertyId: ${property.propertyId}`);
+      return fallbackMeta;
+    }
+
+    // ✅ Merge API metadata with fallback
     return {
-      title: galleryMeta?.metaTitle || "Gallery | Clarks Hotels",
-      description: galleryMeta?.metaDescription || "",
-      keywords: galleryMeta?.metaKeywords || "",
+      title: galleryMeta.metaTitle || fallbackMeta.title,
+      description: galleryMeta.metaDescription || fallbackMeta.description,
+      keywords: galleryMeta.metaKeywords || fallbackMeta.keywords,
       openGraph: {
-        title: galleryMeta?.metaTitle || "Gallery | Clarks Hotels",
-        description: galleryMeta?.metaDescription || "",
+        title: galleryMeta.metaTitle || fallbackMeta.openGraph.title,
+        description: galleryMeta.metaDescription || fallbackMeta.openGraph.description,
       },
     };
   } catch (error) {
     console.error("Gallery metadata error:", error);
-    return {
-      title: "Gallery | Clarks Hotels",
-      description: "Explore beautiful hotel gallery collections.",
-    };
+    return fallbackMeta;
   }
 }
 

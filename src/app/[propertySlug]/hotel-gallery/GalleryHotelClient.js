@@ -5,12 +5,16 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import Image from "next/image";
+import * as ReactDOM from "react-dom";
 import React, { useEffect, useState } from "react";
-// import PropertyHeader from "../../../Components/PropertyHeader";
-import HotelGallery from "../../Components/PropertyGallery";
-import { BookingEngineProvider } from "../../cin_context/BookingEngineContext";
-import FilterBar from "../../cin_booking_engine/Filterbar";
+// import BookNowForm from "@/components/BookNowForm";
+// import PropertyHeader from "@/components/PropertyHeader";
+import HotelGallery from "@/app/Components/PropertyGallery";
+import { BookingEngineProvider } from "@/app/cin_context/BookingEngineContext";
+import FilterBar from "@/app/cin_booking_engine/Filterbar";
 import { X } from "lucide-react";
+// import { getUserInfo } from "../../../../utilities/userInfo";
 import PropertyMainHeader from "@/app/Common/PropertyMainHeader";
 
 export default function GalleryHotelClient({ propertySlug, id }) {
@@ -26,12 +30,56 @@ export default function GalleryHotelClient({ propertySlug, id }) {
   const [isOpenFilterBar, openFilterBar] = useState(false);
   const [isOpen, setOpen] = useState(false);
 
+   
+      async function postBookingWidged(rooms,mapping, isClose,ctaName,selectedPropertyId) {
+       const resp = await getUserInfo();
+         const sessionId = sessionStorage?.getItem("sessionId");
+         const payload = {
+         ctaName: ctaName,
+         urls: window.location.href,
+         cityId: 0,
+         propertyId: selectedPropertyId ? parseInt(selectedPropertyId) :0,
+         checkIn: "",
+         checkOut: "",
+         adults: 0,
+         children: 0,
+         rooms: 0,
+         promoCode: "",
+         ip: resp?.ip,
+         sessionId: sessionId,
+         deviceName: resp?.deviceInfo?.deviceName,
+         deviceType: resp?.deviceInfo?.deviceOS == "Unknown" ? resp?.deviceInfo?.platform : resp?.deviceInfo?.deviceOS,
+         roomsName: rooms?.RoomName,
+         packageName: mapping?.MappingName,
+         isCartOpen: mapping?.MappingName ? "Y": "N",
+         isCartEdit: "N",
+         isCartClick: "N",
+         isClose: isClose ? "Y" : "N",
+        }
+           const response = await fetch(
+             `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/tracker/BookingWidged`,
+             {
+               method: "POST",
+               headers: {
+                 "Content-Type": "application/json",
+               },
+               body: JSON.stringify( payload ),
+             }
+           );
+           const res = await response?.json();
+     
+         //console.log("res BookingWidged",res);
+       }
   const handleBookNowClick = async () => {
+    if(isOpen){
+      postBookingWidged("","", true,"Widget Closed");
+    }else{
+      postBookingWidged("","", false,"Widget Open");
+    }
     setOpen(!isOpen);
     openFilterBar(!isOpenFilterBar);
     setShowFilterBar(!showFilterBar);
   };
-  
  useEffect(() => {
   if (!propertySlug) return;
 
@@ -153,8 +201,9 @@ export default function GalleryHotelClient({ propertySlug, id }) {
         onSubmit={handleBookNowClick}
       /> */}
       <PropertyMainHeader
-        // propertySlug={propertySlug}
-        // id={propertyData.propertyId}
+        brand_slug={propertySlug}
+        id={id}
+        onSubmit={() => {}}
       />
 
       {/* ✅ Banner Section with Swiper */}
@@ -203,7 +252,7 @@ export default function GalleryHotelClient({ propertySlug, id }) {
               {isOpen ? <X size={18} color="black" /> : "Book Now"}
             </button>
           </div>
-          {showFilterBar && (
+          {showFilterBar && ReactDOM.createPortal (
             <BookingEngineProvider>
               <FilterBar
                 selectedProperty={parseInt(propertyId)}
@@ -216,7 +265,8 @@ export default function GalleryHotelClient({ propertySlug, id }) {
                   setShowFilterBar(false);
                 }}
               />
-            </BookingEngineProvider>
+            </BookingEngineProvider>,
+          document.body
           )}
         </div>
       </section>
@@ -227,13 +277,14 @@ export default function GalleryHotelClient({ propertySlug, id }) {
             <h2 className="global-heading">Gallery</h2>
           </div>
 
-          {loading ? (
+          {/* {loading ? (
             <p className="text-center">Loading gallery...</p>
-          ) : galleryData.length > 0 ? (
+          ) : galleryData?.length > 0 ? (
             <HotelGallery galleryData={galleryData} />
           ) : (
             <p className="text-center">No gallery data found.</p>
-          )}
+          )} */}
+          <HotelGallery galleryData={galleryData} />
         </div>
       </section>
 
