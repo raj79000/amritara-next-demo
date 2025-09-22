@@ -222,6 +222,13 @@ export default function ClientOverviewPage({
       
       <section className="sec-padding" data-aos="fade-up">
         <div className="container">
+           <div className="global-heading-sec text-center">
+            <div className="row justify-content-center mb-4">
+              <div className="col-md-9 md-offset-1">
+                <h2 className="global-heading pt-4">Offers</h2>
+              </div>
+            </div>
+          </div>
           <div className="winter-sec">
             <div className="row">
               <LatestOffers />

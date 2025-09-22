@@ -1,12 +1,12 @@
-// app/[propertySlug]/rooms/layout.js
+// app/[brandSlug]/[propertySlug]/rooms/layout.js
 
 export async function generateMetadata({ params }) {
   const { propertySlug } = params;
 
   try {
     // Step 1: Fetch all properties to get the propertyId
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
+    // fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/offers/GetCorporateOffers`)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
       cache: "no-store",
     });
     const json = await res.json();
@@ -18,8 +18,8 @@ export async function generateMetadata({ params }) {
 
     if (!propertyId) {
       return {
-        title: "Rooms | Amritara Hotels",
-        description: "Property not found.",
+        title: "Things to do | Amritara Hotels and Resorts",
+        description: "Things to do | Amritara Hotels and Resorts",
       };
     }
 
@@ -33,26 +33,26 @@ export async function generateMetadata({ params }) {
     if (metaJson.errorMessage !== "success") throw new Error("Failed to fetch metadata");
 
     // Step 3: Extract the metadata for the Rooms page
-    const roomsMeta = metaJson.data.find((item) => item.pageType === "Rooms");
+    const roomsMeta = metaJson.data.find((item) => item.pageType === "experiences");
 
     return {
-      title: roomsMeta?.metaTitle || "Rooms | Amritara Hotels",
+      title: roomsMeta?.metaTitle || "Things to do | Amritara Hotels and Resorts",
       description: roomsMeta?.metaDescription || "",
       keywords: roomsMeta?.metaKeywords || "",
       openGraph: {
-        title: roomsMeta?.metaTitle || "Rooms | Amritara Hotels",
+        title: roomsMeta?.metaTitle || "Things to do | Amritara Hotels and Resorts",
         description: roomsMeta?.metaDescription || "",
       },
     };
   } catch (err) {
     console.error("Rooms page metadata fetch error:", err);
     return {
-      title: "Rooms | Amritara Hotels",
-      description: "Explore our rooms and suites.",
+     title: "Things to do | Amritara Hotels and Resorts",
+        description: "Things to do | Amritara Hotels and Resorts",
     };
   }
 }
 
-export default function RoomsLayout({ children }) {
+export default function ExperienceLayout({ children }) {
   return <>{children}</>;
 }

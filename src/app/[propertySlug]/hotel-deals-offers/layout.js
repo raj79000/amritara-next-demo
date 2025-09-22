@@ -4,7 +4,7 @@ import React from "react";
 
 async function getPropertyIdFromSlug(propertySlug) {
   try {
-    const res = await fetch("https://clarkscms.cinuniverse.com/Api/property/GetPropertyList", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
       cache: "no-store",
     });
     const json = await res.json();
@@ -26,8 +26,8 @@ export async function generateMetadata({ params }) {
   if (!propertySlug) {
     console.error("No propertySlug found in params.");
     return {
-      title: "Missing Property",
-      description: "No metadata available.",
+      title: "Amritara Hotels And Resorts | Offer",
+      description: "Amritara Hotels And Resorts | Offer Description",
     };
   }
 
@@ -36,14 +36,13 @@ export async function generateMetadata({ params }) {
   if (!propertyId) {
     console.error("No property ID found for propertySlug:", propertySlug);
     return {
-      title: "Property Not Found",
-      description: "No metadata available for this property.",
+     title: "Amritara Hotels And Resorts | Offer",
+      description: "Amritara Hotels And Resorts | Offer Description",
     };
   }
 
   try {
-    const metaRes = await fetch(
-      `https://clarkscms.cinuniverse.com/Api/property/GetPropertyMetaTags?propertyId=${propertyId}`,
+    const metaRes = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
       { cache: "no-store" }
     );
     const metaJson = await metaRes.json();
@@ -51,28 +50,26 @@ export async function generateMetadata({ params }) {
     const offerMeta = metaJson?.data?.find((item) => {
       const pageType = item.pageType?.toLowerCase();
       return (
-        pageType === "meetings & Offer" ||
-        pageType === "Offer" ||
-        pageType === "meetings"
+        pageType === "Offer".toLowerCase() || pageType === "hotel-deals-offers".toLowerCase()
       );
     });
 
     return {
-      title: offerMeta?.metaTitle || "Clarks Hotels And Resorts | Offer",
-      description: offerMeta?.metaDescription || "Clarks Hotels And Resorts | Offer Description",
+      title: offerMeta?.metaTitle || "Amritara Hotels And Resorts | Offer",
+      description: offerMeta?.metaDescription || "Amritara Hotels And Resorts | Offer Description",
       openGraph: {
-        title: offerMeta?.metaTitle || "Clarks Hotels And Resorts | Offer",
-        description: offerMeta?.metaDescription || "Clarks Hotels And Resorts | Offer Description",
+        title: offerMeta?.metaTitle || "Amritara Hotels And Resorts | Offer",
+        description: offerMeta?.metaDescription || "Amritara Hotels And Resorts | Offer Description",
       },
       alternates: {
-        canonical: `/${brandSlug}/${propertySlug}/offer`, // plural matches folder name
+        canonical: `/${propertySlug}/hotel-deals-offers`, // plural matches folder name
       },
     };
   } catch (error) {
     console.error("Error fetching metadata:", error);
     return {
-      title: "Error Fetching Metadata",
-      description: "Could not load metadata for this page.",
+      title: "Amritara Hotels And Resorts | Offer",
+      description: "Amritara Hotels And Resorts | Offer Description",
     };
   }
 }

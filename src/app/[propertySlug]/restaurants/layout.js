@@ -1,11 +1,12 @@
-// app/[brandSlug]/[propertySlug]/dining/layout.js
+// app/[propertySlug]/dining/layout.js
 
 import React from "react";
 
 // Helper function to fetch propertyId
 async function getPropertyIdFromSlug(propertySlug) {
   try {
-    const res = await fetch("https://clarkscms.cinuniverse.com/Api/property/GetPropertyList", {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
       cache: "no-store",
     });
     const json = await res.json();
@@ -28,8 +29,8 @@ export async function generateMetadata({ params }) {
   if (!propertySlug) {
     console.error("No propertySlug found in params.");
     return {
-      title: "Missing Property",
-      description: "No property metadata available.",
+      title: "Amritara Hotels And Resorts | Dining",
+      description: "Amritara Hotels And Resorts | Dining Description",
     };
   }
 
@@ -39,39 +40,39 @@ export async function generateMetadata({ params }) {
   if (!propertyId) {
     console.error("No property ID found for propertySlug:", propertySlug);
     return {
-      title: "Property Not Found",
-      description: "No metadata available for this property.",
+      title: "Amritara Hotels And Resorts | Dining",
+      description: "Amritara Hotels And Resorts | Dining Description",
     };
   }
 
   // Step 2: Get meta data from metadata API
   try {
     const metaRes = await fetch(
-      `https://clarkscms.cinuniverse.com/Api/property/GetPropertyMetaTags?propertyId=${propertyId}`,
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
       { cache: "no-store" }
     );
     const metaJson = await metaRes.json();
 
     const diningMeta = metaJson?.data?.find(
-      (item) => item?.pageType?.toLowerCase() === "dining"
+      (item) => item?.pageType?.toLowerCase() === "restaurants"
     );
 
     return {
-      title: diningMeta?.metaTitle || "Clarks Hotels And Resorts | Dining",
-      description: diningMeta?.metaDescription || "Clarks Hotels And Resorts | Dining Description",
+      title: diningMeta?.metaTitle || "Amritara Hotels And Resorts | Dining",
+      description: diningMeta?.metaDescription || "Amritara Hotels And Resorts | Dining Description",
       openGraph: {
-        title: diningMeta?.metaTitle || "Clarks Hotels And Resorts | Dining",
-        description: diningMeta?.metaDescription || "Clarks Hotels And Resorts | Dining Description",
+        title: diningMeta?.metaTitle || "Amritara Hotels And Resorts | Dining",
+        description: diningMeta?.metaDescription || "Amritara Hotels And Resorts | Dining Description",
       },
       alternates: {
-        canonical: `/${brandSlug}/${propertySlug}/dining`,
+        canonical: `/${propertySlug}/restaurants`,
       },
     };
   } catch (error) {
     console.error("Error fetching metadata:", error);
     return {
-      title: "Error Fetching Metadata",
-      description: "Could not load metadata for this page.",
+      title: "Amritara Hotels And Resorts | Dining",
+      description: "Amritara Hotels And Resorts | Dining Description",
     };
   }
 }

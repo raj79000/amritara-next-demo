@@ -26,8 +26,8 @@ export async function generateMetadata({ params }) {
   if (!propertySlug) {
     console.error("No propertySlug found in params.");
     return {
-      title: "Missing Property",
-      description: "No metadata available.",
+      title: "Amritara Hotels And Resorts | Contact",
+      description: "Amritara Hotels And Resorts | Contact Description",
     };
   }
 
@@ -37,8 +37,8 @@ export async function generateMetadata({ params }) {
   if (!propertyId) {
     console.error("No property ID found for propertySlug:", propertySlug);
     return {
-      title: "Property Not Found",
-      description: "No metadata available for this property.",
+      title: "Amritara Hotels And Resorts | Contact",
+      description: "Amritara Hotels And Resorts | Contact Description",
     };
   }
 
@@ -51,7 +51,7 @@ export async function generateMetadata({ params }) {
 
     // Adjust this filter to exact pageType from your API
     const contactMeta = metaJson?.data?.find(
-      (item) => item.pageType?.toLowerCase() === "contact us" || item.pageType?.toLowerCase() === "contact"
+      (item) => item.pageType?.toLowerCase() === "contact us" || item.pageType?.toLowerCase() === "hotel-contact"
     );
 
     return {
@@ -68,8 +68,8 @@ export async function generateMetadata({ params }) {
   } catch (error) {
     console.error("Error fetching metadata:", error);
     return {
-      title: "Error Fetching Metadata",
-      description: "Could not load metadata for this page.",
+      title: "Amritara Hotels And Resorts | Contact",
+      description: "Amritara Hotels And Resorts | Contact Description",
     };
   }
 }

@@ -2017,3 +2017,11 @@ button {
   display: inline-block !important;
 }
 
+.offer-section-overview-page .no-image-bg{
+  min-height: 250px!important;
+  height: 250px!important;
+  max-height: 250px!important;
+  background: #c5c5c5!important;
+  width: 100%!important;
+  object-fit: cover!important;
+}

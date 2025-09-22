@@ -4,7 +4,8 @@ export async function generateMetadata({ params }) {
 
   try {
     // Step 1: Get the property list
-    const res = await fetch("https://clarkscms.cinuniverse.com/Api/property/GetPropertyList", {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
       cache: "no-store",
     });
     const json = await res.json();
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }) {
 
     // Step 3: Fetch meta tags for that propertyId
     const metaRes = await fetch(
-      `https://clarkscms.cinuniverse.com/Api/property/GetPropertyMetaTags?propertyId=${propertyId}`,
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
       { cache: "no-store" }
     );
     const metaJson = await metaRes.json();
