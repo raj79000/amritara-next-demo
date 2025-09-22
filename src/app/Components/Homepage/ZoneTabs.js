@@ -24,7 +24,7 @@ export default function ZoneTabs({ zones }) {
 
   return (
     <>
-      <section className="DiscoverSectionForZone">
+      <section className="DiscoverSectionForZone mt-5">
         <div className="container-fluid">
           <div className="global-heading-sec text-center">
             <h2 className="global-heading">Discover</h2>

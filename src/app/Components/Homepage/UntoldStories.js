@@ -9,6 +9,7 @@ import "swiper/css/pagination";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./untold.module.css";
+import { ArrowLeftCircle, ArrowRightCircle } from "lucide-react";
 
 const UntoldStories = () => {
   const [categories, setCategories] = useState([]);
@@ -81,13 +82,18 @@ const UntoldStories = () => {
       <h3 className="main-section-title global-heading">Untold Stories</h3>
 
       {/* Category slider instead of tabs */}
-      <div className="container mb-4">
+      <div className="container mb-4 position-relative custom-tabs-for-experience">
         <Swiper
-         modules={[Navigation, Pagination]}
-          slidesPerView={"auto"}
-          spaceBetween={15}
+          modules={[Navigation, Pagination]}
+          spaceBetween={3}
           freeMode={true}
-          className="category-swiper"
+          slidesPerView={"auto"}
+          navigation={{
+            nextEl: ".custom-next",
+            prevEl: ".custom-prev",
+          }}
+          pagination={false}
+          className="category-swiper experience-category-slider-tabs"
         >
           {categories.map((cat) => (
             <SwiperSlide key={cat.displayCategoryId} style={{ width: "auto" }}>
@@ -102,6 +108,17 @@ const UntoldStories = () => {
             </SwiperSlide>
           ))}
         </Swiper>
+
+        {/* Custom navigation arrows */}
+        <div className="custom-nav-wrapper">
+          <button className="custom-prev">
+            <ArrowLeftCircle></ArrowLeftCircle>
+          </button>
+          <button className="custom-next">
+           <ArrowRightCircle></ArrowRightCircle>
+          </button>
+        </div>
+
       </div>
 
       {/* Hotels slider */}

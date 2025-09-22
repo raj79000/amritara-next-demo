@@ -19,6 +19,7 @@ import OverExp from "@/app/Components/OverExp";
 import Nearbycity from "@/app/Components/Nearbycity";
 import PropertyFaq from "./PropertyFaq";
 import PropertyGalleryOverview from "@/app/Components/PropertyGalleryOverview";
+import PropertyTestimonials from "@/app/Components/PropertyTestimonials";
 
 export default function ClientOverviewPage({
   propertySlug: slugFromProps,
@@ -30,13 +31,13 @@ export default function ClientOverviewPage({
   const slug = slugFromProps ?? slugFromRoute;
   const [propertyId, setPropertyId] = useState(idFromProps ?? null);
   const [propertyName, setPropertyName] = useState(nameFromProps ?? null);
- const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [cityDetails, setCityDetails] = useState(null);
   const [propertyData, setPropertyData] = useState(null);
   const [loading, setLoading] = useState(true);
-    const [isOpen, setOpen] = useState(false);
-    const [showFullText, setShowFullText] = useState(false);
+  const [isOpen, setOpen] = useState(false);
+  const [showFullText, setShowFullText] = useState(false);
   // ...other state
 
   // If we don't yet have propertyId (or name), look it up by slug
@@ -100,23 +101,23 @@ export default function ClientOverviewPage({
         // propertySlug={propertySlug}
         id={propertyData.propertyId}
       />
-       <section className="hero-section position-relative overflow-hidden h-full flex items-center justify-center">
-      
-      <video className="w-100 object-cover for-desktop-video-main"
-      autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto">
-        <source src="/amritara-new-banner-video.mp4" type="video/mp4" />
-      </video>
-      {/* <video src="/amritara-new-banner-video.mp4" autoPlay loop ></video> */}
-      {/* <div className="hero-bottom-part-ab">
+      <section className="hero-section position-relative overflow-hidden h-full flex items-center justify-center">
+
+        <video className="w-100 object-cover for-desktop-video-main"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto">
+          <source src="/amritara-new-banner-video.mp4" type="video/mp4" />
+        </video>
+        {/* <video src="/amritara-new-banner-video.mp4" autoPlay loop ></video> */}
+        {/* <div className="hero-bottom-part-ab">
         <Link href="#" className="search-icon-banner">
           <Search />
         </Link>
       </div> */}
-    </section>
+      </section>
 
       <section className="position-relative banner-section d-none">
         {propertyData.images && propertyData.images.length > 0 ? (
@@ -132,7 +133,7 @@ export default function ClientOverviewPage({
                 <Image
                   src={
                     // img.propertyImage ||
-                     "/default-image.jpg"}
+                    "/default-image.jpg"}
                   alt={`Banner Image`}
                   width={1920}
                   height={500}
@@ -145,7 +146,7 @@ export default function ClientOverviewPage({
           <div>No images available</div>
         )}
 
-        
+
         {/* <div
           className={`absolute left-1/2 transform -translate-x-1/2 home-page-class`}
           style={{ zIndex: 10 }}
@@ -160,10 +161,10 @@ export default function ClientOverviewPage({
             {isOpen ? <X size={18} color="black" /> : "Book Now"}
           </button>
         </div> */}
-        
+
       </section>
 
-       <section className="mt-5">
+      <section className="mt-5">
         <div className="container-fluid p-0">
           <div className="global-heading-sec text-center">
             <div className="row justify-content-center mb-0">
@@ -199,12 +200,12 @@ export default function ClientOverviewPage({
         </div>
       </section>
 
-      
+
       <AccommodationSlider
         propertyId={propertyData.propertyId}
         setShowModal={setShowModal}
         setSelectedRoom={setSelectedRoom}
-        // onSubmit={handleRoomBookNow}
+      // onSubmit={handleRoomBookNow}
       />
 
       <GalleryModal
@@ -213,16 +214,16 @@ export default function ClientOverviewPage({
         roomData={selectedRoom}
       />
 
-       
+
 
       <DiningSlider propertyId={propertyData.propertyId} />
 
       {/* <EventWedding propertyId={propertyData.propertyId} /> */}
 
-      
+
       <section className="sec-padding" data-aos="fade-up">
         <div className="container">
-           <div className="global-heading-sec text-center">
+          <div className="global-heading-sec text-center">
             <div className="row justify-content-center mb-4">
               <div className="col-md-9 md-offset-1">
                 <h2 className="global-heading pt-4">Offers</h2>
@@ -231,13 +232,15 @@ export default function ClientOverviewPage({
           </div>
           <div className="winter-sec">
             <div className="row">
-              <LatestOffers />
+              <LatestOffers propertyId={propertyData.propertyId} />
             </div>
           </div>
         </div>
       </section>
 
-      
+
+
+
 
       <section className="sec-padding" data-aos="fade-up">
         <div className="container">
@@ -250,16 +253,20 @@ export default function ClientOverviewPage({
           </div>
           <div className="winter-sec">
             <div className="row">
-              <OverExp />
+              <OverExp propertyId={propertyData.propertyId} />
             </div>
           </div>
         </div>
       </section>
 
       {/* <Nearbycity /> */}
-   
-      
+
+
       <PropertyGalleryOverview propertyId={propertyData.propertyId}></PropertyGalleryOverview>
+
+
+      <PropertyTestimonials propertyId={propertyData.propertyId}></PropertyTestimonials>
+
 
       <PropertyFaq propertyId={propertyData.propertyId} />
 

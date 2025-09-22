@@ -259,7 +259,7 @@ box2 {
     float: right;
     background: #fff;
     right: 0;
-     min-height: 192px;;
+     min-height: 140px;;
     }    
  .roomacomo .hotel-box-content{ margin-top:5px;}
  .roomacomo .winter-box-heading, .roomacomo h3{ 
@@ -394,6 +394,56 @@ padding: 8px!important;
     font-family:var(--font-heading), serif !important;
     text-align:center;
 }
+.experience-category-slider-tabs .category-btn{
+  outline:none;
+  border:none;
+  background-color:#fff;
+  color:#000;
+  font-size:14px;
+  padding:6px 10px;
+}
+.experience-category-slider-tabs .category-btn.active{
+  background-color:var(--brown);
+  color:#fff;
+}
+.custom-tabs-for-experience .custom-nav-wrapper{
+  position:relative;
+  z-index:99;
+}
+.custom-tabs-for-experience .custom-nav-wrapper .custom-prev {
+ position: absolute;
+    top: -3px;
+    left: -30px;
+    right: auto;
+    transform: translateY(-100%);
+    outline:none;
+    border:none;
+    opacity:1!important;
+    background-color:transparent;
+
+}
+.custom-tabs-for-experience .custom-nav-wrapper .custom-next {
+position: absolute;
+    top: -3px;
+    right: -30px;
+    left: auto;
+    transform: translateY(-100%);
+     outline:none;
+    border:none;
+    opacity:1!important;
+    background-color:transparent;
+
+}
+
+ .testimonial-section-slider-over .winter-box-content-box{
+      
+       text-align:center;
+        }
+       .testimonial-section-slider-over .testimonial-box{
+     padding:2rem!important;
+       text-align:center;
+       }
+
 
 
 @media (min-width: 768px) {

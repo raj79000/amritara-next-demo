@@ -171,10 +171,10 @@ setBannerImages(bannerImgs);
               <div className="row justify-content-center mb-2">
                 <div className="col-md-9 md-offset-1">
                   <h2 className="global-heading">OFFERS</h2>
-                  <p className="mb-2">
+                  {/* <p className="mb-2">
                     Discover exclusive offers tailored just for your perfect
                     stay.
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>

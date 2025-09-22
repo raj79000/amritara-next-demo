@@ -176,7 +176,7 @@ export default function HotelContactForm({ cityId, propertyId, longitude, latitu
           <div className="col-lg-5 ps-0 col-md-5 col-sm-12">
             <div className="inner-column wow fadeInLeft">
            
-              <iframe src={googleMap}
+              <iframe src={googleMap || "https://maps.app.goo.gl/9MEd8UFvbUJ4hjeD6"}
                width="100%" height="300"></iframe>
             
             </div>

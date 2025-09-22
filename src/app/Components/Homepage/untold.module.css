@@ -9,7 +9,7 @@
     width: 151px;
     height: 150px;
     object-fit: cover;
-    z-index: 11;
+    z-index: 1;
 }
 
 .swiperWrapper {

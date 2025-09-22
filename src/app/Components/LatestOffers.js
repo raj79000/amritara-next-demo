@@ -8,25 +8,35 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Image from "next/image";
 
-export default function LatestOffers({ onSubmit }) {
+export default function LatestOffers({ propertyId, onSubmit }) {
   const [offers, setOffers] = useState([]);
   const [modalContent, setModalContent] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [openOfferId, setOpenOfferId] = useState(null); // track expanded offer
 
-  // Fetch offers
+  // ✅ Fetch offers by propertyId
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/offers/GetCorporateOffers`)
+    if (!propertyId) return;
+
+    fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/offers/GetOffersByProperty?propertyId=${propertyId}`
+    )
       .then((res) => res.json())
       .then((data) => {
-        if (data?.errorCode === "0" && Array.isArray(data.data)) {
-          setOffers(data.data);
+        if (
+          data?.errorCode === "0" &&
+          Array.isArray(data.data) &&
+          data.data.length > 0
+        ) {
+          // API returns data[], each has offersInfo[]
+          const offersList = data.data.flatMap((item) => item.offersInfo || []);
+          setOffers(offersList);
         }
-      });
-  }, []);
+      })
+      .catch((err) => console.error("Error fetching offers:", err));
+  }, [propertyId]);
 
   const handleBookNow = (property) => {
-    onSubmit(property);
+    if (onSubmit) onSubmit(property);
   };
 
   const handleKnowMore = (offer) => {
@@ -41,121 +51,83 @@ export default function LatestOffers({ onSubmit }) {
     setIsModalOpen(false);
   };
 
-  const handleToggleHotels = (offerId) => {
-    setOpenOfferId((prev) => (prev === offerId ? null : offerId));
-  };
-
-  useEffect(() => {
-    if (!openOfferId) return;
-
-    const handleClickOutside = (event) => {
-      const expandedBox = document.querySelector(
-        `.hotel-box .offers-hotel-hotel-list`
-      );
-      if (expandedBox && !expandedBox.contains(event.target)) {
-        setOpenOfferId(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [openOfferId]);
-
   return (
     <>
+    {/* <h1>Property ID: {propertyId}</h1> */}
       <div>
-        <Swiper
-          modules={[Navigation, Pagination]}
-          spaceBetween={20}
-          slidesPerView={1}
-          navigation={true}
-          pagination={false}
-          breakpoints={{
-            500: { slidesPerView: 1 },
-            767: { slidesPerView: 2 },
-            1000: { slidesPerView: 3 },
-          }}
-          className="n-hotel-slider offer-section-overview-page"
-        >
-          {offers.map((offer, index) => {
-            const imageUrl =
-              offer.offersImages?.[0]?.offerImages ||
-              "/images/event/event-img1.png";
+        {offers.length === 0 ? (
+          <p className="text-center py-5">No offers available.</p>
+        ) : (
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={20}
+            slidesPerView={1}
+            navigation={true}
+            pagination={false}
+            breakpoints={{
+              500: { slidesPerView: 1 },
+              767: { slidesPerView: 2 },
+              1000: { slidesPerView: 3 },
+            }}
+            className="n-hotel-slider offer-section-overview-page"
+          >
+            {offers.map((offer, index) => {
+              const imageUrl =
+                offer.offersImages?.[0]?.offerImages ||
+                "/images/event/event-img1.png";
 
-            return (
-              <SwiperSlide key={offer.propertyOfferId || index}>
-                <div className="winter-box shadow hotel-box mt-2 no-image-bg">
-                  <Image
-                    src={imageUrl}
-                    alt={offer.offerTitle || "Offer"}
-                    className="w-100 primary-radius"
-                    width={264}
-                    height={220}
-                    quality={75}
-                  />
-                </div>
-                <div className="winter-box-content-box">
-                  <div className="winter-box-content">
-                    <div className="hotel-box-content">
-                      <h3 className="winter-box-heading mb-2 offer-box-heding no-cursor">
-                        {offer.offerTitle || offer.offerName}
-                      </h3>
-                    </div>
-                    <p className="display-block one-line-text">
-                      <span>
-                        {offer.offerDesc?.slice(0, 100) ||
-                          "No description available."}
-                      </span>
-                    </p>
-                    <div className="winter-box-btn">
-                      <button
-                        className="box-btn know-more"
-                        onClick={() => handleKnowMore(offer)}
-                      >
-                        Know More
-                      </button>
-                      <button
-                        className="box-btn book-now"
-                        onClick={() =>
-                          handleToggleHotels(offer.propertyOfferId)
-                        }
-                      >
-                        Book Now
-                      </button>
+              return (
+                <SwiperSlide key={offer.propertyOfferId || index}>
+                  {/* Offer Image */}
+                  <div className="winter-box shadow hotel-box mt-2 no-image-bg">
+                    <Image
+                      src={imageUrl}
+                      alt={offer.offerTitle || "Offer"}
+                      className="w-100 primary-radius"
+                      width={264}
+                      height={220}
+                      quality={75}
+                    />
+                  </div>
 
-                      {openOfferId === offer.propertyOfferId && (
-                        <div className="offers-hotel-hotel-list mt-3">
-                          {offer.propertyData?.length > 0 ? (
-                            <ul className="list-unstyled mb-0">
-                              {offer.propertyData.map((hotel) => (
-                                <li key={hotel.propertyId} className="mb-2">
-                                  <button
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      handleBookNow(hotel);
-                                    }}
-                                  >
-                                    <small>
-                                      {hotel.propertyName}, {hotel.cityName}
-                                    </small>
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <p>No hotels available for this offer.</p>
-                          )}
-                        </div>
-                      )}
+                  {/* Offer Content */}
+                  <div className="winter-box-content-box">
+                    <div className="winter-box-content">
+                      <div className="hotel-box-content">
+                        <h3 className="winter-box-heading mb-2 offer-box-heding no-cursor">
+                          {offer.offerTitle || offer.offerName}
+                        </h3>
+                      </div>
+                      <p className="display-block one-line-text">
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              offer.offerDesc?.slice(0, 100) ||
+                              "No description available.",
+                          }}
+                        />
+                      </p>
+                      <div className="winter-box-btn">
+                        <button
+                          className="box-btn know-more"
+                          onClick={() => handleKnowMore(offer)}
+                        >
+                          Know More
+                        </button>
+                        <button
+                          className="box-btn book-now"
+                          onClick={() => handleBookNow(offer)}
+                        >
+                          Book Now
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        )}
 
         {/* Modal */}
         {isModalOpen &&
@@ -181,7 +153,11 @@ export default function LatestOffers({ onSubmit }) {
                     >
                       x
                     </button>
-                    <p>{modalContent.description}</p>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: modalContent.description,
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -190,34 +166,30 @@ export default function LatestOffers({ onSubmit }) {
           )}
       </div>
 
-      <style jsx>
-        {`
-          .new-type-popup {
-            backdrop-filter: blur(10px);
-          }
-          .new-type-popup .btn-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #000;
-            height: 30px;
-            width: 30px;
-            position: absolute;
-            top: 0px;
-            right: 10px;
-            cursor: pointer;
-          }
-            .new-type-popup .modal-body p{
-            padding-left :1rem;
-            padding-right :1rem;
-          }
-            .new-type-popup .modal-body{
-            padding-bottom :1rem;
-          }
-          
-          
-        `}
-      </style>
+      <style jsx>{`
+        .new-type-popup {
+          backdrop-filter: blur(10px);
+        }
+        .new-type-popup .btn-close {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          color: #000;
+          height: 30px;
+          width: 30px;
+          position: absolute;
+          top: 0px;
+          right: 10px;
+          cursor: pointer;
+        }
+        .new-type-popup .modal-body p {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        .new-type-popup .modal-body {
+          padding-bottom: 1rem;
+        }
+      `}</style>
     </>
   );
 }
