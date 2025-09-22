@@ -372,6 +372,29 @@ padding: 8px!important;
 .property-inner-zigzag-section .pushed-wrapper .row:nth-child(even){
  flex-direction: row-reverse;
 }
+.new-untold-tabs-home{
+  display: flex;
+  width: 100%!important;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 0;
+  list-style: none;
+}
+/* .new-untold-tabs-home .nav-item{
+  width:200px!important
+} */
+.new-untold-tabs-home .nav-item .nav-link{
+  border: 1px solid #ddd;
+  border-radius: 0px;
+  padding: 8px 6px;
+  font-size: 14px;
+  color: #000;
+  background: #f8f9fa;
+    min-width:100px!important;
+    font-family:var(--font-heading), serif !important;
+    text-align:center;
+}
+
 
 @media (min-width: 768px) {
   .property-inner-zigzag-section .pushed-wrapper .row:nth-child(even) .pushed-box {

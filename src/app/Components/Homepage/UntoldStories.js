@@ -80,22 +80,28 @@ const UntoldStories = () => {
       />
       <h3 className="main-section-title global-heading">Untold Stories</h3>
 
-      {/* Tabs for categories */}
+      {/* Category slider instead of tabs */}
       <div className="container mb-4">
-        <ul className="nav nav-tabs justify-content-center">
+        <Swiper
+         modules={[Navigation, Pagination]}
+          slidesPerView={"auto"}
+          spaceBetween={15}
+          freeMode={true}
+          className="category-swiper"
+        >
           {categories.map((cat) => (
-            <li className="nav-item" key={cat.displayCategoryId}>
+            <SwiperSlide key={cat.displayCategoryId} style={{ width: "auto" }}>
               <button
-                className={`nav-link ${
+                className={`category-btn ${
                   selectedCategory === cat.displayCategoryId ? "active" : ""
                 }`}
                 onClick={() => setSelectedCategory(cat.displayCategoryId)}
               >
                 {cat.displayCategory}
               </button>
-            </li>
+            </SwiperSlide>
           ))}
-        </ul>
+        </Swiper>
       </div>
 
       {/* Hotels slider */}
@@ -104,108 +110,64 @@ const UntoldStories = () => {
           <p className="text-center py-5">No hotels found in this category.</p>
         ) : (
           <Swiper
-            loop={true}
-            centeredSlides={true}
-            slidesPerView={3}
-            spaceBetween={20}
-            navigation={{
-              nextEl: ".swiper-button-next",
-              prevEl: ".swiper-button-prev",
-            }}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            modules={[Navigation, Pagination, Autoplay]}
+            modules={[Navigation, Pagination]}
+              spaceBetween={10}
+              slidesPerView={1}
+              margin={2}
+              navigation={true}
+              pagination={false}
+              breakpoints={{
+                0: { slidesPerView: 1 },
+                640: { slidesPerView: 2 },
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+                1180: { slidesPerView: 3 },
+              }}
             className={styles.swiperContainer}
           >
             {filteredHotels.map((hotel, index) => {
-              const imageUrl =
-                hotel?.images[0]?.propertyImage ||
-                "/no_img1.jpg";
+              const imageUrl = hotel?.images[0]?.propertyImage || "/no_img1.jpg";
 
               return (
                 <SwiperSlide key={index}>
                   <div className="winter-box shadow hotel-box">
-                   <div className="no-image-bg mb-3">
-                    <Image
-                      src={imageUrl || "/no_img1.jpg"}
-                      alt={hotel.propertyName || "image"}
-                      className="w-100 primary-radius"
-                      width={500}
-                      height={300}
-                      quality={100}
-                    />
+                    <div className="no-image-bg mb-3">
+                      <Image
+                        src={imageUrl}
+                        alt={hotel.propertyName || "image"}
+                        className="w-100 primary-radius"
+                        width={500}
+                        height={300}
+                        quality={100}
+                      />
                     </div>
-                   
 
                     {/* Hotel Title */}
                     <Link
                       href={`/${hotel.propertySlug}/hotel-overview`}
-                      className="text-decoration-none text-dark winter-box-heading ps-3 pt-3"
+                      className="text-decoration-none text-dark winter-box-heading"
                     >
-                      {hotel.propertyName}
+                      <h6 className="ps-3 pb-2">{hotel.propertyName}</h6>
                     </Link>
-
-                    {/* Hotel Content */}
                     <div className="winter-box-content main-new-hotel-box">
-                      {/* Left side buttons */}
                       <div className="hotel-box-content hotel-left-side-box">
                         <div className="winter-box-btn">
-                          {!hotel.staahPropertyPrice ||
-                          hotel.staahPropertyPrice === 0 ? (
-                            <button
-                              className="box-btn book-now"
-                              onClick={() =>
-                                handleBookNow(
+                            <button className="box-btn book-now"
+                              onClick={() => handleBookNow(
                                   hotel.staahPropertyId,
                                   hotel.cityName,
                                   hotel.cityId
-                                )
-                              }
-                            >
-                              Book Now
+                                )}> Book Now
                             </button>
-                          ) : hotel.staahPropertyPrice === 297 ? (
-                            <button className="box-btn book-now" disabled>
-                              Not Available
-                            </button>
-                          ) : (
-                            <button
-                              className="box-btn book-now"
-                              onClick={() =>
-                                handleBookNow(
-                                  hotel.staahPropertyId,
-                                  hotel.cityName,
-                                  hotel.cityId
-                                )
-                              }
-                            >
-                              Book Now
-                            </button>
-                          )}
 
-                          <Link
-                            href={`/${brandSlug}/${hotel.propertySlug}/hotel-overview`}
-                            className="box-btn know-more"
-                          >
+                          <Link href={`/${hotel.propertySlug}/hotel-overview`} className="box-btn know-more">
                             Visit Hotel
                           </Link>
                         </div>
                       </div>
 
                       {/* Right side price */}
-                      {!hotel.staahPropertyPrice ||
-                      hotel.staahPropertyPrice === 0 ? (
-                        <div className="hotel-box-content hotel-right-side-box">
-                          <p className="font-semibold text-lg text-red-600 text-end sold-out-text mt-0 mb-0">
-                            Sold Out
-                            <span className="small-text-for-today">
-                              (for today)
-                            </span>
-                          </p>
-                        </div>
-                      ) : hotel.staahPropertyPrice !== 297 ? (
+                    
                         <div className="hotel-box-content hotel-right-side-box">
                           <p className="text-xs text-gray-600 price-show f-new-10 text-end">
                             Starting from
@@ -215,13 +177,12 @@ const UntoldStories = () => {
                             <small className="f-new-10">/Night</small>
                           </p>
                         </div>
-                      ) : null}
+                     
                     </div>
                   </div>
                 </SwiperSlide>
               );
             })}
-          
           </Swiper>
         )}
       </div>
