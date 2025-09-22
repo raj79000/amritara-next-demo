@@ -1,4 +1,4 @@
-// app/[brandSlug]/[propertySlug]/dining/page.js
+
 
 import React from "react";
 import DineHotelClient from "./DineHotelClient";

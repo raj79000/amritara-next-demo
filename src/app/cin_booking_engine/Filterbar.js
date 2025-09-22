@@ -250,7 +250,7 @@ const FilterBar = ({
   const fetchPropertyImages = async (property_Id) => {
     try {
       const response = await fetch(
-        `https://clarkscms.cinuniverse.com/Api/property/GetPropertyByFilter?propertyId=${parseInt(
+        `http://loyaltypulsedemo.ownyourcustomers.in/cmsapi//property/GetPropertyByFilter?propertyId=${parseInt(
           property_Id
         )}`,
         {
@@ -269,7 +269,7 @@ const FilterBar = ({
   const fetchGalleryImages = async (property_Id) => {
     try {
       const response = await fetch(
-        `https://clarkscms.cinuniverse.com/Api/gallery/GetGalleryByProperty?propertyId=${parseInt(
+        `http://loyaltypulsedemo.ownyourcustomers.in/cmsapi//gallery/GetGalleryByProperty?propertyId=${parseInt(
           property_Id
         )}`,
         {
@@ -970,7 +970,7 @@ const FilterBar = ({
       setPropertyList(contentData?.PropertyList);
     }
 
-    fetch("https://clarkscms.cinuniverse.com/Api/property/GetBrandList")
+    fetch("http://loyaltypulsedemo.ownyourcustomers.in/cmsapi//property/GetBrandList")
       .then((res) => res.json())
       .then((data) => {
         if (data.errorCode === "0") {
@@ -1328,7 +1328,7 @@ const FilterBar = ({
   // useEffect(() => {
   //   if (cityName?.value) {
   //     fetch(
-  //       `https://clarkscms.cinuniverse.com/Api/property/GetCityWithProperty?CityId=${parseInt(
+  //       `http://loyaltypulsedemo.ownyourcustomers.in/cmsapi/property/GetCityWithProperty?CityId=${parseInt(
   //         cityName.value
   //       )}`
   //     )
@@ -1358,7 +1358,7 @@ const FilterBar = ({
       try {
         if (cityName?.value) {
           const response = await fetch(
-            `https://clarkscms.cinuniverse.com/Api/property/GetCityWithProperty?CityId=${parseInt(
+            `http://loyaltypulsedemo.ownyourcustomers.in/cmsapi/property/GetCityWithProperty?CityId=${parseInt(
               cityName?.value
             )}`,
             {
@@ -1414,7 +1414,7 @@ const FilterBar = ({
     if (input) {
       try {
         const response = await fetch(
-          `https://clarkscms.cinuniverse.com/Api/property/GetCityWithProperty?CityId=${parseInt(
+          `http://loyaltypulsedemo.ownyourcustomers.in/cmsapi/property/GetCityWithProperty?CityId=${parseInt(
             input
           )}`,
           {

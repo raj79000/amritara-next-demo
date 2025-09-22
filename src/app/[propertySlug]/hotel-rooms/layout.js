@@ -1,48 +1,39 @@
 // app/[propertySlug]/rooms/layout.js
-
 export async function generateMetadata({ params }) {
   const { propertySlug } = params;
 
   try {
-    // Step 1: Fetch all properties to get the propertyId
+    // Fetch property list
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
-      cache: "no-store",
-    });
-    const json = await res.json();
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`,
+      { cache: "no-store" }
+    );
+    const { data, errorMessage } = await res.json();
+    if (errorMessage !== "success") throw new Error("Failed to fetch property list");
 
-    if (json.errorMessage !== "success") throw new Error("Failed to fetch property list");
+    const propertyId = data.find((p) => p.propertySlug === propertySlug)?.propertyId;
+    if (!propertyId) throw new Error("Property not found");
 
-    const property = json.data.find((p) => p.propertySlug === propertySlug);
-    const propertyId = property?.propertyId;
-
-    if (!propertyId) {
-      return {
-        title: "Rooms | Amritara Hotels",
-        description: "Property not found.",
-      };
-    }
-
-    // Step 2: Fetch metadata for the given propertyId
+    // Fetch meta tags
     const metaRes = await fetch(
       `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
       { cache: "no-store" }
     );
-    const metaJson = await metaRes.json();
+    const { data: metaData, errorMessage: metaError } = await metaRes.json();
+    if (metaError !== "success") throw new Error("Failed to fetch metadata");
 
-    if (metaJson.errorMessage !== "success") throw new Error("Failed to fetch metadata");
+    // Rooms page = pageType "2"
+    const roomsMeta = metaData.find((item) => item.pageType === "2");
 
-    // Step 3: Extract the metadata for the Rooms page
-    const roomsMeta = metaJson.data.find((item) => item.pageType === "Rooms");
+    const title = roomsMeta?.metaTitle || "Rooms | Amritara Hotels";
+    const description = roomsMeta?.metaDescription || "";
+    const keywords = roomsMeta?.metaKeywords || "";
 
     return {
-      title: roomsMeta?.metaTitle || "Rooms | Amritara Hotels",
-      description: roomsMeta?.metaDescription || "",
-      keywords: roomsMeta?.metaKeywords || "",
-      openGraph: {
-        title: roomsMeta?.metaTitle || "Rooms | Amritara Hotels",
-        description: roomsMeta?.metaDescription || "",
-      },
+      title,
+      description,
+      keywords,
+      openGraph: { title, description },
     };
   } catch (err) {
     console.error("Rooms page metadata fetch error:", err);
@@ -54,5 +45,5 @@ export async function generateMetadata({ params }) {
 }
 
 export default function RoomsLayout({ children }) {
-  return <>{children}</>;
+  return children;
 }

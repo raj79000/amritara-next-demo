@@ -51,7 +51,7 @@ export default function BookTableModal({ show, onClose, hotelName, cityId, prope
     };
 
     try {
-      const res = await fetch("https://clarkscms.cinuniverse.com/Api/common/EnquireNow", {
+      const res = await fetch("http://loyaltypulsedemo.ownyourcustomers.in/cmsapi/common/EnquireNow", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

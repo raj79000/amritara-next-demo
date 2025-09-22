@@ -1,19 +1,17 @@
-
-
+// app/[propertySlug]/contact/layout.js
 import React from "react";
 
 async function getPropertyIdFromSlug(propertySlug) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
-      cache: "no-store",
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`,
+      { cache: "no-store" }
+    );
     const json = await res.json();
 
-    const matchedProperty = json?.data?.find(
+    return json?.data?.find(
       (item) => item?.propertySlug?.toLowerCase() === propertySlug?.toLowerCase()
-    );
-
-    return matchedProperty?.propertyId || null;
+    )?.propertyId || null;
   } catch (error) {
     console.error("Error fetching property list:", error);
     return null;
@@ -21,21 +19,17 @@ async function getPropertyIdFromSlug(propertySlug) {
 }
 
 export async function generateMetadata({ params }) {
-  const { brandSlug, propertySlug } = params;
+  const { propertySlug } = params;
 
   if (!propertySlug) {
-    console.error("No propertySlug found in params.");
     return {
       title: "Amritara Hotels And Resorts | Contact",
       description: "Amritara Hotels And Resorts | Contact Description",
     };
   }
 
-  // Get propertyId from slug
   const propertyId = await getPropertyIdFromSlug(propertySlug);
-
   if (!propertyId) {
-    console.error("No property ID found for propertySlug:", propertySlug);
     return {
       title: "Amritara Hotels And Resorts | Contact",
       description: "Amritara Hotels And Resorts | Contact Description",
@@ -47,23 +41,20 @@ export async function generateMetadata({ params }) {
       `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
       { cache: "no-store" }
     );
-    const metaJson = await metaRes.json();
+    const { data } = await metaRes.json();
 
-    // Adjust this filter to exact pageType from your API
-    const contactMeta = metaJson?.data?.find(
-      (item) => item.pageType?.toLowerCase() === "contact us" || item.pageType?.toLowerCase() === "hotel-contact"
-    );
+    // Contact pageType = "7"
+    const contactMeta = data?.find((item) => item.pageType === "7");
+
+    const title = contactMeta?.metaTitle || "Amritara Hotels And Resorts | Contact";
+    const description =
+      contactMeta?.metaDescription || "Amritara Hotels And Resorts | Contact Description";
 
     return {
-      title: contactMeta?.metaTitle || "Amritara Hotels And Resorts | Contact",
-      description: contactMeta?.metaDescription || "Amritara Hotels And Resorts | Contact Description",
-      openGraph: {
-        title: contactMeta?.metaTitle || "Amritara Hotels And Resorts | Contact",
-        description: contactMeta?.metaDescription || "Amritara Hotels And Resorts | Contact Description",
-      },
-      alternates: {
-        canonical: `${propertySlug}/hotel-contact`,
-      },
+      title,
+      description,
+      openGraph: { title, description },
+      alternates: { canonical: `/${propertySlug}/hotel-contact` },
     };
   } catch (error) {
     console.error("Error fetching metadata:", error);
@@ -75,5 +66,5 @@ export async function generateMetadata({ params }) {
 }
 
 export default function Layout({ children }) {
-  return <>{children}</>;
+  return children;
 }

@@ -1,4 +1,4 @@
-// app/[brandSlug]/[propertySlug]/Offer/layout.js
+
 
 import React from "react";
 

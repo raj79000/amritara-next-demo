@@ -1,14 +1,15 @@
 import React from "react";
-import RoomHotelClient from "./RoomHotelClient";
+import ExperienceClient from "./ExperienceClient";
 
-export default async function accomodationPage({ params }) {
+export default async function ExperiencePage({ params }) {
  const resolvedParams = await params;
   const { brand_slug, propertyId } = resolvedParams;
 
   return (
     <>
-      <RoomHotelClient brand_slug={brand_slug} propertyId={propertyId} />   
-     
+
+    <ExperienceClient propertyId={propertyId} brand_slug={brand_slug}></ExperienceClient>
+      
     </>
   );
 }

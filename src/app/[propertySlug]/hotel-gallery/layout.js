@@ -3,7 +3,7 @@
 export async function generateMetadata({ params }) {
   const { propertySlug } = params;
 
-  // Define static fallback metadata
+  // Fallback metadata
   const fallbackMeta = {
     title: "Gallery | Amritara Hotels",
     description: "Explore stunning visuals from Amritara Hotels.",
@@ -12,65 +12,47 @@ export async function generateMetadata({ params }) {
       title: "Gallery | Amritara Hotels",
       description: "Explore stunning visuals from Amritara Hotels.",
     },
+    alternates: { canonical: `/${propertySlug}/hotel-gallery` },
   };
 
   try {
-    // Step 1: Get property list
+    // Step 1: Fetch property list
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`,
       { cache: "no-store" }
     );
+    if (!res.ok) return fallbackMeta;
 
-    if (!res.ok) {
-      console.warn("Property list request failed", res.status);
-      return fallbackMeta;
-    }
-
-    const json = await res.json();
-    const properties = Array.isArray(json?.data) ? json.data : [];
-
-    const property = properties.find(
+    const { data } = await res.json();
+    const propertyId = data?.find(
       (p) => p.propertySlug?.toLowerCase() === propertySlug.toLowerCase()
-    );
+    )?.propertyId;
 
-    if (!property?.propertyId) {
-      console.warn(`No propertyId found for slug: ${propertySlug}`);
-      return fallbackMeta;
-    }
+    if (!propertyId) return fallbackMeta;
 
-    // Step 2: Get metadata for this property
+    // Step 2: Fetch property meta tags
     const metaRes = await fetch(
-      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${property.propertyId}`,
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
       { cache: "no-store" }
     );
+    if (!metaRes.ok) return fallbackMeta;
 
-    if (!metaRes.ok) {
-      console.warn("Metadata request failed", metaRes.status);
-      return fallbackMeta;
-    }
+    const { data: metas } = await metaRes.json();
 
-    const metaJson = await metaRes.json();
-    const metas = Array.isArray(metaJson?.data) ? metaJson.data : [];
+    // Step 3: Find Gallery metadata (pageType = "6")
+    const galleryMeta = metas?.find((item) => item.pageType === "6");
+    if (!galleryMeta) return fallbackMeta;
 
-    // Step 3: Look for Gallery page metadata
-    const galleryMeta = metas.find(
-      (item) => item.pageType?.toLowerCase() === "gallery"
-    );
+    const title = galleryMeta.metaTitle || fallbackMeta.title;
+    const description = galleryMeta.metaDescription || fallbackMeta.description;
+    const keywords = galleryMeta.metaKeywords || fallbackMeta.keywords;
 
-    if (!galleryMeta) {
-      console.warn(`No Gallery metadata found for propertyId: ${property.propertyId}`);
-      return fallbackMeta;
-    }
-
-    // ✅ Merge API metadata with fallback
     return {
-      title: galleryMeta.metaTitle || fallbackMeta.title,
-      description: galleryMeta.metaDescription || fallbackMeta.description,
-      keywords: galleryMeta.metaKeywords || fallbackMeta.keywords,
-      openGraph: {
-        title: galleryMeta.metaTitle || fallbackMeta.openGraph.title,
-        description: galleryMeta.metaDescription || fallbackMeta.openGraph.description,
-      },
+      title,
+      description,
+      keywords,
+      openGraph: { title, description },
+      alternates: { canonical: `/${propertySlug}/hotel-gallery` },
     };
   } catch (error) {
     console.error("Gallery metadata error:", error);
@@ -79,5 +61,5 @@ export async function generateMetadata({ params }) {
 }
 
 export default function GalleryLayout({ children }) {
-  return <>{children}</>;
+  return children;
 }

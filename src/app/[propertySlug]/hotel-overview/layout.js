@@ -1,13 +1,13 @@
-// app/[brandSlug]/[propertySlug]/overview/layout.js
+
 export async function generateMetadata({ params }) {
   const { propertySlug } = params;
 
   try {
     // Step 1: Get the property list
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
-      cache: "no-store",
-    });
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`,
+      { cache: "no-store" }
+    );
     const json = await res.json();
     if (json.errorMessage !== "success") throw new Error("Failed to fetch property list");
 
@@ -31,8 +31,8 @@ export async function generateMetadata({ params }) {
 
     if (metaJson.errorMessage !== "success") throw new Error("Failed to fetch metadata");
 
-    // Step 4: Find the overview metadata
-    const overviewMeta = metaJson.data.find((item) => item.pageType === "Overview");
+    // Step 4: Find the overview metadata (pageType = "1")
+    const overviewMeta = metaJson.data.find((item) => item.pageType === "1");
 
     return {
       title: overviewMeta?.metaTitle || "Overview | Amritara Hotels",

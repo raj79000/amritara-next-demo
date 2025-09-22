@@ -76,7 +76,7 @@ export default function EnquiryFormModal({
 
       console.log('Submitting enquiry:', JSON.stringify(body, null, 2));
 
-      const res = await fetch('https://clarkscms.cinuniverse.com/Api/common/EnquireNow', {
+      const res = await fetch('http://loyaltypulsedemo.ownyourcustomers.in/cmsapi/common/EnquireNow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

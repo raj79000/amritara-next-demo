@@ -81,7 +81,7 @@ export default function VenueEventEnquiryModal({
 
     try {
       const response = await fetch(
-        "https://clarkscms.cinuniverse.com/Api/common/EnquireNow",
+        "http://loyaltypulsedemo.ownyourcustomers.in/cmsapi//common/EnquireNow",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

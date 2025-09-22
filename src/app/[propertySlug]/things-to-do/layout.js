@@ -1,56 +1,54 @@
-// app/[brandSlug]/[propertySlug]/rooms/layout.js
+
 
 export async function generateMetadata({ params }) {
   const { propertySlug } = params;
 
+  const fallbackMeta = {
+    title: "Things to do | Amritara Hotels and Resorts",
+    description: "Things to do | Amritara Hotels and Resorts",
+  };
+
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
-      cache: "no-store",
-    });
-    const json = await res.json();
+    // Step 1: Fetch property list
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`,
+      { cache: "no-store" }
+    );
+    const { data, errorMessage } = await res.json();
+    if (errorMessage !== "success") return fallbackMeta;
 
-    if (json.errorMessage !== "success") throw new Error("Failed to fetch property list");
+    const propertyId = data?.find((p) => p.propertySlug === propertySlug)?.propertyId;
+    if (!propertyId) return fallbackMeta;
 
-    const property = json.data.find((p) => p.propertySlug === propertySlug);
-    const propertyId = property?.propertyId;
-
-    if (!propertyId) {
-      return {
-        title: "Things to do | Amritara Hotels and Resorts",
-        description: "Things to do | Amritara Hotels and Resorts",
-      };
-    }
-
-    // Step 2: Fetch metadata for the given propertyId
+    // Step 2: Fetch property meta tags
     const metaRes = await fetch(
       `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
       { cache: "no-store" }
     );
-    const metaJson = await metaRes.json();
+    const { data: metas, errorMessage: metaError } = await metaRes.json();
+    if (metaError !== "success") return fallbackMeta;
 
-    if (metaJson.errorMessage !== "success") throw new Error("Failed to fetch metadata");
+    // Step 3: Find metadata for Experiences / Things To Do (pageType = "5")
+    const experiencesMeta = metas?.find((item) => item.pageType === "5");
+    if (!experiencesMeta) return fallbackMeta;
 
-    // Step 3: Extract the metadata for the Rooms page
-    const roomsMeta = metaJson.data.find((item) => item.pageType === "experiences");
+    const title = experiencesMeta.metaTitle || fallbackMeta.title;
+    const description = experiencesMeta.metaDescription || fallbackMeta.description;
+    const keywords = experiencesMeta.metaKeywords || "";
 
     return {
-      title: roomsMeta?.metaTitle || "Things to do | Amritara Hotels and Resorts",
-      description: roomsMeta?.metaDescription || "",
-      keywords: roomsMeta?.metaKeywords || "",
-      openGraph: {
-        title: roomsMeta?.metaTitle || "Things to do | Amritara Hotels and Resorts",
-        description: roomsMeta?.metaDescription || "",
-      },
+      title,
+      description,
+      keywords,
+      openGraph: { title, description },
+      alternates: { canonical: `/${propertySlug}/things-to-do` },
     };
   } catch (err) {
-    console.error("Rooms page metadata fetch error:", err);
-    return {
-     title: "Things to do | Amritara Hotels and Resorts",
-        description: "Things to do | Amritara Hotels and Resorts",
-    };
+    console.error("Experiences metadata fetch error:", err);
+    return fallbackMeta;
   }
 }
 
 export default function ExperienceLayout({ children }) {
-  return <>{children}</>;
+  return children;
 }

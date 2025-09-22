@@ -18,7 +18,7 @@ import PropertyMainHeader from "@/app/Common/PropertyMainHeader";
 import GalleryModal from "../../Components/GalleryModal";
 // import { getUserInfo } from "../../../../utilities/userInfo";
 
-export default function RoomHotelClient() {
+export default function ExperienceClient() {
   const { brandSlug, propertySlug } = useParams();
 
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -294,7 +294,7 @@ export default function RoomHotelClient() {
       </section>
 
 
-      <section className="inner-no-banner-sec-old">
+      {/* <section className="inner-no-banner-sec-old">
         <div className="container-fluid">
           <div className="winter-sec">
             <div className="row">
@@ -312,7 +312,7 @@ export default function RoomHotelClient() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
     </>
   );

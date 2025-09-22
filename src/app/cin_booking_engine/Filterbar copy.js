@@ -1074,7 +1074,7 @@ const FilterBar = ({ contentData, tokenKey, selectedProperty }) => {
     if (input) {
       try {
         const response = await fetch(
-          `https://clarkscms.cinuniverse.com/Api/property/GetCityWithProperty?CityId=${parseInt(
+          `http://loyaltypulsedemo.ownyourcustomers.in/cmsapi//property/GetCityWithProperty?CityId=${parseInt(
             input
           )}`,
           {
