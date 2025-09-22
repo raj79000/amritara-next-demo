@@ -5,13 +5,12 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import React, { useEffect, useState } from "react";
-import Diningpageslider from "../../../Components/DiningSlider";
-import PropertyHeader from "../../../Components/PropertyHeader";
+import Diningpageslider from "../../Components/Diningpageslider"
 import Image from "next/image";
-import { BookingEngineProvider } from "../../../cin_context/BookingEngineContext";
-import FilterBar from "../../../cin_booking_engine/Filterbar";
+import { BookingEngineProvider } from "../../cin_context/BookingEngineContext";
+import FilterBar from "../../cin_booking_engine/Filterbar";
 import { X } from "lucide-react";
-import InnerFooterPage from "../../../Components/InnerFooterPage";
+import PropertyMainHeader from "@/app/Common/PropertyMainHeader";
 
 export default function DineHotelClient({ propertySlug }) {
   const [propertyData, setPropertyData] = useState(null);
@@ -118,21 +117,21 @@ export default function DineHotelClient({ propertySlug }) {
 
   return (
     <>
-      <PropertyHeader
+      {/* <PropertyHeader
         brand_slug={propertySlug}
         id={banner?.propertyId}
         onSubmit={handleBookNowClick}
-      />
+      /> */}
+      <PropertyMainHeader></PropertyMainHeader>
 
-      <section className="position-relative banner-section d-none">
-        <div className="w-100 overflow-hidden rounded-0 mtspace5">
+      <section className="position-relative inner-banner-section-slider">
           {bannerImages.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination, Autoplay]}
               navigation
               autoplay={{ delay: 4000 }}
               loop
-              className="w-100 h-[100vh]"
+              className="w-100 slider-banner-inner"
             >
               {bannerImages.map((imgUrl, index) => (
                 <SwiperSlide key={index}>
@@ -141,7 +140,7 @@ export default function DineHotelClient({ propertySlug }) {
                     alt={`Banner ${index + 1}`}
                     width={1920}
                     height={1080}
-                    className="w-100 h-[100vh] object-cover"
+                    className="w-100 object-cover"
                   />
                 </SwiperSlide>
               ))}
@@ -152,10 +151,9 @@ export default function DineHotelClient({ propertySlug }) {
               alt="Default Banner"
               width={1920}
               height={1080}
-              className="w-100 h-[100vh] object-cover"
+              className="w-100 object-cover"
             />
           )}
-        </div>
 
         <div className="position-absolute bottom-0 start-0 w-100 bg-white shadow">
           {/* <BookNowForm /> */}
@@ -191,7 +189,7 @@ export default function DineHotelClient({ propertySlug }) {
         </div>
       </section>
 
-      <section className="inner-no-banner-sec">
+      <section className="Dining-Inner-Section mt-5">
         <div className="container">
           <div className="global-heading-sec text-center">
             <div className="row justify-content-center mb-2">
@@ -222,7 +220,6 @@ export default function DineHotelClient({ propertySlug }) {
         </div>
       </section>
 
-      <InnerFooterPage propertyData={propertyData} />
     </>
   );
 }

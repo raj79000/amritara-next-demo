@@ -4,8 +4,6 @@ export async function generateMetadata({ params }) {
   const { propertySlug } = params;
 
   try {
-    // Step 1: Fetch all properties to get the propertyId
-    // fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/offers/GetCorporateOffers`)
     const res = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
       cache: "no-store",
     });

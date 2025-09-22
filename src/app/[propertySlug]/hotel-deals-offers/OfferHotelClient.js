@@ -6,13 +6,12 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import Offerpagesslider from "../../../Components/Offerpageslider";
-import PropertyHeader from "../../../Components/PropertyHeader";
+import Offerpagesslider from "../../Components/Offerpageslider";
 import Image from "next/image";
-import { BookingEngineProvider } from "../../../cin_context/BookingEngineContext";
-import FilterBar from "../../../cin_booking_engine/Filterbar";
+import { BookingEngineProvider } from "../../cin_context/BookingEngineContext";
+import FilterBar from "../../cin_booking_engine/Filterbar";
 import { X } from "lucide-react";
-import InnerFooterPage from "../../../Components/InnerFooterPage";
+import PropertyMainHeader from "@/app/Common/PropertyMainHeader";
 
 export default function OfferHotelClient({ propertySlug }) {
     const [propertyData, setPropertyData] = useState(null);
@@ -98,21 +97,16 @@ setBannerImages(bannerImgs);
 
   return (
     <>
-      <PropertyHeader
-        brand_slug={propertySlug}
-        id={propertyId}
-        onSubmit={handleBookNowClick}
-      />
+      <PropertyMainHeader></PropertyMainHeader>
 
-      <section className="position-relative banner-section d-none">
-        <div className="w-100 overflow-hidden rounded-0 mtspace5">
+       <section className="position-relative inner-banner-section-slider">
           {bannerImages.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination, Autoplay]}
               navigation
               autoplay={{ delay: 4000 }}
               loop
-              className="w-100 h-[100vh]"
+              className="w-100 slider-banner-inner"
             >
               {bannerImages.map((imgUrl, index) => (
                 <SwiperSlide key={index}>
@@ -121,7 +115,7 @@ setBannerImages(bannerImgs);
                     alt={`Banner ${index + 1}`}
                     width={1920}
                     height={1080}
-                    className="w-100 h-[100vh] object-cover"
+                    className="w-100 object-cover"
                   />
                 </SwiperSlide>
               ))}
@@ -132,10 +126,9 @@ setBannerImages(bannerImgs);
               alt="Default Banner"
               width={1920}
               height={1080}
-              className="w-100 h-[100vh] object-cover"
+              className="w-100 object-cover"
             />
           )}
-        </div>
 
         <div className="position-absolute bottom-0 start-0 w-100 bg-white shadow">
           {/* <BookNowForm /> */}
@@ -172,7 +165,7 @@ setBannerImages(bannerImgs);
       </section>
 
       {offers.length > 0 ? (
-        <section className="inner-no-banner-sec">
+        <section className="inner-offer-page-sec pt-5 pb-5">
           <div className="container">
             <div className="global-heading-sec text-center">
               <div className="row justify-content-center mb-2">
@@ -196,12 +189,11 @@ setBannerImages(bannerImgs);
           </div>
         </section>
       ) : (
-        <section className="text-center" style={{marginTop: "300px"}}>
+        <section className="text-center" style={{marginTop: "50px"}}>
           <p>No offers available for this property at the moment.</p>
         </section>
       )}
 
-      <InnerFooterPage propertyData={propertyData} />
     </>
   );
 }

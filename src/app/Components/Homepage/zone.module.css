@@ -26,7 +26,12 @@
     width: 100%;
     object-fit: cover;
     border-radius: 8px;
-
+    min-height: 200px;
+}
+.NoImgBg{
+    background-color: #f0f0f0;
+    width: 100%;
+    border-radius: 8px;
 }
 .InActiveTab{
        background-color: var(--black) !important;

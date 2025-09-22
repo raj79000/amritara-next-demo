@@ -173,10 +173,15 @@ ion-icon:not([name="logo-codepen"]) {
   }
   
   .item:hover {
-    background: #000;
+    background: var(--brown);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     transform: translateY(-5px); /* Adds a subtle lift effect */
   }
+    .item h6{
+      text-transform:uppercase;
+      letter-spacing:1px;
+      font-weight:500!important;
+    }
   
   .item:hover h6,
   .item:hover p,
@@ -238,7 +243,6 @@ ion-icon:not([name="logo-codepen"]) {
     margin-bottom: 20px;
     color: #000;
     font-size: 18px;
-    font-weight: 700 !important;
   }
   .mission p {
   margin-bottom: 10px;

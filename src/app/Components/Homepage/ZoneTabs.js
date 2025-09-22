@@ -70,29 +70,24 @@ export default function ZoneTabs({ zones }) {
                     <SwiperSlide key={property.propertyId}>
                       <div className={styles.TabCardWrapper}>
                         <div className={styles.TabCard}>
+                          <div className={styles.NoImgBg}>
                           <Image
                             src={
-                              property?.images?.propertyImage ||
+                              property?.images[0]?.propertyImage ||
                               "/no_image1.jpg"
                             } // adjust key if needed
                             height={300}
                             width={500}
                             alt={property.propertyTitle}
                             className={styles.TabCardImg}
-                            onError={(e) => {
-                              e.currentTarget.src = "/img/image-not-found.png";
-                            }}
                           />
+                          </div>
                           <h5 className={styles.TabCardTitle}>
                             {property.propertyTitle}
                           </h5>
                           <div className={styles.TabContentBtn}>
                             <Link
-                              href={
-                                property.propertySlug
-                                  ? `/${property.propertySlug}/${property.propertyType}-in-${property.citySlug}`
-                                  : "#"
-                              }
+                              href={`/${property.propertySlug}/hotel-overview`}
                               className="explore-more-btn"
                             >
                               Explore

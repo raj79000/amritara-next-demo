@@ -72,8 +72,8 @@ const PropertyMainHeader = () => {
             <li><Link href="/hotels" onClick={toggleSidebar}>Our Hotels</Link></li>
             <li><Link href={`/${propertySlug}/hotel-overview`} onClick={toggleSidebar}>Overview</Link></li>
             <li><Link href={`/${propertySlug}/hotel-rooms`} onClick={toggleSidebar}>Stay</Link></li>
-            <li><Link href={`/${propertySlug}/restaurant`} onClick={toggleSidebar}>Dine</Link></li>
-            <li><Link href={`/${propertySlug}/meeting-events`} onClick={toggleSidebar}>Meeting Events</Link></li>
+            <li><Link href={`/${propertySlug}/restaurants`} onClick={toggleSidebar}>Dine</Link></li>
+            {/* <li><Link href={`/${propertySlug}/meeting-events`} onClick={toggleSidebar}>Meeting Events</Link></li> */}
             <li><Link href={`/${propertySlug}/hotel-deals-offers`} onClick={toggleSidebar}>Offers</Link></li>
             <li><Link href={`/${propertySlug}/hotel-gallery`} onClick={toggleSidebar}>Gallery</Link></li>
             <li><Link href={`/${propertySlug}/things-to-do`} onClick={toggleSidebar}>Experiences</Link></li>

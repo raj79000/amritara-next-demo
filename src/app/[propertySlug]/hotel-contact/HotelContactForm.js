@@ -175,22 +175,10 @@ export default function HotelContactForm({ cityId, propertyId, longitude, latitu
 
           <div className="col-lg-5 ps-0 col-md-5 col-sm-12">
             <div className="inner-column wow fadeInLeft">
-              {/* <iframe
-                src={`https://www.google.com/maps?q=${latitude},${longitude}&z=14&output=embed`}
-                width="100%"
-                height="300"
-                loading="lazy"
-              /> */}
-              <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14021.567874465847!2d77.0997871!3d28.5279359!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x2bb9cba86c44b4e1!2sAmritara%20private%20hideaways!5e0!3m2!1sen!2sin!4v1584517017077!5m2!1sen!2sin"
+           
+              <iframe src={googleMap}
                width="100%" height="300"></iframe>
-              {/* <iframe
-                src={`${googleMap} || "https://www.google.com/maps?q=${latitude},${longitude}&z=14&output=embed"}`}
-                width="100%"
-                height="300"
-                loading="lazy"
-              /> */}
-              {/* <h2>Longitude : {longitude}</h2>
-              <h2>Latitude : {latitude}</h2> */}
+            
             </div>
           </div>
         </div>

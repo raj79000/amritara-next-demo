@@ -78,9 +78,12 @@ export default function ContactHotelClient({ brandSlug, propertySlug, propertyId
         setPropertyData(property);
 
         // banner images
-        const images = property?.images || [];
-        const validImageUrls = images.map((img) => img.propertyImage).filter(Boolean);
-        setBannerImages(validImageUrls);
+        const images = property?.images || []; // property.images is likely an array
+const validImageUrls = images
+  .map((img) => img?.propertyImage) // extract propertyImage field
+  .filter(Boolean); // remove null/empty
+
+setBannerImages(validImageUrls);
       } catch (error) {
         console.error("Error fetching property data:", error);
         setPropertyData(null);
@@ -102,26 +105,24 @@ export default function ContactHotelClient({ brandSlug, propertySlug, propertyId
         id={propertyData.propertyId}
         onSubmit={() => {}}
       />
-      <section className="position-relative banner-section">
-        {/* Banner Image */}
-        <div className="w-100 overflow-hidden rounded-0 mtspace5">
+     <section className="position-relative inner-banner-section-slider">
           {bannerImages.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination, Autoplay]}
               navigation
               autoplay={{ delay: 4000 }}
               loop
-              className="w-100 h-[90vh]"
+               className="w-100 slider-banner-inner"
             >
               {bannerImages.map((imgUrl, index) => (
                 <SwiperSlide key={index}>
                   <Image
-                    // src={imgUrl}
-                    src="/images/banner_img.png"
+                    src={imgUrl}
+                    // src="/images/banner_img.png"
                     alt={`Banner ${index + 1}`}
                     width={1920}
                     height={1080}
-                    className="w-100 h-[90vh] object-cover"
+                    className="w-100 object-cover"
                   />
                 </SwiperSlide>
               ))}
@@ -132,10 +133,9 @@ export default function ContactHotelClient({ brandSlug, propertySlug, propertyId
               alt="Default Banner"
               width={1920}
               height={1080}
-              className="w-100 h-[90vh] object-cover"
+             className="w-100 object-cover"
             />
           )}
-        </div>
 
         {/* Fixed Book Now Form at Bottom of Section */}
         <div className="position-absolute bottom-0 start-0 w-100 bg-white shadow">
@@ -158,7 +158,7 @@ export default function ContactHotelClient({ brandSlug, propertySlug, propertyId
         </div>
       </section>
 
-      <section className="inner-no-banner-sec">
+      <section className="main-contactus-section-inner pt-5 pb-5">
         <div className="container">
           <div className="global-heading-sec text-center">
             <div className="row justify-content-center mb-2">

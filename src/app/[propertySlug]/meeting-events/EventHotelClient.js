@@ -5,13 +5,13 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import React, { useEffect, useState } from "react";
-import Eventspagesslider from "../../../Components/Eventspageslider";
-import PropertyHeader from "../../../Components/PropertyHeader";
+import Eventspagesslider from "../../Components/Eventspageslider";
+import PropertyHeader from "../../Components/PropertyHeader";
 import Image from "next/image";
-import { BookingEngineProvider } from "../../../cin_context/BookingEngineContext";
-import FilterBar from "../../../cin_booking_engine/Filterbar";
+import { BookingEngineProvider } from "../../cin_context/BookingEngineContext";
+import FilterBar from "../../cin_booking_engine/Filterbar";
 import { X } from "lucide-react";
-import InnerFooterPage from "../../../Components/InnerFooterPage";
+import InnerFooterPage from "../../Components/InnerFooterPage";
 
 export default function EventHotelClient({ propertySlug }) {
   const [propertyData, setPropertyData] = useState(null);
@@ -238,7 +238,6 @@ export default function EventHotelClient({ propertySlug }) {
         </div>
       </section>
 
-       <InnerFooterPage propertyData={propertyData} />
     </>
   );
 }
