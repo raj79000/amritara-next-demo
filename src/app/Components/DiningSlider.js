@@ -96,7 +96,7 @@ const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
 
   return (
     <>
-      <section data-aos="fade-up">
+      <section data-aos="fade-up" className="bg-lred">
           <div className="container-fluid">
             <div className="row justify-content-center mb-4">
               <div className="col-md-9">

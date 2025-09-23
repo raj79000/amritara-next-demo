@@ -129,15 +129,15 @@ export default function AccommodationSlider({
             <Swiper
               modules={[Navigation]}
               spaceBetween={10}
-              slidesPerView={3}
+              slidesPerView={2}
               loop={true}
               pagination={false}
               navigation={true}
               
               breakpoints={{
                 320: { slidesPerView: 1 },
-                768: { slidesPerView: 1.5 },
-                1024: { slidesPerView: 1.5 },
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 2 },
               }}
               className="relative"
             >
@@ -183,7 +183,7 @@ export default function AccommodationSlider({
                               setShowModal(true);
                             }}
                           >
-                             more info
+                             read more
                           </button>
                         </p>
                         {/* Example price field if available */}
@@ -201,7 +201,7 @@ export default function AccommodationSlider({
                               setShowModal(true);
                             }}
                           >
-                            More info
+                           View more
                           </button>
                           <Link
                             href="#"

@@ -43,7 +43,7 @@ export default function PropertyFaq({ propertyId }) {
     <>
     <section
       id="seccityfaq"
-      className="faq-cs-sc cs-sc-padding location-cs-sc mt-0"
+      className="faq-cs-sc cs-sc-padding location-cs-sc mt-5"
     >
       <div className="container">
         <div className="row mb-3">

@@ -51,8 +51,10 @@ body {
 }
 
 .pushed-header .header-1 {
-	font-weight: 600;
-	font-size: 1.1rem;
+	font-weight: 500;
+	font-size: 22px;
+  font-family: var(--font-heading), serif !important;
+
 }
 .no-image-bg{
 	background-color: antiquewhite!important;

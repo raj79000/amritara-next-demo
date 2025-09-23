@@ -152,7 +152,7 @@ export default function AccommodationSliderNew({
                           setShowModal(true);
                         }}
                       >
-                        More Info
+                       View more
                       </button>
                       <button
                         className="box-btn book-now"

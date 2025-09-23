@@ -2017,7 +2017,8 @@ button {
   display: inline-block !important;
 }
 
-.offer-section-overview-page .no-image-bg{
+.offer-section-overview-page .no-image-bg,
+.offer-section-overview-page .no-image-bg img{
   min-height: 250px!important;
   height: 250px!important;
   max-height: 250px!important;

@@ -164,7 +164,7 @@ export default function ClientOverviewPage({
 
       </section>
 
-      <section className="mt-5">
+      <section className="overview-about-page-sec">
         <div className="container-fluid p-0">
           <div className="global-heading-sec text-center">
             <div className="row justify-content-center mb-0">
@@ -242,12 +242,12 @@ export default function ClientOverviewPage({
 
 
 
-      <section className="sec-padding" data-aos="fade-up">
+      <section className="sec-padding bg-lred" data-aos="fade-up">
         <div className="container">
           <div className="global-heading-sec text-center">
-            <div className="row justify-content-center mb-4">
+            <div className="row justify-content-center mb-0">
               <div className="col-md-9 md-offset-1">
-                <h2 className="global-heading pt-4">Experiences</h2>
+                <h2 className="global-heading pt-0">Experiences</h2>
               </div>
             </div>
           </div>

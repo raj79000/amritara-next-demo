@@ -15,6 +15,7 @@ import "./contactus.css";
 import Link from "next/link";
 import HotelContactForm from "./HotelContactForm";
 import PropertyMainHeader from "@/app/Common/PropertyMainHeader";
+import NearbyPlaces from "./NearbyPlaces";
 
 export default function ContactHotelClient({ brandSlug, propertySlug, propertyId }) {
   const [propertyData, setPropertyData] = useState(null);
@@ -279,6 +280,9 @@ setBannerImages(validImageUrls);
               </div>
             </div>
           </section>
+        </div>
+          <NearbyPlaces propertyId={propertyData.propertyId}></NearbyPlaces>
+        <div className="container">
           <HotelContactForm
             cityId={propertyData?.cityId}
             propertyId={propertyData?.propertyId}
