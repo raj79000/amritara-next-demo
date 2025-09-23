@@ -146,9 +146,21 @@ input#agree {
     background-color: var(--brown) !important;
     color: var(--brown) !important;
     height: 24px;
-    width: 30px;
+    width: 24px;
     border-radius: 0;
     fill: black;
+}
+input#agree1 {
+    /* background-color: var(--brown) !important; */
+    color: var(--brown) !important;
+    height: 20px;
+    width: 20px;
+    border-radius: 0;
+    fill: black;
+    outline:1px solid #000;
+}
+.form-check-label-for-su{
+  font-size:14px;
 }
 .no-image-box{
 	background-color:#e7e7e7;

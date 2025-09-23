@@ -1,0 +1,8 @@
+.completeprofilesection{
+padding-top:5rem;
+}
+
+.completeprofilesection .form-card-signup{
+    border-radius:0;
+    border-bottom:10px solid var(--brown);
+}

@@ -1,11 +1,15 @@
 "use client";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
-  generateToken, getOtp, verifyOtp, signIn,
-  signup, profileInfo, updateProfile,
+  generateTokenRaw,
+  getOtp,
+  verifyOtp,
+  signup,
+  profileInfo,
+  updateProfile,
 } from "@/lib/api/auth";
 
-/* ---------- Utils ---------- */
+/* -------------------- helpers (truthy / normalize / completeness / otp) -------------------- */
 const truthy = (v) => v !== undefined && v !== null && String(v).trim() !== "";
 
 const normalizeUser = (raw = {}) => {
@@ -14,15 +18,23 @@ const normalizeUser = (raw = {}) => {
     .toString()
     .toUpperCase();
   return {
-    MemberId: u.MembershipId ?? u.MemberId ?? u.Id ?? u.MemberID ?? null,
-    FirstName: u.FirstName ?? u.GivenName ?? u.Name?.split?.(" ")?.[0] ?? "",
-    LastName:  u.LastName  ?? u.Surname   ?? (u.Name?.split?.(" ")?.slice(1).join(" ") ?? ""),
-    EmailId:   u.EmailId   ?? u.Email     ?? u.EmailID ?? "",
+    MemberId:
+      u.MembershipId ?? u.MemberId ?? u.membershipId ?? u.Id ?? u.MemberID ?? null,
+    FirstName:
+      u.FirstName ?? u.firstname ?? u.GivenName ?? u.Name?.split?.(" ")?.[0] ?? "",
+    LastName:
+      u.LastName ??
+      u.lastname ??
+      u.Surname ??
+      (u.Name?.split?.(" ")?.slice(1).join(" ") ?? ""),
+    EmailId: u.EmailId ?? u.Email ?? u.EmailID ?? "",
     MobilePrifix: u.MobilePrifix ?? u.MobilePrefix ?? u.CountryCode ?? "+91",
-    MobileNo:  u.MobileNo  ?? u.Mobile    ?? u.Phone ?? u.PhoneNumber ?? "",
-    City:      u.City      ?? "",
-    Country:   u.Country   ?? "",
+    MobileNo: u.MobileNo ?? u.Mobile ?? u.Phone ?? u.PhoneNumber ?? "",
+    City: u.City ?? "",
+    StateCode: u.StateCode ?? "",
+    Country: u.Country ?? "",
     PrivacyPolicyAcceptance: PPA === "Y" ? "Y" : "N",
+    CardNo: u.cardno ?? u.CardNo ?? null,
     _raw: u,
   };
 };
@@ -34,17 +46,81 @@ const isProfileComplete = (nu) =>
   (truthy(nu.EmailId) || truthy(nu.MobileNo)) &&
   nu.PrivacyPolicyAcceptance === "Y";
 
-const isTestMode = () =>
-  typeof window !== "undefined" && process.env.NEXT_PUBLIC_AUTH_TEST_MODE === "true";
 const isValidOtp = (otp) => /^[0-9]{6}$/.test(String(otp || "").trim());
 
-/* ---------- Context ---------- */
+/* -------------------- token extraction utils -------------------- */
+
+// Scan any JSON shape for a token-looking string
+const pluckTokenFromObject = (obj) => {
+  let found = "";
+  const seen = new Set();
+
+  const visit = (val) => {
+    if (!val || seen.has(val)) return;
+    if (typeof val === "string") {
+      if (val.length >= 20 && !/\s/.test(val)) {
+        if (!found) found = val;
+      }
+      return;
+    }
+    if (Array.isArray(val)) {
+      for (const x of val) visit(x);
+      return;
+    }
+    if (typeof val === "object") {
+      seen.add(val);
+      for (const k of Object.keys(val)) {
+        const v = val[k];
+        if (/token|auth|bearer/i.test(k)) {
+          if (typeof v === "string" && v.length >= 20 && !/\s/.test(v)) {
+            if (!found) found = v;
+          } else {
+            visit(v);
+          }
+        } else {
+          visit(v);
+        }
+      }
+    }
+  };
+
+  visit(obj);
+  return found;
+};
+
+// Extract token from { json, headers } returned by generateTokenRaw()
+const extractTokenFromGenerateToken = ({ json, headers }) => {
+  const direct =
+    json?.Data?.Token ||
+    json?.data?.token ||
+    json?.Result?.Token ||
+    json?.result?.token ||
+    json?.Token ||
+    json?.token ||
+    "";
+  if (direct && direct.length >= 20) return direct;
+
+  const scanned = pluckTokenFromObject(json);
+  if (scanned) return scanned;
+
+  const hAuth =
+    headers?.authorization || headers?.["x-auth-token"] || headers?.["x-token"];
+  if (hAuth && hAuth.length >= 20) {
+    const parts = hAuth.split(/\s+/);
+    return parts.length > 1 ? parts[1] : parts[0];
+  }
+  return "";
+};
+
+/* -------------------- context -------------------- */
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);   // normalized user
-  const [token, setToken] = useState(null); // session-scoped bearer
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
+  // hydrate from sessionStorage (session-scoped login)
   useEffect(() => {
     const u = sessionStorage.getItem("user");
     const t = sessionStorage.getItem("token");
@@ -52,120 +128,152 @@ export function AuthProvider({ children }) {
     if (t) setToken(t);
   }, []);
 
+  // Always yield a valid bearer
   const ensureToken = async () => {
-    if (token) return token;
-    const t = await generateToken();
-    const tk = t?.Data?.Token || "";
+    const cached = sessionStorage.getItem("token");
+    if (cached) {
+      setToken(cached);
+      return cached;
+    }
+    const raw = await generateTokenRaw();
+    const tk = extractTokenFromGenerateToken(raw);
+
+    // Helpful logs while wiring up
+    console.log("[GenerateToken] json:", raw.json);
+    console.log("[GenerateToken] headers:", raw.headers);
+    console.log("[GenerateToken] parsed token length:", tk?.length || 0);
+
+    if (!tk) {
+      throw new Error("Could not obtain auth token from GenerateToken response.");
+    }
     setToken(tk);
     sessionStorage.setItem("token", tk);
     return tk;
   };
 
+  // Send OTP (must include bearer)
   const requestOtp = async (mobile = "", email = "") => {
     const authToken = await ensureToken();
-    return await getOtp(authToken, { MobileNo: mobile, EmailId: email });
+    const r = await getOtp(authToken, { MobileNo: mobile, EmailId: email });
+    console.log("[GetOtp] response:", r);
+    if (r?.success === true && Number(r?.errorCode) === 0) {
+      return { ok: true, message: String(r?.result || "OTP sent.") };
+    }
+    return { ok: false, message: r?.result || r?.error || "Failed to send OTP" };
   };
 
-  /**
-   * OTP login flow:
-   *  - verify (or allow 123456 in test mode)
-   *  - signIn
-   *  - if MembershipId present → fetch ProfileInfo for full picture
-   *  - decide new/existing via isProfileComplete
-   */
+  // Verify OTP (bearer required). 0=existing, 1=new. Retry once on 1008.
   const loginWithOtp = async (mobile = "", otp, email = "", mobilePrefix = "+91") => {
-    const authToken = await ensureToken();
+    let authToken = await ensureToken();
 
     if (!isValidOtp(otp)) throw new Error("OTP must be 6 digits.");
-    if (isTestMode()) {
-      if (String(otp).trim() !== "123456") throw new Error("Invalid OTP (test mode)");
-    } else {
-      const v = await verifyOtp(authToken, { MobileNo: mobile, EmailId: email, Otp: otp });
-      if (v?.Success === false) throw new Error(v?.Message || "OTP verification failed.");
+
+    // first attempt
+    let v = await verifyOtp(authToken, { MobileNo: mobile, EmailId: email, Otp: otp });
+
+    // auth expired → refresh once and retry
+    if (Number(v?.errorCode) === 1008) {
+      const fresh = await generateTokenRaw();
+      const tk = extractTokenFromGenerateToken(fresh);
+      if (!tk) throw new Error("Could not refresh token for VerifyOtp.");
+      setToken(tk);
+      sessionStorage.setItem("token", tk);
+      authToken = tk;
+      v = await verifyOtp(authToken, { MobileNo: mobile, EmailId: email, Otp: otp });
     }
 
-    const signRes = await signIn({ MobileNo: mobile, EmailId: email, Otp: otp });
-    const signed = normalizeUser(signRes?.Data || signRes || {});
+    if (v?.success !== true) {
+      console.warn("[VerifyOtp] unexpected:", v);
+      throw new Error(v?.error || "OTP verification failed");
+    }
 
-    let resolved = signed;
+    const code = Number(v?.errorCode);
+    const row = Array.isArray(v?.result) && v.result.length ? v.result[0] : null;
 
-    if (truthy(signed.MemberId)) {
-      const profRes = await profileInfo(authToken, signed.MemberId);
-      const prof = normalizeUser(profRes?.Data || profRes || {});
-      resolved = {
-        ...signed,
-        ...prof,
-        MemberId: prof.MemberId || signed.MemberId,
-        MobilePrifix: prof.MobilePrifix || signed.MobilePrifix || mobilePrefix,
-      };
+    let resolved;
+    if (code === 0) {
+      // existing member; hydrate profile if we have an id
+      const minimal = normalizeUser(row || {});
+      if (truthy(minimal.MemberId)) {
+        try {
+          const profRes = await profileInfo(authToken, minimal.MemberId);
+          const prof = normalizeUser(profRes?.Data || profRes || {});
+          resolved = { ...minimal, ...prof, MemberId: prof.MemberId || minimal.MemberId };
+        } catch {
+          resolved = minimal;
+        }
+      } else {
+        resolved = minimal;
+      }
+    } else if (code === 1) {
+      // new member → prefill identity
+      resolved = normalizeUser({
+        MobilePrifix: mobile ? mobilePrefix : undefined,
+        MobileNo: mobile || undefined,
+        EmailId: email || undefined,
+      });
     } else {
-      resolved = {
-        ...resolved,
-        MobilePrifix: mobile ? mobilePrefix : resolved.MobilePrifix,
-        MobileNo: mobile || resolved.MobileNo,
-        EmailId: email || resolved.EmailId,
-      };
+      console.warn("[VerifyOtp] unknown errorCode:", v);
+      throw new Error(v?.error || "OTP verification failed");
     }
 
     setUser(resolved);
     sessionStorage.setItem("user", JSON.stringify(resolved));
-    sessionStorage.setItem("pendingIdentity", JSON.stringify({ mobile, email, mobilePrefix }));
+    sessionStorage.setItem(
+      "pendingIdentity",
+      JSON.stringify({ mobile, email, mobilePrefix })
+    );
 
-    const isNewUser = !isProfileComplete(resolved);
+    const isNewUser = code === 1 || !isProfileComplete(resolved);
     return { user: resolved, isNewUser };
   };
 
-  /**
-   * Save profile:
-   *  - If MemberId exists → UpdateProfile (requires MembershipId)
-   *  - Else → signup (create)
-   * Always normalize + mark acceptance “Y” locally so routing is correct next time.
-   */
-  const saveProfileAndRefresh = async (form) => {
-    const authToken = await ensureToken();
-    let raw;
+  // Create or update profile on the API, then cache
+const saveProfileAndRefresh = async (form) => {
+  const authToken = await ensureToken();
+  let raw;
 
-    if (truthy(user?.MemberId)) {
-      raw = await updateProfile(authToken, {
-        MembershipId: user.MemberId,
-        FirstName: form.FirstName,
-        LastName: form.LastName,
-        MobileNo: form.MobileNo,
-        EmailId: form.EmailId,
-        Country: form.Country,
-        City: form.City,
-        // Optionals supported by API can be added here (Gender, DateofBirth, etc.)
-      });
-    } else {
-      raw = await signup(authToken, {
-        FirstName: form.FirstName,
-        LastName: form.LastName,
-        MobilePrifix: form.MobilePrifix || "+91",
-        MobileNo: form.MobileNo,
-        EmailId: form.EmailId,
-        City: form.City,
-        Country: form.Country,
-        PrivacyPolicyAcceptance: "Y",
-      });
-    }
-
-    const server = normalizeUser(raw?.Data || raw || {});
-    const merged = {
-      ...server,
-      FirstName: form.FirstName ?? server.FirstName,
-      LastName: form.LastName ?? server.LastName,
-      EmailId: form.EmailId ?? server.EmailId,
-      MobilePrifix: form.MobilePrifix ?? server.MobilePrifix,
-      MobileNo: form.MobileNo ?? server.MobileNo,
-      City: form.City ?? server.City,
-      Country: form.Country ?? server.Country,
-      PrivacyPolicyAcceptance: "Y",
-    };
-
-    setUser(merged);
-    sessionStorage.setItem("user", JSON.stringify(merged));
-    return merged;
+  if (!truthy(user?.MemberId)) {
+  const payload = {
+    FirstName: form.FirstName,
+    LastName: form.LastName,
+    MobilePrifix: form.MobilePrifix || "+91", // we’ll also try MobilePrefix in auth.js
+    MobileNo: form.MobileNo,
+    EmailId: form.EmailId,
+    City: form.City,
+    StateCode: form.StateCode,
+    Country: form.Country,
+    PrivacyPolicyAcceptance: "Y",
   };
+
+  const raw = await signup(authToken, payload);
+
+  if (!(raw?.success === true && Number(raw?.errorCode) === 0)) {
+    // Show exactly what the server reported:
+    const msg = raw?.result || raw?.error || "Sign up failed";
+    throw new Error(msg);
+  }
+  }
+
+  const server = normalizeUser(raw?.Data || raw || {});
+  const merged = {
+    ...server,
+    FirstName: form.FirstName ?? server.FirstName,
+    LastName: form.LastName ?? server.LastName,
+    EmailId: form.EmailId ?? server.EmailId,
+    MobilePrifix: form.MobilePrifix ?? server.MobilePrifix,
+    MobileNo: form.MobileNo ?? server.MobileNo,
+    City: form.City ?? server.City,
+    StateCode: form.StateCode ?? server.StateCode,
+    Country: form.Country ?? server.Country,
+    PrivacyPolicyAcceptance: "Y",
+  };
+
+  setUser(merged);
+  sessionStorage.setItem("user", JSON.stringify(merged));
+  return merged;
+};
+
 
   const updateUser = (updates) => {
     setUser((prev) => {
@@ -184,7 +292,15 @@ export function AuthProvider({ children }) {
   };
 
   const value = useMemo(
-    () => ({ user, token, requestOtp, loginWithOtp, saveProfileAndRefresh, updateUser, logout }),
+    () => ({
+      user,
+      token,
+      requestOtp,
+      loginWithOtp,
+      saveProfileAndRefresh,
+      updateUser,
+      logout,
+    }),
     [user, token]
   );
 

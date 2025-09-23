@@ -2026,3 +2026,21 @@ button {
   width: 100%!important;
   object-fit: cover!important;
 }
+
+.complete-profile-section{
+padding-top:8rem;
+}
+
+.complete-profile-section .form-card-signup{
+    border-radius:1rem;
+    border-bottom:6px solid var(--brown);
+    background-color:#fff;
+}
+.complete-p-title{
+  color:var(--brown);
+}
+.complete-profile-section .form-card-signup form input,
+.complete-profile-section .form-card-signup form select{
+  font-size:14px!important;
+  border-radius:0!important;
+}

@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import MainHeader from "../Common/MainHeader";
+import "./CompleteProfile.css"
 
 export default function CompleteProfilePage() {
   const router = useRouter();
@@ -33,6 +34,7 @@ export default function CompleteProfilePage() {
     MobileNo: loggedMobile || baseUser.MobileNo || "",
     EmailId: loggedEmail || baseUser.EmailId || "",
     City: baseUser.City || "",
+    StateCode: baseUser.StateCode || "",
     Country: baseUser.Country || "India",
     PrivacyPolicyAcceptance: "N",
   });
@@ -66,25 +68,25 @@ export default function CompleteProfilePage() {
   return (
     <>
       <MainHeader />
-      <section className="section-padding" style={{ background: "#f8f6f2", minHeight: "100vh" }}>
-        <div className="container" style={{ maxWidth: 900 }}>
-          <div className="card shadow-sm border-0 rounded-4 mt-4">
+      <section className="complete-profile-section" style={{ background: "#f8f6f2", minHeight: "100vh" }}>
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-md-7">
+<div className="form-card-signup">
             <div className="card-body p-4">
-              <h2 className="mb-1">Create Your Amritara Rewards Profile</h2>
-              <p className="text-muted mb-4">Kindly complete your details to activate loyalty benefits.</p>
+              <h3 className="mb-1 text-center mb-3 complete-p-title">Complete Profile</h3>
 
               <form onSubmit={onSubmit} className="row g-3">
                 <div className="col-md-6">
-                  <label className="form-label">First Name</label>
-                  <input name="FirstName" value={form.FirstName} onChange={onChange} className="form-control" required />
+                 
+                  <input name="FirstName" value={form.FirstName} onChange={onChange} className="form-control" placeholder="First Name" required />
                 </div>
                 <div className="col-md-6">
-                  <label className="form-label">Last Name</label>
-                  <input name="LastName" value={form.LastName} onChange={onChange} className="form-control" required />
+                  
+                  <input name="LastName" value={form.LastName} onChange={onChange} className="form-control" placeholder="Last Name" required />
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Phone No.</label>
                   <div className="d-flex gap-2">
                     <select
                       name="MobilePrifix"
@@ -109,41 +111,43 @@ export default function CompleteProfilePage() {
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Email</label>
+                 
                   <input
                     type="email"
                     name="EmailId"
                     value={form.EmailId}
                     onChange={onChange}
                     className="form-control"
-                    placeholder="name@example.com"
+                    placeholder="Email"
                     required
                     readOnly={!!loggedEmail}
                   />
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">Country</label>
                   <select name="Country" value={form.Country} onChange={onChange} className="form-select" required>
                     <option value="India">India</option>
                   </select>
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">City</label>
                   <input name="City" value={form.City} onChange={onChange} className="form-control" placeholder="City" />
                 </div>
 
-                <div className="col-12 mt-2">
+                <div className="col-md-6">
+                  <input name="StateCode" value={form.StateCode} onChange={onChange} className="form-control" placeholder="State Code" />
+                </div>
+
+                <div className="col-12 mt-3">
                   <div className="form-check">
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      id="agree"
+                      id="agree1"
                       checked={agree}
                       onChange={(e) => setAgree(e.target.checked)}
                     />
-                    <label className="form-check-label" htmlFor="agree">
+                    <label className="form-check-label ms-2 form-check-label-for-su" htmlFor="agree">
                       I have read and agree to the{" "}
                       <a href="/privacy-policy" className="text-decoration-none">Privacy Policy</a> and{" "}
                       <a href="/term-and-condition" className="text-decoration-none">Terms &amp; Conditions</a>.
@@ -152,16 +156,19 @@ export default function CompleteProfilePage() {
                   {error && <div className="text-danger mt-2">{error}</div>}
                 </div>
 
-                <div className="col-12 d-flex gap-2 mt-3">
+                <div className="col-12 mt-3 text-center">
                   <button className="btn btn-primary px-4" type="submit">Submit</button>
-                  <button type="button" className="btn btn-outline-secondary" onClick={() => router.replace("/signin")}>
+                  {/* <button type="button" className="btn btn-outline-secondary" onClick={() => router.replace("/signin")}>
                     Cancel
-                  </button>
+                  </button> */}
                 </div>
               </form>
 
             </div>
           </div>
+            </div>
+          </div>
+          
         </div>
       </section>
     </>
