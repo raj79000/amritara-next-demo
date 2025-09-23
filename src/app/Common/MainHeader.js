@@ -65,7 +65,7 @@ const MainHeader = () => {
                         <ul className={`dropdown-menu ${open ? "show" : ""}`}>
                           <li>
                             <Link className="dropdown-item" href="/members/dashboard">
-                              Update Profile
+                             Dashboard
                             </Link>
                           </li>
                           <li>

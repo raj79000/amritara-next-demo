@@ -45,22 +45,31 @@ const normalizeUser = (raw = {}) => {
     .toString()
     .toUpperCase();
 
+  // Numbers often come as strings ("0", "10", "4500.00")
+  const toNum = (v, d = 0) => {
+    const n = Number(String(v ?? "").replace(/[, ]/g, ""));
+    return Number.isFinite(n) ? n : d;
+  };
+
   return {
-    // treat cardNo as the primary id if provided
+    /* IDs */
     MemberId:
       u.MembershipId ??
       u.MemberId ??
       u.membershipId ??
-      u.cardNo ??                 // <— NEW
+      u.cardNo ??            // ProfileInfo
       u.CardNo ??
       u.Id ??
       u.MemberID ??
       null,
 
+    CardNo: u.cardNo ?? u.CardNo ?? null,
+
+    /* Name + contact */
     FirstName:
       u.FirstName ??
       u.firstname ??
-      u.firstName ??              // <— NEW
+      u.firstName ??         // ProfileInfo
       u.GivenName ??
       u.Name?.split?.(" ")?.[0] ??
       "",
@@ -68,13 +77,13 @@ const normalizeUser = (raw = {}) => {
     LastName:
       u.LastName ??
       u.lastname ??
-      u.lastName ??               // <— NEW
+      u.lastName ??          // ProfileInfo
       u.Surname ??
       (u.Name?.split?.(" ")?.slice(1).join(" ") ?? ""),
 
     EmailId:
       u.EmailId ??
-      u.emailId ??                // <— NEW
+      u.emailId ??           // ProfileInfo
       u.Email ??
       u.EmailID ??
       "",
@@ -87,29 +96,44 @@ const normalizeUser = (raw = {}) => {
 
     MobileNo:
       u.MobileNo ??
-      u.mobileNumber ??           // <— NEW
+      u.mobileNumber ??      // ProfileInfo
       u.Mobile ??
       u.Phone ??
       u.PhoneNumber ??
       "",
 
-    City:
-      u.City ??
-      u.cityName ??               // <— NEW
-      "",
+    /* Location */
+    City:    u.City ?? u.cityName ?? "",            // ProfileInfo
+    State:   u.State ?? u.stateName ?? "",          // ProfileInfo
+    Country: u.Country ?? u.country ?? "",          // ProfileInfo
+    Address: u.address ?? u.Address ?? "",          // ProfileInfo
 
-    Country:
-      u.Country ??
-      u.country ??                // <— NEW
-      "",
+    /* Loyalty stats (ProfileInfo) */
+    TierId:           u.tierId ?? "",
+    TierName:         u.tierName ?? "",
+    PointsBalance:    toNum(u.pointsBalance, 0),
+    PointsToNextTier: toNum(u.pointstoNextTier, 0),
+    StaysToNextTier:  toNum(u.staystoNextTier, 0),
+    TotalStays:       toNum(u.totalStays, 0),
+    EnrolDate:        u.enrolDate ?? "",
+    TierEndDate:      u.tierEndDate ?? "",
+    PointsExpiryDate: u.dateofPontsExpiry ?? "",
+    PointsExpiryAmt:  toNum(u.amountofPontsExpiry, 0),
 
-    // if we have an existing profile, treat acceptance as Y (server doesn’t return it)
+    /* Misc (ProfileInfo) */
+    MemberCreateDate: u.memberCreateDate ?? "",
+    DateOfBirth:      u.dateofBirth ?? "",
+    WeddingAnniv:     u.weddingAnniversary ?? "",
+    Gender:           u.gender ?? "",
+
+    /* Acceptance:
+       If we have a valid card/id from server, treat as accepted (server doesn’t send it) */
     PrivacyPolicyAcceptance: PPA === "Y" ? "Y" : (u.cardNo || u.CardNo ? "Y" : "N"),
 
-    CardNo: u.cardNo ?? u.CardNo ?? null,
     _raw: u,
   };
 };
+
 
 
 // const isProfileComplete = (nu) =>
@@ -267,7 +291,7 @@ export function AuthProvider({ children }) {
       throw new Error(v?.error || "OTP verification failed");
     }
 
-    const code = Number(v?.errorCode);
+   const code = Number(v?.errorCode);
 const row  = Array.isArray(v?.result) && v.result.length ? v.result[0] : null;
 
 let resolved;
@@ -275,19 +299,22 @@ let resolved;
 if (code === 0) {
   // existing user
   const minimal = normalizeUser(row || {});
-  if (truthy(minimal.MemberId)) {
+  if (minimal.MemberId) {
     try {
       const profRes = await profileInfo(authToken, minimal.MemberId);
-      const fromProf = Array.isArray(profRes?.result) && profRes.result.length
-        ? profRes.result[0]
+      const profRaw = Array.isArray(profRes?.result) && profRes.result.length
+        ? profRes.result[0]                      // ← ProfileInfo array
         : (profRes?.Data || profRes || {});
-      const prof = normalizeUser(fromProf);
-      resolved = { ...minimal, ...prof, MemberId: prof.MemberId || minimal.MemberId };
+      const prof = normalizeUser(profRaw);
+      resolved = {
+        ...minimal,
+        ...prof,
+        MemberId: prof.MemberId || minimal.MemberId,
+      };
     } catch {
       resolved = minimal;
     }
   } else {
-    // sometimes VerifyOtp returns only cardNo in result; profileInfo might still return it
     resolved = minimal;
   }
 } else if (code === 1) {
@@ -302,12 +329,11 @@ if (code === 0) {
   throw new Error(v?.error || "OTP verification failed");
 }
 
-// persist session
 setUser(resolved);
 sessionStorage.setItem("user", JSON.stringify(resolved));
 sessionStorage.setItem("pendingIdentity", JSON.stringify({ mobile, email, mobilePrefix }));
 
-// ✅ For code===0, force existing. Else, use completeness fallback.
+// Force existing for code===0; otherwise use completeness
 const isNewUser = code === 0 ? false : (code === 1 || !isProfileComplete(resolved));
 return { user: resolved, isNewUser };
   };
