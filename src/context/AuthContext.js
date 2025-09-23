@@ -12,39 +12,119 @@ import {
 /* -------------------- helpers (truthy / normalize / completeness / otp) -------------------- */
 const truthy = (v) => v !== undefined && v !== null && String(v).trim() !== "";
 
+// const normalizeUser = (raw = {}) => {
+//   const u = raw || {};
+//   const PPA = (u.PrivacyPolicyAcceptance ?? u.PPAcceptance ?? u.IsTermsAccepted ?? "")
+//     .toString()
+//     .toUpperCase();
+//   return {
+//     MemberId:
+//       u.MembershipId ?? u.MemberId ?? u.membershipId ?? u.Id ?? u.MemberID ?? null,
+//     FirstName:
+//       u.FirstName ?? u.firstname ?? u.GivenName ?? u.Name?.split?.(" ")?.[0] ?? "",
+//     LastName:
+//       u.LastName ??
+//       u.lastname ??
+//       u.Surname ??
+//       (u.Name?.split?.(" ")?.slice(1).join(" ") ?? ""),
+//     EmailId: u.EmailId ?? u.Email ?? u.EmailID ?? "",
+//     MobilePrifix: u.MobilePrifix ?? u.MobilePrefix ?? u.CountryCode ?? "+91",
+//     MobileNo: u.MobileNo ?? u.Mobile ?? u.Phone ?? u.PhoneNumber ?? "",
+//     City: u.City ?? "",
+//     StateCode: u.StateCode ?? "",
+//     Country: u.Country ?? "",
+//     PrivacyPolicyAcceptance: PPA === "Y" ? "Y" : "N",
+//     CardNo: u.cardno ?? u.CardNo ?? null,
+//     _raw: u,
+//   };
+// };
+
 const normalizeUser = (raw = {}) => {
   const u = raw || {};
   const PPA = (u.PrivacyPolicyAcceptance ?? u.PPAcceptance ?? u.IsTermsAccepted ?? "")
     .toString()
     .toUpperCase();
+
   return {
+    // treat cardNo as the primary id if provided
     MemberId:
-      u.MembershipId ?? u.MemberId ?? u.membershipId ?? u.Id ?? u.MemberID ?? null,
+      u.MembershipId ??
+      u.MemberId ??
+      u.membershipId ??
+      u.cardNo ??                 // <— NEW
+      u.CardNo ??
+      u.Id ??
+      u.MemberID ??
+      null,
+
     FirstName:
-      u.FirstName ?? u.firstname ?? u.GivenName ?? u.Name?.split?.(" ")?.[0] ?? "",
+      u.FirstName ??
+      u.firstname ??
+      u.firstName ??              // <— NEW
+      u.GivenName ??
+      u.Name?.split?.(" ")?.[0] ??
+      "",
+
     LastName:
       u.LastName ??
       u.lastname ??
+      u.lastName ??               // <— NEW
       u.Surname ??
       (u.Name?.split?.(" ")?.slice(1).join(" ") ?? ""),
-    EmailId: u.EmailId ?? u.Email ?? u.EmailID ?? "",
-    MobilePrifix: u.MobilePrifix ?? u.MobilePrefix ?? u.CountryCode ?? "+91",
-    MobileNo: u.MobileNo ?? u.Mobile ?? u.Phone ?? u.PhoneNumber ?? "",
-    City: u.City ?? "",
-    StateCode: u.StateCode ?? "",
-    Country: u.Country ?? "",
-    PrivacyPolicyAcceptance: PPA === "Y" ? "Y" : "N",
-    CardNo: u.cardno ?? u.CardNo ?? null,
+
+    EmailId:
+      u.EmailId ??
+      u.emailId ??                // <— NEW
+      u.Email ??
+      u.EmailID ??
+      "",
+
+    MobilePrifix:
+      u.MobilePrifix ??
+      u.MobilePrefix ??
+      u.CountryCode ??
+      "+91",
+
+    MobileNo:
+      u.MobileNo ??
+      u.mobileNumber ??           // <— NEW
+      u.Mobile ??
+      u.Phone ??
+      u.PhoneNumber ??
+      "",
+
+    City:
+      u.City ??
+      u.cityName ??               // <— NEW
+      "",
+
+    Country:
+      u.Country ??
+      u.country ??                // <— NEW
+      "",
+
+    // if we have an existing profile, treat acceptance as Y (server doesn’t return it)
+    PrivacyPolicyAcceptance: PPA === "Y" ? "Y" : (u.cardNo || u.CardNo ? "Y" : "N"),
+
+    CardNo: u.cardNo ?? u.CardNo ?? null,
     _raw: u,
   };
 };
 
+
+// const isProfileComplete = (nu) =>
+//   truthy(nu.MemberId) &&
+//   truthy(nu.FirstName) &&
+//   truthy(nu.LastName) &&
+//   (truthy(nu.EmailId) || truthy(nu.MobileNo)) &&
+//   nu.PrivacyPolicyAcceptance === "Y";
+
 const isProfileComplete = (nu) =>
-  truthy(nu.MemberId) &&
-  truthy(nu.FirstName) &&
-  truthy(nu.LastName) &&
-  (truthy(nu.EmailId) || truthy(nu.MobileNo)) &&
-  nu.PrivacyPolicyAcceptance === "Y";
+  // id or card present
+  (truthy(nu.MemberId) || truthy(nu.CardNo)) &&
+  // has at least a name and a way to contact
+  (truthy(nu.FirstName) || truthy(nu.LastName)) &&
+  (truthy(nu.EmailId) || truthy(nu.MobileNo));
 
 const isValidOtp = (otp) => /^[0-9]{6}$/.test(String(otp || "").trim());
 
@@ -188,44 +268,48 @@ export function AuthProvider({ children }) {
     }
 
     const code = Number(v?.errorCode);
-    const row = Array.isArray(v?.result) && v.result.length ? v.result[0] : null;
+const row  = Array.isArray(v?.result) && v.result.length ? v.result[0] : null;
 
-    let resolved;
-    if (code === 0) {
-      // existing member; hydrate profile if we have an id
-      const minimal = normalizeUser(row || {});
-      if (truthy(minimal.MemberId)) {
-        try {
-          const profRes = await profileInfo(authToken, minimal.MemberId);
-          const prof = normalizeUser(profRes?.Data || profRes || {});
-          resolved = { ...minimal, ...prof, MemberId: prof.MemberId || minimal.MemberId };
-        } catch {
-          resolved = minimal;
-        }
-      } else {
-        resolved = minimal;
-      }
-    } else if (code === 1) {
-      // new member → prefill identity
-      resolved = normalizeUser({
-        MobilePrifix: mobile ? mobilePrefix : undefined,
-        MobileNo: mobile || undefined,
-        EmailId: email || undefined,
-      });
-    } else {
-      console.warn("[VerifyOtp] unknown errorCode:", v);
-      throw new Error(v?.error || "OTP verification failed");
+let resolved;
+
+if (code === 0) {
+  // existing user
+  const minimal = normalizeUser(row || {});
+  if (truthy(minimal.MemberId)) {
+    try {
+      const profRes = await profileInfo(authToken, minimal.MemberId);
+      const fromProf = Array.isArray(profRes?.result) && profRes.result.length
+        ? profRes.result[0]
+        : (profRes?.Data || profRes || {});
+      const prof = normalizeUser(fromProf);
+      resolved = { ...minimal, ...prof, MemberId: prof.MemberId || minimal.MemberId };
+    } catch {
+      resolved = minimal;
     }
+  } else {
+    // sometimes VerifyOtp returns only cardNo in result; profileInfo might still return it
+    resolved = minimal;
+  }
+} else if (code === 1) {
+  // new user
+  resolved = normalizeUser({
+    MobilePrifix: mobile ? mobilePrefix : undefined,
+    MobileNo: mobile || undefined,
+    EmailId: email || undefined,
+  });
+} else {
+  console.warn("[VerifyOtp] unknown errorCode:", v);
+  throw new Error(v?.error || "OTP verification failed");
+}
 
-    setUser(resolved);
-    sessionStorage.setItem("user", JSON.stringify(resolved));
-    sessionStorage.setItem(
-      "pendingIdentity",
-      JSON.stringify({ mobile, email, mobilePrefix })
-    );
+// persist session
+setUser(resolved);
+sessionStorage.setItem("user", JSON.stringify(resolved));
+sessionStorage.setItem("pendingIdentity", JSON.stringify({ mobile, email, mobilePrefix }));
 
-    const isNewUser = code === 1 || !isProfileComplete(resolved);
-    return { user: resolved, isNewUser };
+// ✅ For code===0, force existing. Else, use completeness fallback.
+const isNewUser = code === 0 ? false : (code === 1 || !isProfileComplete(resolved));
+return { user: resolved, isNewUser };
   };
 
   // Create or update profile on the API, then cache
