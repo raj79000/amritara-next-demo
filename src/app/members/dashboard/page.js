@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import MainHeader from "@/app/Common/MainHeader";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -17,17 +19,27 @@ export default function DashboardPage() {
     }
   }, [user, router]);
 
+
+
   if (!user || loading) return null;
 
   return (
     <>
       <MainHeader />
-      <section className="section-padding mt-5" style={{ minHeight: "60vh" }}>
+      <section className="main-dashboard-page" style={{ minHeight: "60vh" }}>
+
+        <Link href="/members/profile">Edit Profile</Link>
+        <div className="atithyam-logo-div text-center">
+          <Image src="/rewards/atithyam_logo.png" className="atithyam-logo-dashboard" height={150} width={200} alt="atithyam logo" />
+        </div>
         <div className="container mt-5">
-          <h1 className="mb-2">
-            Welcome{user?.FirstName ? `, ${user.FirstName}` : ""}!
+          <h1 className="mb-2 text-center">
+            Welcome
+            {user?.FirstName || user?.LastName
+              ? `, ${user?.FirstName ?? ""}${user?.LastName ? ` ${user.LastName}` : ""}`
+              : ""}!
           </h1>
-          <p className="text-muted">Your loyalty rewards dashboard</p>
+
 
           <div className="row mb-4">
             {/* Points */}
@@ -35,10 +47,12 @@ export default function DashboardPage() {
               <div className="card text-center shadow-sm">
                 <div className="card-body">
                   <h5 className="card-title">Points</h5>
-                  <p className="display-4 fw-bold text-primary">
+                  <p className="badge bg-success fs-5">
                     {user?.PointsBalance ?? 0}
                   </p>
-                  <p className="card-text">Total points earned</p>
+                  <p className="card-text">
+                     Expire on: {user?.PointsExpiryDate || ""}
+                    </p>
                 </div>
               </div>
             </div>
@@ -51,7 +65,7 @@ export default function DashboardPage() {
                   <span className="badge bg-success fs-5">
                     {user?.TierName || "N/A"}
                   </span>
-                  <p className="card-text mt-2">Valid till {user?.TierEndDate}</p>
+                  {/* <p className="card-text mt-2">Valid till {user?.TierEndDate}</p> */}
                 </div>
               </div>
             </div>
@@ -60,13 +74,16 @@ export default function DashboardPage() {
             <div className="col-md-4 mb-3">
               <div className="card text-center shadow-sm">
                 <div className="card-body">
-                  <h5 className="card-title">Stays</h5>
-                  <p className="display-6 fw-bold text-warning">
-                    {user?.TotalStays ?? 0}
+                  <h5 className="card-title">Membership No</h5>
+                  <p className="badge bg-success fs-5">
+                    {user?.CardNo || user?.MemberId || "—"}
                   </p>
-                  <p className="card-text">
+                  {/* <p className="card-text">
                     {user?.StaysToNextTier} stays to next tier
-                  </p>
+                  </p> */}
+                   <p>
+  <strong>Enrol Date:</strong> {user?.EnrolDate || ""}
+</p>
                 </div>
               </div>
             </div>

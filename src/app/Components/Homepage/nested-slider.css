@@ -118,3 +118,20 @@
 .swiper-button-prev:after, .swiper-button-next:after{
     font-size: 11px!important;
 }
+
+.main-parent-slider-experience {
+    position:relative;
+}
+.main-parent-slider-experience .experience-category-title{
+       position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 9;
+    background: linear-gradient(151deg, rgb(0, 0, 0), rgba(0, 0, 0, 0));
+    color: #fff;
+    padding: 1rem;
+    width: auto;
+    height: auto;
+    font-size: 20px;
+    background: #c99f69;
+}

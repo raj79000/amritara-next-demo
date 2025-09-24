@@ -53,7 +53,7 @@ const MainHeader = () => {
                 <div className="display-flex">
                   {isLoggedIn ? (
                     <>
-                      <div className="dropdown">
+                      <div className="dropdown dropdown-for-logged-in-user">
                         <button
                           className="dropdown-toggle profile-btnn-top border-0 bg-transparent me-2"
                           type="button"

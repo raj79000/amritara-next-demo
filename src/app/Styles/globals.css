@@ -30,10 +30,53 @@ body {
 	padding: 4px;
 	width: 17px;
 }
-
+.dropdown-for-logged-in-user a,
+.dropdown-for-logged-in-user button{
+text-transform:uppercase;
+font-size:14px!important;
+}
+.main-dashboard-page{
+  padding-top:7rem;
+  padding-bottom:3rem;
+}
+.atithyam-logo-div img{
+  width:200px!important;
+  height:auto!important;
+}
+.main-dashboard-page .bg-success{
+  background-color:#c99e66!important;
+}
+.edit-profile-page-main-sec{
+  padding-top:6rem!important;
+  padding-bottom:3rem;
+}
+.edit-profile-page-main-sec .card .card-body{
+  border-bottom:6px solid var(--brown);
+  padding-bottom:2rem;
+}
 .pushed-wrapper {
 	position: relative;
 }
+.members-main-heading{
+  text-align:center;
+  color:var(--brown);
+  margin-bottom:1rem!important;
+}
+.edit-profile-page-main-sec .card form label{
+  font-size:14px;
+}
+.edit-profile-page-main-sec .card form input,
+.edit-profile-page-main-sec .card form select,
+.edit-profile-page-main-sec .card form textarea{
+  font-size:14px!important;
+  border-radius:0!important;
+}
+.edit-profile-page-main-sec .card form input:focus,
+.edit-profile-page-main-sec .card form select:focus,
+.edit-profile-page-main-sec .card form textarea:focus{
+  border-color:var(--brown)!important;
+}
+
 
 .pushed-image {
 	background-size: cover;

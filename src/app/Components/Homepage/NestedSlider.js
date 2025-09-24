@@ -7,107 +7,71 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "./nested-slider.css";
-import { Diamond, IndianRupee } from "lucide-react";
+// import { Diamond, IndianRupee } from "lucide-react";
 
 const dummyData = [
   {
-    title: "Mountain Adventures",
+    title: "Mountain",
     description: "Explore breathtaking mountain landscapes and thrilling hiking trails.",
     image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
     items: [
       {
-        text: "Majestic Mountain",
+        text: "Majestic 1",
         image: "/img/popular-1.jpeg",
       },
       {
-        text: "Majestic Mountain",
+        text: "Majestic 2",
         image: "/img/popular-4.jpg",
       },
       {
-        text: "Majestic Mountain",
+        text: "Majestic 3",
         image: "/img/popular-3.jpg",
       },
       
     ],
   },
   {
-    title: "Tropical Beaches",
+    title: "River",
     description: "Relax on pristine sandy beaches with crystal clear waters.",
     image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
     items: [
       {
-        text: "Majestic Mountain",
+        text: "Riveer 1",
         image: "/img/popular-3.jpg",
       },
       {
-        text: "Majestic Mountain",
+        text: "Riveer 2",
         image: "/img/popular-1.jpeg",
       },
       
       {
-        text: "Majestic Mountain",
+        text: "Riveer 3",
         image: "/img/popular-4.jpg",
       },
     ],
   },
   {
-    title: "Cultural Cities",
+    title: "Cultural",
     description: "Discover the rich history and vibrant culture of world cities.",
     image: "https://images.unsplash.com/photo-1486299267070-83823f5448dd?auto=format&fit=crop&w=1200&q=80",
     items: [
       
       {
-        text: "Majestic Mountain",
+        text: "Culture City 1",
         image: "/img/popular-3.jpg",
       },
       {
-        text: "Majestic Mountain",
+        text: "Culture City 2",
         image: "/img/popular-4.jpg",
       },
       {
-        text: "Majestic Mountain",
+        text: "Culture City 3",
         image: "/img/popular-1.jpeg",
       },
     ],
   },
-  {
-    title: "Forest Retreats",
-    description: "Immerse yourself in the tranquility of lush forest environments.",
-    image: "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1200&q=80",
-    items: [
-      {
-        text: "Raje Mountain",
-        image: "/img/popular-1.jpeg",
-      },
-      {
-        text: "Majes Mountain",
-        image: "/img/popular-3.jpg",
-      },
-      {
-        text: "Majesticcc Mountain",
-        image: "/img/popular-4.jpg",
-      },
-    ],
-  },
-  {
-    title: "Rathore Adventures",
-    description: "Experience the mystique and beauty of desert landscapes.",
-    image: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=1200&q=80",
-    items: [
-      {
-        text: "Majestic Mountain",
-        image: "/img/popular-1.jpeg",
-      },
-      {
-        text: "Majestic Mountain",
-        image: "/img/popular-3.jpg",
-      },
-      {
-        text: "Majestic Mountain",
-        image: "/img/popular-4.jpg",
-      },
-    ],
-  },
+  
+
 ];
 
 export default function NestedSwiper() {
@@ -153,13 +117,11 @@ export default function NestedSwiper() {
                 768: { slidesPerView: 1.3 },
                 1024: { slidesPerView: 1.3 },
                 }}
-                className="parent-swiper main-parent-slider"
+                className="parent-swiper main-parent-slider main-parent-slider-experience"
             >
                 {dummyData.map((slide, index) => (
-                <SwiperSlide key={index} className=" bg-gray-100 rounded-xl relative">
-                    <h3 className="text-2xl font-bold mb-3 d-none">{slide.title}</h3>
-                   
-                    <p className="text-gray-600 mb-4 d-none">{slide.description}</p>
+                <SwiperSlide key={index} className="bg-gray-100 rounded-xl relative">
+                    <h3 className="text-2xl font-bold mb-3 experience-category-title">{slide.title}</h3>
 
                     <Swiper
                     pagination={{ clickable: true }}
