@@ -118,3 +118,11 @@
 .navButton:hover {
   background-color: var(--red);
 }
+
+@media screen and (max-width: 768px) {
+.UntoldStoriesSec{
+  padding:1rem!important;
+}
+
+
+}

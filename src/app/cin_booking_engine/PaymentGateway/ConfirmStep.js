@@ -3,7 +3,8 @@ import Image from "next/image";
 import toast, { Toaster } from "react-hot-toast";
 //import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useRef, useState } from "react";
-import { createSignature } from "../../utilities/signature";
+import { createSignature } from "../../../utilities/signature";
+import { getUserInfo } from "../../../utilities/userInfo";
 
 const ConfirmStep = ({ onClose, goNext, status }) => {
   const [responseObject, setResponseObject] = useState(null);
@@ -17,14 +18,72 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
   const [totalChildren, setTotalChildren] = useState(null);
   const hiddenFormRef = useRef(null);
   const [hiddenInputValue, setHiddenInputValue] = useState("");
-  const keyData = "dbKey=Dbconn";
+  // const keyData = "dbKey=Dbconn";
+ // const keyData = "dbKey=cinbe_pg";
+  const keyData = `dbKey=${process.env.NEXT_PUBLIC_TOKEN_DB_KEY}`;
   const dummyImage = "/no_image.jpg";
+  const redirectionUrl = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/th-payment-redirect`;
+  
+   async function postBookingWidged(propId, rooms,mapping, isClose,ctaName, 
+    ApiName,ApiUrl,ApiStatus,ApiErrorCode,ApiMessage) {
+    const resp = await getUserInfo();
+  
+      const sessionId = sessionStorage?.getItem("sessionId");
+      // const totalAdults = selectedRoom?.reduce(
+      //   (sum, room) => sum + (room?.adults || 0),
+      //   0
+      // );
+      // const totalChildren = selectedRoom?.reduce(
+      //   (sum, room) => sum + (room?.children || 0),
+      //   0
+      // );
+       const totalRooms = BookingDetails?.selectedRoom?.length;
+      //console.log("data pathname",data)
+      const payload = {
+      ctaName: ctaName,
+      urls: window.location.href,
+      cityId: "0",
+      propertyId: propId?.toString() || responseObject?.property_id?.toString() || "0",
+      checkIn: BookingDetails?.selectedStartDate ?? "",
+      checkOut: BookingDetails?.selectedEndDate ?? "",
+      adults: totalAdults?.toString() ?? "0",
+      children: totalChildren?.toString() ?? "0",
+      rooms: totalRooms?.toString() ?? "0",
+      promoCode: "",
+      ip: resp?.ip,
+      sessionId: sessionId,
+      deviceName: resp?.deviceInfo?.deviceName,
+      deviceType: resp?.deviceInfo?.deviceOS == "Unknown" ? resp?.deviceInfo?.platform : resp?.deviceInfo?.deviceOS,
+      roomsName: rooms?.RoomName ?? BookingDetails?.selectedRoom?.map(room => room?.roomName)?.join(", "),
+      packageName: mapping?.MappingName ?? BookingDetails?.selectedRoom?.map(room => room?.roomPackage)?.join(", "),
+      isCartOpen: mapping?.MappingName ? "Y": "N",
+      isCartEdit: "N",
+      isCartClick: "N",
+      isClose: isClose ? "Y" : "N",
+      ApiName: ApiName ?? "",
+      ApiUrl: ApiUrl ?? "",
+      ApiStatus: ApiStatus?.toString() ?? "",
+      ApiErrorCode: ApiErrorCode?.toString() ?? "",
+      ApiMessage: ApiMessage?.toString() ?? ""
+     }
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_CMS_BASE_URL}/Api/tracker/BookingWidged`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify( payload ),
+          }
+        );
+        const res = await response?.json();
+  
+      //console.log("res BookingWidged",res);
+    }
 
   useEffect(() => {
     const storedData = sessionStorage?.getItem("paymentResponse");
     const bookingData = sessionStorage?.getItem("bookingData");
-    console.log("stored ConfirmStep Wizard", storedData);
-    console.log("bookingData ConfirmStep Wizard", bookingData);
     if (storedData?.length == 0) {
       setNodata(true);
       return;
@@ -33,28 +92,27 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
       if (bookingData) {
         const parsedBooking = JSON.parse(bookingData);
         //setBookingDetails(parsedBooking);
-        const totalAdults = parsedBooking.selectedRoom.reduce((total, room) => {
-          return total + (parseInt(room.adults, 10) || 0);
+        const totalAdults = parsedBooking?.selectedRoom?.reduce((total, room) => {
+          return total + (parseInt(room?.adults, 10) || 0);
         }, 0);
 
-        const totalChildren = parsedBooking.selectedRoom.reduce(
+        const totalChildren = parsedBooking?.selectedRoom?.reduce(
           (total, room) => {
-            return total + (parseInt(room.children, 10) || 0);
+            return total + (parseInt(room?.children, 10) || 0);
           },
           0
         );
 
         setTotalAdults(totalAdults);
         setTotalChildren(totalChildren);
-
-        console.log("parsedBooking", parsedBooking);
       }
       const parsed = JSON.parse(storedData);
-      console.log("parsedData ConfirmStep Wizard", parsed);
-      console.log(
-        "parsedData ConfirmStep Parsed.partner_id",
-        parsed?.partner_id
-      );
+      setTimeout(() => {
+      postBookingWidged(parsed?.result?.[0]?.responseJson?.property_id,"","", false,"Payment response", 
+      "","","","","");
+    }, 200);
+    
+      console.log("parsed",parsed);
       parsed.result[0].responseJson.partner_id = String(
         parsed?.result?.[0]?.responseJson?.partner_id
       );
@@ -87,8 +145,56 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
     }
   }, [responseObject]);
 
+  useEffect(() => {
+    if (reservationStatus == "success") {
+      const fetchBookingResponse = async () => {
+        try {
+          const respData = {
+            reservationNo:
+              completeResponseObject?.result?.[0]?.responseJson?.reservation_id,
+            reservationJson: JSON.stringify(
+              completeResponseObject?.result?.[0]?.reservationJson
+            ),
+            bookingDetailsJson: JSON.stringify(
+              completeResponseObject?.result?.[0]?.bookingDetailsJson
+            ),
+          };
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_CMS_BASE_URL}/Api/booking/BookingResponse`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(respData),
+            }
+          );
+
+          // if (!response.ok) {
+          //   throw new Error("failed to fetch");
+          // }
+          // const data = await response.json();
+        } catch (error) {
+          //console.error("Error fetching properties:", error);
+        }
+      };
+
+      fetchBookingResponse();
+    }
+  }, [reservationStatus]);
+
   const handleConfirm = async () => {
     setLoading(true);
+    
+  let roomsData = ""; 
+  let mappingData =""; 
+  let isCloseData = false;
+  let apiStatusData = ""; 
+  let apiErrorCodeData = "";  
+  let apiMessageData = "";
+  let ctaNameData = ""; 
+  let apiNameData = "confirm";  
+  let apiUrlData = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/payment/confirm`; 
     try {
       const timestamp = Date.now().toString();
       const secret = "ABDEFGHJKLMOPQRSTUVWXYZ123456789";
@@ -99,7 +205,7 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
       );
       //alert(signature);
       const res = await fetch(
-        "https://cinbe.cinuniverse.com/api/payment/confirm",
+        `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/payment/confirm`,
         {
           method: "POST",
           headers: {
@@ -110,28 +216,38 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
           body: JSON.stringify({ responseObject, keyData }),
         }
       );
-
-      const data = await res.json();
+      if(!res?.ok){
+      ctaNameData = "Reservation post";
+      apiStatusData= res?.status;
+      apiErrorCodeData= res?.status;
+      apiMessageData= "Payment failed";
+      }
+      else{
+        const data = await res.json();
       //alert(`ResponseData ${JSON.stringify(data)}`);
-      setReservationStatus(data.errorMessage);
-      const parsedData = JSON.parse(data.result[0].bookingDetailsJson);
-      console.log("data.errorMessage Confirm", data.errorMessage);
-      console.log("parsedData Confirm", parsedData);
+      setReservationStatus(data?.errorMessage);
+      const parsedData = JSON.parse(data?.result?.[0]?.bookingDetailsJson);
       setBookingDetails(parsedData);
 
-      const totalAdults = parsedData.selectedRoom.reduce((total, room) => {
-        return total + (parseInt(room.adults, 10) || 0);
+      const totalAdults = parsedData?.selectedRoom.reduce((total, room) => {
+        return total + (parseInt(room?.adults, 10) || 0);
       }, 0);
 
-      const totalChildren = parsedData.selectedRoom.reduce((total, room) => {
-        return total + (parseInt(room.children, 10) || 0);
+      const totalChildren = parsedData?.selectedRoom?.reduce((total, room) => {
+        return total + (parseInt(room?.children, 10) || 0);
       }, 0);
 
       setTotalAdults(totalAdults);
       setTotalChildren(totalChildren);
+      
+      apiStatusData= res?.status;
+      apiErrorCodeData= res?.status;
+      apiMessageData= "Success";
+    }
     } catch (err) {
-      //alert(err);
-      console.error("Client error:", err);
+       apiStatusData= err;
+       apiErrorCodeData= "1166";
+       apiMessageData= err;
       toast.error("An error occurred.");
     } finally {
       setTimeout(() => {
@@ -139,11 +255,25 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
         //  onClose();
         setLoading(false);
         // status(null);
+        // setTimeout(() => {
+      postBookingWidged("",roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    // }, 200);
       }, 5000);
     }
   };
 
   const generateReservationIdFromAPI = async (selectedPropertyId) => {
+    
+  let roomsData = ""; 
+  let mappingData =""; 
+  let isCloseData = false;
+  let apiStatusData = ""; 
+  let apiErrorCodeData = "";  
+  let apiMessageData = "";
+  let ctaNameData = "Fetch reservation ID"; 
+  let apiNameData = "reservation-id";  
+  let apiUrlData = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/reservation-id`; 
     const timestamp = Date.now().toString();
     const secret = "ABDEFGHJKLMOPQRSTUVWXYZ123456789";
     const signature = await createSignature(
@@ -153,7 +283,7 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
     );
 
     const response = await fetch(
-      "https://cinbe.cinuniverse.com/api/reservation-id",
+      `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/reservation-id`,
       {
         method: "POST",
         headers: {
@@ -169,11 +299,27 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
     );
 
     if (!response.ok) {
+      apiStatusData= response?.status;
+      apiErrorCodeData= response?.status;
+      apiMessageData= "Data not found";
+      setTimeout(() => {
+      postBookingWidged("",roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    }, 200);
       throw new Error("Reservation ID generation failed");
     }
 
-    const data = await response.json();
+    else{
+      apiStatusData= "0";
+      apiErrorCodeData= "0";
+      apiMessageData= "Success";
+      setTimeout(() => {
+      postBookingWidged("",roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    }, 200);
+      const data = await response.json();
     return data.reservation_id;
+  }
   };
   const handleRetry = async () => {
     const newReservationId = await generateReservationIdFromAPI(
@@ -226,8 +372,17 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
       secret
     );
 
+  let roomsData = ""; 
+  let mappingData =""; 
+  let isCloseData = false;
+  let apiStatusData = ""; 
+  let apiErrorCodeData = "";  
+  let apiMessageData = "";
+  let ctaNameData = "Th payment request"; 
+  let apiNameData = "th-payment-request";  
+  let apiUrlData = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/th-payment-request`; 
     const resp = await fetch(
-      "https://cinbe.cinuniverse.com/api/th-payment-request",
+      `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/th-payment-request`,
       {
         method: "POST",
         headers: {
@@ -238,8 +393,13 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
         body: JSON.stringify({ finalRequestData2, keyData }),
       }
     );
+    
     const data = await resp.json();
     if (data?.errorMessage == "success") {
+      
+      apiStatusData= "0";
+      apiErrorCodeData= "0";
+      apiMessageData= "Success";
       const finalRequestData = {
         property_id:
           completeResponseObject?.result?.[0]?.reservationJson?.PropertyId,
@@ -269,8 +429,17 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
       setHiddenInputValue(JSON.stringify(finalRequestData));
       setTimeout(() => {
         hiddenFormRef.current.submit();
+      postBookingWidged("",roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
       }, 100);
     } else {
+      apiStatusData= resp?.status;
+      apiErrorCodeData= resp?.status;
+      apiMessageData= "Data not found";
+      setTimeout(() => {
+      postBookingWidged("",roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    }, 200);
       toast.error(data?.errorMessage);
     }
   };
@@ -283,10 +452,10 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
             className="fa fa-times-circle text-red-600 text-4xl"
             aria-hidden="true"
           ></i>
-          <h3 className="text-2xl font-bold text-red-600 mt-4">
+          <h5 className=" font-bold mt-4 text-center">
             Payment Failed
-          </h3>
-          <p className="mt-2 text-gray-700">Something went wrong.</p>
+          </h5>
+          <p className="mt-2 text-center">Something went wrong.</p>
         </>
       ) : (
         <div>
@@ -298,7 +467,7 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                 </p>
               ) : reservationStatus === "success" ? (
                 <>
-                  <div className="wizard-step-global-padding">
+                  <div className="wizard-step-global-padding w-100">
                     <div className="confirmation-step-new">
                       <div className="brand-top-box">
                         <div className="brand-image">
@@ -343,6 +512,9 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                             width={500}
                             alt="room image"
                           />
+                          <h6 className="text-center pt-3">
+                            {BookingDetails?.property?.PropertyName}
+                          </h6>
                           {/* <Image src="/no_image.jpg" height={400} width={500} alt="room image" /> */}
                         </div>
                         <div className="confirmation-data-box">
@@ -388,7 +560,7 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                               <li>
                                 {BookingDetails?.selectedRoom?.map(
                                   (room, index) => (
-                                    <p className="f-12-new" key={index}>
+                                    <p className="f-12-new">
                                       {index + 1} {room.roomName}
                                     </p>
                                   )
@@ -440,29 +612,15 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                               </li>
                               <li>
                                 <p className="f-12-new font-weightbold">
-                                  ₹&nbsp;{BookingDetails?.totalPrice}
+                                  INR&nbsp;{BookingDetails?.totalPrice}
                                 </p>
                               </li>
                             </ul>
-                            <div className="terms-conditionss">
-                              <div className="trms-booxx1">
-                                <p className="f-12-new">Cancellation Policy</p>
-                                <p className="f-12-new">
-                                  {BookingDetails?.cancellationPolicyState}
-                                </p>
-                              </div>
-                              <div className="trms-booxx1">
-                                <p className="f-12-new">Terms & Conditions</p>
-                                <p className="f-12-new">
-                                  {BookingDetails?.termsAndConditions}
-                                </p>
-                              </div>
-                            </div>
                             <div className="row conf-hotel-details">
-                              <div className="col-6 first-col-conf">
+                              <div className="col-12 first-col-conf">
                                 <p className="f-12-new">Hotel Details</p>
                               </div>
-                              <div className="col-6 second-col-conf">
+                              <div className="col-12 second-col-conf">
                                 <p className="f-12-new">
                                   {/* Alivaa Hotel Gurugram Sohna Road City Center */}
                                   {BookingDetails?.property?.PropertyName}
@@ -489,6 +647,20 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                                 </p>
                                 <p className="f-12-new">
                                   {BookingDetails?.property?.Address?.Phone}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="terms-conditionss">
+                              <div className="trms-booxx1">
+                                <p className="f-12-new">Cancellation Policy</p>
+                                <p className="f-12-new">
+                                  {BookingDetails?.cancellationPolicyState}
+                                </p>
+                              </div>
+                              <div className="trms-booxx1">
+                                <p className="f-12-new">Terms & Conditions</p>
+                                <p className="f-12-new">
+                                  {BookingDetails?.termsAndConditions}
                                 </p>
                               </div>
                             </div>
@@ -541,15 +713,17 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                 {loading ? "Saving..." : "Close"}
               </button> */}
 
-              <button
-                onClick={() => {
-                  handleRetry();
-                }}
-                disabled={loading}
-                className="mt-6 btn btn-primary"
-              >
-                {loading ? "Saving..." : "Retry"}
-              </button>
+              {reservationStatus === null && (
+                <button
+                  onClick={() => {
+                    handleRetry();
+                  }}
+                  disabled={loading}
+                  className="mt-6 btn btn-primary"
+                >
+                  {loading ? "Saving..." : "Retry"}
+                </button>
+              )}
               {/* {!loading && (
                 <button
                   onClick={() => {
@@ -570,7 +744,7 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                 </p>
               ) : reservationStatus === "success" ? (
                 <>
-                  <div className="wizard-step-global-padding">
+                  <div className="wizard-step-global-padding w-100">
                     <div className="confirmation-step-new">
                       <div className="brand-top-box">
                         <div className="brand-image">
@@ -716,7 +890,7 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                               </li>
                               <li>
                                 <p className="f-12-new font-weightbold">
-                                  ₹&nbsp;{BookingDetails?.totalPrice}
+                                  INR&nbsp;{BookingDetails?.totalPrice}
                                 </p>
                               </li>
                             </ul>
@@ -798,10 +972,10 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
                     className="fa fa-times-circle text-red-600 text-4xl"
                     aria-hidden="true"
                   ></i>
-                  <h1 className="text-3xl font-bold text-red-600 mt-4">
+                  <h5 className="text-center mt-4">
                     Payment Failed
-                  </h1>
-                  <p className="mt-2">
+                  </h5>
+                  <p className="mt-2 text-center">
                     Something went wrong during the payment. Please try again or
                     contact support.
                   </p>
@@ -873,7 +1047,7 @@ const ConfirmStep = ({ onClose, goNext, status }) => {
 
       <form
         method="POST"
-        action="https://cinbe.cinuniverse.com/api/th-payment-redirect"
+        action={redirectionUrl}
         ref={hiddenFormRef}
         style={{ display: "none" }}
       >

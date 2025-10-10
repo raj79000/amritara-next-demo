@@ -439,10 +439,80 @@ screen and (device-width: 1366px) and (orientation: landscape) {
   }
 }
 
-
+.program-member-data-box .card .text-center{
+text-align:justify!important;
+}
+.program-member-data-box .atithyam-logo-on-program{
+height:auto!important;
+margin-bottom:1rem!important;
+}
+.program-member-data-box .btn-brown{
+  background-color:#c99e66!important;
+  padding:7px 10px!important;
+  color:#fff;
+  font-size:14px!important;
+  border-radius:0;
+}
+.program-member-data-box .card div ul li strong{
+font-weight:600!important;
+}
+.program-member-data-box .card div ul li{
+  margin-top:1rem;
+}
+.program-member-data-box .card div p{
+  text-align:justify!important;
+}
+.reward-hand-point-icon{
+  filter:invert(1);
+}
+.member-program-page-main-data .member-data-box-main .m-text-white, .member-program-page-main-data .member-data-box-main .m-text-white p, .member-program-page-main-data .member-data-box-main .m-text-white h4
+{
+  color:#fff!important;
+}
 
 
 /* media for ipad air */
 @media screen and (device-width: 820px) and (orientation: portrait),
 screen and (device-width: 834px) and (orientation: portrait),
 screen and (device-width: 1024px) and (orientation: portrait) {}
+
+@media(max-width:767px){
+  .hotel-bottom-box-cta-n-content .cta-buttons-box .book-now-btn {
+    padding: 5px 5px;
+  }
+   .hotel-bottom-box-cta-n-content .cta-buttons-box .explore-more-btn {
+    padding: 5px 5px;
+  }
+  .hotel-bottom-box-cta-n-content .price-starts-hotel {
+    font-size:12px!important;
+}
+.hotel-bottom-box-cta-n-content .price-starts-rate-here{
+   font-size:12px!important;
+}
+.our-rewards .card__advantages{
+  padding-left:0!important;
+}
+.our-rewards .card__advantage{
+  padding-left:0!important;
+  display:flex;
+}
+.footer .linkstyle2 {
+    font-size: 14px;
+}
+.missing-stays-form form input{
+width:100%!important;
+}
+.missing-stays-form form .react-datepicker-wrapper{
+width:100%!important;
+}
+.missing-stays-form form input,
+.missing-stays-form form select,
+.missing-stays-form form textarea{
+font-size:14px!important
+}
+.inner-gumlet-video {
+    margin-top: 7rem!important;
+}
+
+
+}

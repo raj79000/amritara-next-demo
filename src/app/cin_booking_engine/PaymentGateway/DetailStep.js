@@ -1,16 +1,20 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import toast, { Toaster } from "react-hot-toast";
 //import "react-toastify/dist/ReactToastify.css";
-//import "../../Booking_engine/booking.css"
 import CryptoJS from "crypto-js";
 import md5 from "md5";
 import { useBookingEngineContext } from "../../cin_context/BookingEngineContext";
-import { createSignature } from "../../utilities/signature";
+import { createSignature } from "../../../utilities/signature";
 import PayLater from "./PayLater";
+import { getUserInfo } from "../../../utilities/userInfo";
+import Link from 'next/link'
 //import useBook from "app/booking-engine-widget/useBook";
 
+import { countryList } from "../../../utilities/countryList";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { Check, SquareCheck, ShieldCheck , CalendarCheck} from "lucide-react";
 const encryptHash = (partnerKey, data) => {
   let text = "";
   Object.keys(data).forEach((key) => {
@@ -35,7 +39,7 @@ const encrypt = (plainText, key) => {
   }).ciphertext.toString(CryptoJS.enc.Hex);
 };
 
-const BookingAndPayment = () => {
+const BookingAndPayment = forwardRef ((props, ref) => {
   const {
     updateUserDetails,
     totalPrice,
@@ -53,6 +57,8 @@ const BookingAndPayment = () => {
     selectedAddonList,
     totalRoomPrice,
     baseRoomPrice,
+    setTotalRoomPrice,
+    setBaseRoomPrice,
     selectedTaxList,
     roomTaxes,
     setRoomTaxes,
@@ -64,204 +70,15 @@ const BookingAndPayment = () => {
     cancellationPolicyState,
     termsAndConditions,
     property,
+    isMemberRate,
+    setIsMemberRate,
+    defaultOffer, setDefaultOffer,
+    isInventoryAvailable, setInventoryAvailable,
+    totalTax, setTotalTax
   } = useBookingEngineContext();
 
   //const { promoCodeContext, setPromoCodeContext } = useBook();
-  const countryList = [
-    { name: "Afghanistan", code: "+93" },
-    { name: "Albania", code: "+355" },
-    { name: "Algeria", code: "+213" },
-    { name: "Andorra", code: "+376" },
-    { name: "Angola", code: "+244" },
-    { name: "Argentina", code: "+54" },
-    { name: "Armenia", code: "+374" },
-    { name: "Australia", code: "+61" },
-    { name: "Austria", code: "+43" },
-    { name: "Azerbaijan", code: "+994" },
-    { name: "Bahamas", code: "+1-242" },
-    { name: "Bahrain", code: "+973" },
-    { name: "Bangladesh", code: "+880" },
-    { name: "Barbados", code: "+1-246" },
-    { name: "Belarus", code: "+375" },
-    { name: "Belgium", code: "+32" },
-    { name: "Belize", code: "+501" },
-    { name: "Benin", code: "+229" },
-    { name: "Bhutan", code: "+975" },
-    { name: "Bolivia", code: "+591" },
-    { name: "Bosnia and Herzegovina", code: "+387" },
-    { name: "Botswana", code: "+267" },
-    { name: "Brazil", code: "+55" },
-    { name: "Brunei", code: "+673" },
-    { name: "Bulgaria", code: "+359" },
-    { name: "Burkina Faso", code: "+226" },
-    { name: "Burundi", code: "+257" },
-    { name: "Cambodia", code: "+855" },
-    { name: "Cameroon", code: "+237" },
-    { name: "Canada", code: "+1" },
-    { name: "Central African Republic", code: "+236" },
-    { name: "Chad", code: "+235" },
-    { name: "Chile", code: "+56" },
-    { name: "China", code: "+86" },
-    { name: "Colombia", code: "+57" },
-    { name: "Comoros", code: "+269" },
-    { name: "Congo (Brazzaville)", code: "+242" },
-    { name: "Congo (Kinshasa)", code: "+243" },
-    { name: "Costa Rica", code: "+506" },
-    { name: "Croatia", code: "+385" },
-    { name: "Cuba", code: "+53" },
-    { name: "Cyprus", code: "+357" },
-    { name: "Czech Republic", code: "+420" },
-    { name: "Denmark", code: "+45" },
-    { name: "Djibouti", code: "+253" },
-    { name: "Dominica", code: "+1-767" },
-    { name: "Dominican Republic", code: "+1-809" },
-    { name: "Ecuador", code: "+593" },
-    { name: "Egypt", code: "+20" },
-    { name: "El Salvador", code: "+503" },
-    { name: "Equatorial Guinea", code: "+240" },
-    { name: "Eritrea", code: "+291" },
-    { name: "Estonia", code: "+372" },
-    { name: "Eswatini", code: "+268" },
-    { name: "Ethiopia", code: "+251" },
-    { name: "Fiji", code: "+679" },
-    { name: "Finland", code: "+358" },
-    { name: "France", code: "+33" },
-    { name: "Gabon", code: "+241" },
-    { name: "Gambia", code: "+220" },
-    { name: "Georgia", code: "+995" },
-    { name: "Germany", code: "+49" },
-    { name: "Ghana", code: "+233" },
-    { name: "Greece", code: "+30" },
-    { name: "Grenada", code: "+1-473" },
-    { name: "Guatemala", code: "+502" },
-    { name: "Guinea", code: "+224" },
-    { name: "Guinea-Bissau", code: "+245" },
-    { name: "Guyana", code: "+592" },
-    { name: "Haiti", code: "+509" },
-    { name: "Honduras", code: "+504" },
-    { name: "Hungary", code: "+36" },
-    { name: "Iceland", code: "+354" },
-    { name: "India", code: "+91" },
-    { name: "Indonesia", code: "+62" },
-    { name: "Iran", code: "+98" },
-    { name: "Iraq", code: "+964" },
-    { name: "Ireland", code: "+353" },
-    { name: "Israel", code: "+972" },
-    { name: "Italy", code: "+39" },
-    { name: "Ivory Coast", code: "+225" },
-    { name: "Jamaica", code: "+1-876" },
-    { name: "Japan", code: "+81" },
-    { name: "Jordan", code: "+962" },
-    { name: "Kazakhstan", code: "+7" },
-    { name: "Kenya", code: "+254" },
-    { name: "Kiribati", code: "+686" },
-    { name: "Kuwait", code: "+965" },
-    { name: "Kyrgyzstan", code: "+996" },
-    { name: "Laos", code: "+856" },
-    { name: "Latvia", code: "+371" },
-    { name: "Lebanon", code: "+961" },
-    { name: "Lesotho", code: "+266" },
-    { name: "Liberia", code: "+231" },
-    { name: "Libya", code: "+218" },
-    { name: "Liechtenstein", code: "+423" },
-    { name: "Lithuania", code: "+370" },
-    { name: "Luxembourg", code: "+352" },
-    { name: "Madagascar", code: "+261" },
-    { name: "Malawi", code: "+265" },
-    { name: "Malaysia", code: "+60" },
-    { name: "Maldives", code: "+960" },
-    { name: "Mali", code: "+223" },
-    { name: "Malta", code: "+356" },
-    { name: "Marshall Islands", code: "+692" },
-    { name: "Mauritania", code: "+222" },
-    { name: "Mauritius", code: "+230" },
-    { name: "Mexico", code: "+52" },
-    { name: "Micronesia", code: "+691" },
-    { name: "Moldova", code: "+373" },
-    { name: "Monaco", code: "+377" },
-    { name: "Mongolia", code: "+976" },
-    { name: "Montenegro", code: "+382" },
-    { name: "Morocco", code: "+212" },
-    { name: "Mozambique", code: "+258" },
-    { name: "Myanmar", code: "+95" },
-    { name: "Namibia", code: "+264" },
-    { name: "Nauru", code: "+674" },
-    { name: "Nepal", code: "+977" },
-    { name: "Netherlands", code: "+31" },
-    { name: "New Zealand", code: "+64" },
-    { name: "Nicaragua", code: "+505" },
-    { name: "Niger", code: "+227" },
-    { name: "Nigeria", code: "+234" },
-    { name: "North Korea", code: "+850" },
-    { name: "North Macedonia", code: "+389" },
-    { name: "Norway", code: "+47" },
-    { name: "Oman", code: "+968" },
-    { name: "Pakistan", code: "+92" },
-    { name: "Palau", code: "+680" },
-    { name: "Palestine", code: "+970" },
-    { name: "Panama", code: "+507" },
-    { name: "Papua New Guinea", code: "+675" },
-    { name: "Paraguay", code: "+595" },
-    { name: "Peru", code: "+51" },
-    { name: "Philippines", code: "+63" },
-    { name: "Poland", code: "+48" },
-    { name: "Portugal", code: "+351" },
-    { name: "Qatar", code: "+974" },
-    { name: "Romania", code: "+40" },
-    { name: "Russia", code: "+7" },
-    { name: "Rwanda", code: "+250" },
-    { name: "Saint Kitts and Nevis", code: "+1-869" },
-    { name: "Saint Lucia", code: "+1-758" },
-    { name: "Saint Vincent and the Grenadines", code: "+1-784" },
-    { name: "Samoa", code: "+685" },
-    { name: "San Marino", code: "+378" },
-    { name: "Saudi Arabia", code: "+966" },
-    { name: "Senegal", code: "+221" },
-    { name: "Serbia", code: "+381" },
-    { name: "Seychelles", code: "+248" },
-    { name: "Sierra Leone", code: "+232" },
-    { name: "Singapore", code: "+65" },
-    { name: "Slovakia", code: "+421" },
-    { name: "Slovenia", code: "+386" },
-    { name: "Solomon Islands", code: "+677" },
-    { name: "Somalia", code: "+252" },
-    { name: "South Africa", code: "+27" },
-    { name: "South Korea", code: "+82" },
-    { name: "South Sudan", code: "+211" },
-    { name: "Spain", code: "+34" },
-    { name: "Sri Lanka", code: "+94" },
-    { name: "Sudan", code: "+249" },
-    { name: "Suriname", code: "+597" },
-    { name: "Sweden", code: "+46" },
-    { name: "Switzerland", code: "+41" },
-    { name: "Syria", code: "+963" },
-    { name: "Taiwan", code: "+886" },
-    { name: "Tajikistan", code: "+992" },
-    { name: "Tanzania", code: "+255" },
-    { name: "Thailand", code: "+66" },
-    { name: "Timor-Leste", code: "+670" },
-    { name: "Togo", code: "+228" },
-    { name: "Tonga", code: "+676" },
-    { name: "Trinidad and Tobago", code: "+1-868" },
-    { name: "Tunisia", code: "+216" },
-    { name: "Turkey", code: "+90" },
-    { name: "Turkmenistan", code: "+993" },
-    { name: "Tuvalu", code: "+688" },
-    { name: "Uganda", code: "+256" },
-    { name: "Ukraine", code: "+380" },
-    { name: "United Arab Emirates", code: "+971" },
-    { name: "United Kingdom", code: "+44" },
-    { name: "United States", code: "+1" },
-    { name: "Uruguay", code: "+598" },
-    { name: "Uzbekistan", code: "+998" },
-    { name: "Vanuatu", code: "+678" },
-    { name: "Vatican City", code: "+379" },
-    { name: "Venezuela", code: "+58" },
-    { name: "Vietnam", code: "+84" },
-    { name: "Yemen", code: "+967" },
-    { name: "Zambia", code: "+260" },
-    { name: "Zimbabwe", code: "+263" },
-  ];
+  
   const [formData, setFormData] = useState({
     title: "",
     firstName: "",
@@ -283,6 +100,7 @@ const BookingAndPayment = () => {
     cvv: "",
   });
 
+  const srilankaProperties = [26735,53301,54175];
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -291,6 +109,44 @@ const BookingAndPayment = () => {
   const [generatedReservationId, setGeneratedReservationId] = useState("");
   const [payLaterData, setPayLaterData] = useState(null);
   const [isOpenPayLater, setOpenPayLater] = useState(false);
+  
+  const formRef = useRef();
+  const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const replaceKeys = ["book-now", "select-package", "pay-now", "search"];
+function replaceAction(newAction) {
+    const params = new URLSearchParams(searchParams.toString());
+    let replaced = false;
+
+    // remove any existing action keys
+    replaceKeys.forEach(key => {
+      if (params.has(key)) {
+        params.delete(key);
+        replaced = true;
+      }
+    });
+
+    // if no params OR replaced → add the new action
+    if ([...params.keys()].length === 0 || replaced) {
+      params.set(newAction, "");
+    } else if (!params.has(newAction)) {
+      // if other queries exist but no action → add it
+      params.set(newAction, "");
+    }
+
+    // cleanup so `action=` becomes just `action`
+    const query = params.toString().replace(/=(&|$)/g, "$1");
+
+    router.replace(`${pathname}?${query}`);
+  }
+  useImperativeHandle(ref, () => ({
+      submitForm: () => {
+        formRef.current.requestSubmit(); // modern way to submit form
+      }
+    }));
+
+
   const formatDate = (date) => {
     if (!date) return "N/A";
     return new Date(date).toISOString().split("T")[0];
@@ -298,11 +154,365 @@ const BookingAndPayment = () => {
 
   const fromDate = formatDate(selectedStartDate);
   const toDate = formatDate(selectedEndDate);
-  //const keyData = "dbKey=clarks_pg";
-  const keyData = "dbKey=Dbconn";
+  // const keyData = "dbKey=Dbconn";
+  const keyData = `dbKey=${process.env.NEXT_PUBLIC_TOKEN_DB_KEY}`;
+ // const keyData = process.env.NEXT_PUBLIC_TOKEN_DB_KEY;
   // const cleanedKeyData = keyData.replace(/"/g, "");
+  const [guestInfo, setGuestInfo] = useState({});
 
+    const sessionId = sessionStorage?.getItem("sessionId");
+
+  const calculateNumberOfDays = () => {
+    if (!selectedStartDate || !selectedEndDate) return 1;
+    const start = new Date(selectedStartDate);
+    const end = new Date(selectedEndDate);
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const numberOfDays = calculateNumberOfDays();
+  const calculateBasePrice = () => {
+    // Sum all selectedRoom's roomRate
+    const totalRoomRate = selectedRoom?.reduce(
+      (sum, room) => sum + (parseFloat(room?.packageRate) || 0),
+      0
+    );
+    return totalRoomRate * numberOfDays;
+  };
+
+  const calculateTotalWithTax = () => {
+    const basePrice = calculateBasePrice();
+    return totalTax + (basePrice || 0);
+  };
+
+  const basePrice = calculateBasePrice();
+  const finalAmount = calculateTotalWithTax();
+    useEffect(() =>{
+      async function callUserInfo() {
+      const resp = await getUserInfo();
+      setGuestInfo(resp);
+      }
+      callUserInfo();
+   },[])
+
+   const baseUrl = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/th-payment-redirect`;
+
+// async function redirectWithPost(paramvalues, keydata) {
+//   const formData = new FormData();
+//   formData.append("paramvalues", paramvalues);
+//   formData.append("keydata", keydata);
+
+//   const response = await fetch(baseUrl, {
+//     method: "POST",
+//     body: formData,
+//   });
+
+//   const html = await response.text();
+//   const newWindow = window.open("", "_self"); // or "_blank"
+//   newWindow.document.write(html);
+//   newWindow.document.close();
+// }
+
+  function redirectWithPost(paramvalues, keydata) {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = baseUrl;
+ 
+    const input1 = document.createElement("input");
+    input1.type = "hidden";
+    input1.name = "paramvalues";
+    input1.value = paramvalues;
+ 
+    const input2 = document.createElement("input");
+    input2.type = "hidden";
+    input2.name = "keydata";
+    input2.value = keydata;
+ 
+    form.appendChild(input1);
+    form.appendChild(input2);
+    document.body.appendChild(form);
+ 
+    form.submit(); // 🔥 Browser loads API → API returns HTML → auto-submit → SecurePay
+    
+  }
+
+  // const proceedToPay = (selectedRoom) => {
+  //   const isProceed = selectedRoom.every((room) => room.roomId);
+
+  //   // Check if any room has more guests than allowed
+  //   const isGuestLimitExceeded = selectedRoom.some(
+  //     (room) => room.adults + room.children > room.maxGuest
+  //   );
+  //   const isAdultLimitExceeded = selectedRoom.some(
+  //     (room) => room.adults > room.maxAdult
+  //   );
+
+  //   const isChildLimitExceeded = selectedRoom.some(
+  //     (room) => room.children > room.maxChildren
+  //   );
+  //   const roomCountMap = selectedRoom.reduce((acc, room) => {
+  // acc[room.roomId] = (acc[room.roomId] || 0) + 1;
+  // acc[room.roomName] = room?.roomName;
+  // return acc;
+  //  }, {});
+   
+  //  // Check if any room count exceeds its minInventory
+  //  const isInvAvailable = !selectedRoom.some(
+  //    (room) => roomCountMap[room.roomId] > room.minInventory
+  //  );
+  //   if (
+  //     isProceed &&
+  //     !isGuestLimitExceeded &&
+  //     isInvAvailable &&
+  //     !isAdultLimitExceeded &&
+  //     !isChildLimitExceeded
+  //   ) {
+  //     setTotalRoomPrice(finalAmount);
+  //     setBaseRoomPrice(basePrice);
+  //     //goNext();
+  //     return "success";
+  //   } else if (!isProceed) {
+  //     toast.error("Select your room(s)");
+  //     return "Select your room(s)";
+  //   } else if (isGuestLimitExceeded) {
+  //     toast.error(
+  //       "Selected guests are greater than the max guest allowed in one or more rooms"
+  //     );
+  //     return "Selected guests are greater than the max guest allowed in one or more rooms";
+  //   } else if (isAdultLimitExceeded) {
+  //     toast.error(
+  //       "Selected adults are greater than the max adults allowed in one or more rooms"
+  //     );
+  //     return "Selected adults are greater than the max adults allowed in one or more rooms";
+  //   } else if (isChildLimitExceeded) {
+  //     toast.error(
+  //       "Selected children are greater than the max children allowed in one or more rooms"
+  //     );
+  //     return "Selected children are greater than the max children allowed in one or more rooms";
+  //   } else if (!isInvAvailable) {
+  //     toast.error("Booking not available for selected date");
+  //   }
+  //     return "Booking not available for selected date";
+  // };
+
+//   const proceedToPay = (selectedRoom) => {
+//   const isProceed = selectedRoom.every((room) => room.roomId);
+
+//   // Guest limit checks
+//   const isGuestLimitExceeded = selectedRoom.some(
+//     (room) => room.adults + room.children > room.maxGuest
+//   );
+//   const isAdultLimitExceeded = selectedRoom.some(
+//     (room) => room.adults > room.maxAdult
+//   );
+//   const isChildLimitExceeded = selectedRoom.some(
+//     (room) => room.children > room.maxChildren
+//   );
+
+//   // Group by roomId and count selections
+//   const roomCountMap = selectedRoom.reduce((acc, room) => {
+//     if (!acc[room.roomId]) {
+//       acc[room.roomId] = { count: 0, roomName: room.roomName };
+//     }
+//     acc[room.roomId].count += 1;
+//     return acc;
+//   }, {});
+
+//   // Find if any room exceeds inventory
+//   const exceededRoom = selectedRoom.find(
+//     (room) => roomCountMap[room.roomId].count > room.minInventory
+//   );
+
+//   const isInvAvailable = !exceededRoom;
+
+//   // Final checks
+//   if (
+//     isProceed &&
+//     !isGuestLimitExceeded &&
+//     isInvAvailable &&
+//     !isAdultLimitExceeded &&
+//     !isChildLimitExceeded
+//   ) {
+//     setTotalRoomPrice(finalAmount);
+//     setBaseRoomPrice(basePrice);
+//     // goNext();
+//     return "success";
+//   } else if (!isProceed) {
+//     toast.error("Select your room(s)");
+//     return "Select your room(s)";
+//   } else if (isGuestLimitExceeded) {
+//     toast.error(
+//       "Selected guests are greater than the max guest allowed in one or more rooms"
+//     );
+//     return "Selected guests are greater than the max guest allowed in one or more rooms";
+//   } else if (isAdultLimitExceeded) {
+//     toast.error(
+//       "Selected adults are greater than the max adults allowed in one or more rooms"
+//     );
+//     return "Selected adults are greater than the max adults allowed in one or more rooms";
+//   } else if (isChildLimitExceeded) {
+//     toast.error(
+//       "Selected children are greater than the max children allowed in one or more rooms"
+//     );
+//     return "Selected children are greater than the max children allowed in one or more rooms";
+//   } else if (!isInvAvailable) {
+//     toast.error(
+//       `Booking not available for "${exceededRoom.roomName}" (inventory exceeded)`
+//     );
+//     return `Booking not available for "${exceededRoom.roomName}"`;
+//   }
+
+// //  return "Booking not available for selected date";
+// };
+const proceedToPay = (selectedRoom) => {
+  const isProceed = selectedRoom.every((room) => room?.roomId);
+  const isOutOfStock = selectedRoom.every((room) => Number(room?.roomRateWithTax) > 0);
+
+  // Guest limit checks
+  const isGuestLimitExceeded = selectedRoom.some(
+    (room) => room.adults + room.children > room.maxGuest
+  );
+  const isAdultLimitExceeded = selectedRoom.some(
+    (room) => room.adults > room.maxAdult
+  );
+  const isChildLimitExceeded = selectedRoom.some(
+    (room) => room.children > room.maxChildren
+  );
+
+  // Group by roomId and count selections
+  const roomCountMap = selectedRoom.reduce((acc, room) => {
+    if (!acc[room.roomId]) {
+      acc[room.roomId] = { count: 0, roomName: room.roomName };
+    }
+    acc[room.roomId].count += 1;
+    return acc;
+  }, {});
+
+  // Find if any room exceeds inventory
+  const exceededRoom = selectedRoom.find(
+    (room) => roomCountMap[room.roomId].count > room.minInventory
+  );
+
+  const isInvAvailable = !exceededRoom;
+
+  // Final checks
+  if (
+    isProceed &&
+    isOutOfStock &&
+    !isGuestLimitExceeded &&
+    isInvAvailable &&
+    !isAdultLimitExceeded &&
+    !isChildLimitExceeded
+  ) {
+    setTotalRoomPrice(finalAmount);
+    setBaseRoomPrice(basePrice);
+    // goNext();
+    return "success";
+  } else if (!isProceed) {
+    toast.error("Select your room(s)");
+    return "Select your room(s)";
+  }
+     else if (!isOutOfStock) {
+     toast.error("One or more room(s) are out of stock.");
+     return "One or more room(s) are out of stock.";
+   }
+   else if (isGuestLimitExceeded) {
+    toast.error(
+      "Selected guests are greater than the max guest allowed in one or more rooms"
+    );
+    return "Selected guests are greater than the max guest allowed in one or more rooms";
+  } else if (isAdultLimitExceeded) {
+    toast.error(
+      "Selected adults are greater than the max adults allowed in one or more rooms"
+    );
+    return "Selected adults are greater than the max adults allowed in one or more rooms";
+  } else if (isChildLimitExceeded) {
+    toast.error(
+      "Selected children are greater than the max children allowed in one or more rooms"
+    );
+    return "Selected children are greater than the max children allowed in one or more rooms";
+  } else if (!isInvAvailable) {
+    //const selectedCount = roomCountMap[exceededRoom.roomId].count;
+    const availableCount = exceededRoom.minInventory;
+
+    toast.error(
+      `inventory exceeded for "${exceededRoom.roomName}". Available: ${availableCount}`
+    );
+    return `inventory exceeded for "${exceededRoom.roomName}". Available: ${availableCount}`;
+  }
+};
+
+ async function postBookingWidged(rooms,mapping, isClose,ctaName, 
+  ApiName,ApiUrl,ApiStatus,ApiErrorCode,ApiMessage) {
+//  const resp = await getUserInfo();
+
+  //console.log("resp",resp);
+  // if(!sessionId){
+  //  setSessionId(resp?.guid);
+  // }
+    const totalAdults = selectedRoom?.reduce(
+      (sum, room) => sum + (room?.adults || 0),
+      0
+    );
+    const totalChildren = selectedRoom?.reduce(
+      (sum, room) => sum + (room?.children || 0),
+      0
+    );
+    const totalRooms = selectedRoom?.length;
+    //console.log("data pathname",data)
+    const payload = {
+    ctaName: ctaName,
+    urls: window.location.href,
+    cityId: "0",
+    propertyId: selectedPropertyId?.toString() ?? "0",
+    checkIn: fromDate ?? "",
+    checkOut: toDate ?? "",
+    adults: totalAdults?.toString() ?? "0",
+    children: totalChildren?.toString() ?? "0",
+    rooms: totalRooms?.toString() ?? "0",
+    promoCode: "",
+    ip: guestInfo?.ip,
+    sessionId: sessionId,
+    deviceName: guestInfo?.deviceInfo?.deviceName,
+    deviceType: guestInfo?.deviceInfo?.deviceOS == "Unknown" ? guestInfo?.deviceInfo?.platform : guestInfo?.deviceInfo?.deviceOS,
+    roomsName: selectedRoom?.map(room => room?.roomName)?.join(", "),
+    packageName: selectedRoom?.map(room => room?.roomPackage)?.join(", "),
+    isCartOpen: mapping?.MappingName ? "Y": "N",
+    isCartEdit: "N",
+    isCartClick: "N",
+    isClose: isClose ? "Y" : "N",
+    ApiName: ApiName ?? "",
+    ApiUrl: ApiUrl ?? "",
+    ApiStatus: ApiStatus?.toString() ?? "",
+    ApiErrorCode: ApiErrorCode?.toString() ?? "",
+    ApiMessage: ApiMessage?.toString() ?? ""
+   }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_CMS_BASE_URL}/Api/tracker/BookingWidged`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify( payload ),
+        }
+      );
+      const res = await response?.json();
+
+    //console.log("res BookingWidged",res);
+  }
   const getUserDetails = async (phone) => {
+    
+    let roomsData = ""; 
+  let mappingData =""; 
+  let isCloseData = false;
+  let apiStatusData = ""; 
+  let apiErrorCodeData = "";  
+  let apiMessageData = "";
+  let ctaNameData = "Fetch User Details"; 
+  let apiNameData = "user-details";  
+  let apiUrlData = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/user-details`; 
     try {
       const timestamp = Date.now().toString();
       const secret = "ABDEFGHJKLMOPQRSTUVWXYZ123456789";
@@ -312,7 +522,7 @@ const BookingAndPayment = () => {
         secret
       );
       const res = await fetch(
-        "https://cinbe.cinuniverse.com/api/user-details",
+        `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/user-details`,
         {
           method: "POST",
           headers: {
@@ -323,18 +533,105 @@ const BookingAndPayment = () => {
           body: JSON.stringify({ phone, keyData }),
         }
       );
-      const data = await res?.json();
+      if(!res?.ok){
+      apiStatusData= res?.status;
+      apiErrorCodeData= res?.status;
+      apiMessageData= "Data not found";
+      }
+      else{
+      apiStatusData= res?.status;
+      apiErrorCodeData= res?.status;
+      apiMessageData= "Success";
+        const data = await res?.json();
       return data;
+    }
     } catch (error) {
-      console.error("API call failed:", error); // Will now show in console
+      
+       apiStatusData= error;
+       apiErrorCodeData= "1166";
+       apiMessageData= error;
+      console.error("API call failed:", error); 
+    }finally {
+      setTimeout(() => {
+      postBookingWidged(roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    }, 200);
+    }
+  };
+  
+  const getUserEnrollment = async (phone) => {
+    console.log("selectedRoom",selectedRoom);
+    //const resp = await getUserInfo();
+    let roomsData = ""; 
+  let mappingData =""; 
+  let isCloseData = false;
+  let apiStatusData = ""; 
+  let apiErrorCodeData = "";  
+  let apiMessageData = "";
+  let ctaNameData = "Post User Enrollment"; 
+  let apiNameData = "user-enrollment";  
+  let apiUrlData = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/user-enrollment`; 
+  const payload ={
+    
+    MobileNo: phone?.toString(),
+    PropertyId: selectedPropertyId?.toString(),
+    SessionId: sessionId,
+    Ip: guestInfo?.ip,
+    Room: selectedRoom.map(room => room?.roomName).join(", "),
+    Package: selectedRoom.map(room => room?.roomPackage).join(", ")
+  }
+    try {
+      const timestamp = Date.now().toString();
+      const secret = "ABDEFGHJKLMOPQRSTUVWXYZ123456789";
+      const signature = await createSignature(
+        JSON.stringify(payload),
+        timestamp,
+        secret
+      );
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/user-enrollment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-timestamp": timestamp,
+            "x-signature": signature,
+          },
+          body: JSON.stringify({ payload, keyData }),
+        }
+      );
+      if(!res?.ok){
+      apiStatusData= res?.status;
+      apiErrorCodeData= res?.status;
+      apiMessageData= "Data not found";
+      }
+      else{
+      apiStatusData= res?.status;
+      apiErrorCodeData= res?.status;
+      apiMessageData= "Success";
+        const data = await res?.json();
+      return data;
+    }
+    } catch (error) {
+      
+       apiStatusData= error;
+       apiErrorCodeData= "1166";
+       apiMessageData= error;
+      console.error("API call failed:", error); 
+    }finally {
+      setTimeout(() => {
+      postBookingWidged(roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    }, 200);
     }
   };
   const handlePhoneBlur = async () => {
-    const phone = formData.phone;
-    if (phone.length >= 7) {
+    const phone = formData?.phone;
+    if (phone?.length >= 7) {
       try {
-        const userData = await getUserDetails(parseInt(phone));
-        const result = userData.result[0];
+        //const userData = await getUserDetails(parseInt(phone));
+        const userData = await getUserEnrollment(parseInt(phone));
+        const result = userData?.result?.[0];
 
         setFormData((prev) => ({
           ...prev,
@@ -400,17 +697,30 @@ const BookingAndPayment = () => {
   //   setOpenPayLater(true);
   // };
 
+  function encodeBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
   const generateReservationIdFromAPI = async (selectedPropertyId) => {
+    
+  let roomsData = ""; 
+  let mappingData =""; 
+  let isCloseData = false;
+  let apiStatusData = ""; 
+  let apiErrorCodeData = "";  
+  let apiMessageData = "";
+  let ctaNameData = "Fetch reservation ID"; 
+  let apiNameData = "reservation-id";  
+  let apiUrlData = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/reservation-id`; 
     const timestamp = Date.now().toString();
     const secret = "ABDEFGHJKLMOPQRSTUVWXYZ123456789";
     const signature = await createSignature(
-      selectedPropertyId.toString(),
+      selectedPropertyId?.toString(),
       timestamp,
       secret
     );
 
     const response = await fetch(
-      "https://cinbe.cinuniverse.com/api/reservation-id",
+      `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/reservation-id`,
       {
         method: "POST",
         headers: {
@@ -419,18 +729,35 @@ const BookingAndPayment = () => {
           "x-signature": signature,
         },
         body: JSON.stringify({
-          selectedPropertyId: selectedPropertyId.toString(),
+          selectedPropertyId: selectedPropertyId?.toString(),
           keyData,
         }),
       }
     );
 
     if (!response.ok) {
+      
+      apiStatusData= response?.status;
+      apiErrorCodeData= response?.status;
+      apiMessageData= "Data not found";
+      setTimeout(() => {
+      postBookingWidged(roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    }, 200);
       throw new Error("Reservation ID generation failed");
     }
 
-    const data = await response.json();
+    else{
+      apiStatusData= "0";
+      apiErrorCodeData= "0";
+      apiMessageData= "Success";
+      const data = await response.json();
+      setTimeout(() => {
+      postBookingWidged(roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    }, 200);
     return data.reservation_id;
+  }
   };
   const getLatestRoomRates = async () => {
     // const jsonString = JSON.stringify(payload);
@@ -443,7 +770,7 @@ const BookingAndPayment = () => {
     );
 
     const response = await fetch(
-      "https://cinbe.cinuniverse.com/api/cin-api/rate",
+      `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/cin-api/rate`,
       {
         method: "POST",
         headers: {
@@ -455,7 +782,7 @@ const BookingAndPayment = () => {
           selectedPropertyId,
           fromDate,
           toDate,
-          promoCodeContext,
+          promoCodeContext: promoCodeContext ? promoCodeContext: encodeBase64(defaultOffer),
         }),
       }
     );
@@ -465,19 +792,19 @@ const BookingAndPayment = () => {
     }
 
     const data = await response.json();
-    return await data?.Product[0]?.Rooms;
+    return await data?.Product?.[0]?.Rooms;
   };
 
   const getLatestAddOnsRates = async () => {
     const timestamp = Date.now().toString();
     const secret = "ABDEFGHJKLMOPQRSTUVWXYZ123456789";
     const signature = await createSignature(
-      selectedPropertyId.toString(),
+      selectedPropertyId?.toString(),
       timestamp,
       secret
     );
     const response = await fetch(
-      "https://cinbe.cinuniverse.com/api/cin-api/add-ons",
+      `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/cin-api/add-ons`,
       {
         method: "POST",
         headers: {
@@ -486,7 +813,7 @@ const BookingAndPayment = () => {
           "x-signature": signature,
         },
         body: JSON.stringify({
-          selectedPropertyId: selectedPropertyId.toString(),
+          selectedPropertyId: selectedPropertyId?.toString(),
         }),
       }
     );
@@ -499,81 +826,34 @@ const BookingAndPayment = () => {
   };
 
   const handleJson = async (newReservationId, payment_type) => {
+    
+  let roomsData = selectedRoom; 
+  let mappingData =""; 
+  let isCloseData = false;
+  let apiStatusData = ""; 
+  let apiErrorCodeData = "";  
+  let apiMessageData = "";
+  let ctaNameData = "Post payment request"; 
+  let apiNameData = "th-payment-request";  
+  let apiUrlData = `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/th-payment-request`; 
     try {
-      const latestRoomRates = await getLatestRoomRates();
-      const latestAddOnsRates = await getLatestAddOnsRates();
-      if (!promoCodeContext && promoCodeContext != "") {
-      }
-      // const decoded = atob(promoCodeContext);
-      if (latestRoomRates) {
-        latestRoomRates?.map((room) => {
-          selectedRoom.forEach((r) => {
-            if (
-              r?.roomId == room?.RoomId &&
-              r?.roomRate !=
-                parseInt(
-                  Object.values(room?.RatePlans?.[0]?.Rates || {})[0]?.OBP?.[
-                    "1"
-                  ].RateBeforeTax
-                )
-            ) {
-              window.location.reload();
-            }
-          });
-        });
-      }
-
-      if (latestAddOnsRates) {
-        latestAddOnsRates?.map((addOns) => {
-          selectedAddonList.forEach((r) => {
-            if (
-              r?.AddonId == addOns?.AddonId &&
-              (r?.Rate?.[0]?.INR?.amountAfterTax !=
-                addOns?.Rate?.[0]?.INR?.amountAfterTax ||
-                r?.AdultRate?.[0]?.INR?.amountAfterTax !=
-                  addOns?.AdultRate?.[0]?.INR?.amountAfterTax ||
-                r?.ChildRate?.[0]?.INR?.amountAfterTax !=
-                  addOns?.ChildRate?.[0]?.INR?.amountAfterTax)
-            ) {
-              //setIsRateChange(true);
-              alert("Add-Ons rates have changed. Refreshing to update rates.");
-              window.location.reload();
-            }
-          });
-        });
-      }
       updateUserDetails(formData);
-
-      // sessionStorage.setItem(
-      //   "bookingData",
-      //   JSON.stringify({
-      //     formData,
-      //     totalPrice,
-      //     selectedRoom,
-      //     selectedStartDate,
-      //     selectedEndDate,
-      //     selectedAddonList,
-      //     cancellationPolicyState,
-      //     termsAndConditions,
-      //     property,
-      //   })
-      // );
       const getAddonRateSection = (rateArray, quantity = "0") => {
         const rate =
-          Array.isArray(rateArray) && rateArray.length > 0
-            ? rateArray[0]?.INR
+          Array.isArray(rateArray) && rateArray?.length > 0
+            ? rateArray?.[0]?.INR
             : null;
         return {
           Quantity: quantity,
           AmountAfterTax: (
             parseFloat(rate?.amountAfterTax || "0") * parseInt(quantity)
-          ).toString(),
-          Tax: (parseFloat(rate?.tax || "0") * parseInt(quantity)).toString(),
+          )?.toString(),
+          Tax: (parseFloat(rate?.tax || "0") * parseInt(quantity))?.toString(),
           Taxes: Array.isArray(rate?.taxes)
             ? rate.taxes.map((tx) => ({
                 Amount: (
                   parseFloat(tx?.Amount || "0") * parseInt(quantity)
-                ).toString(),
+                )?.toString(),
                 TaxId: tx?.ID || "0",
                 taxName: tx?.Name || "",
               }))
@@ -596,20 +876,20 @@ const BookingAndPayment = () => {
       const getAddonAmountAfterTax = (addon, room) => {
         const childAmt =
           room.children > 0 && addon?.ChildRate?.[0]?.INR?.amountAfterTax
-            ? parseFloat(addon.ChildRate[0].INR.amountAfterTax) *
+            ? parseFloat(addon?.ChildRate?.[0]?.INR?.amountAfterTax) *
               room.children *
               addon.quantity
             : 0;
 
         const adultAmt =
           addon?.AdultRate?.length && addon?.AdultRate?.[0]?.INR?.amountAfterTax
-            ? parseFloat(addon.AdultRate[0].INR.amountAfterTax) *
+            ? parseFloat(addon?.AdultRate?.[0]?.INR?.amountAfterTax) *
               room.adults *
               addon.quantity
             : 0;
 
         const baseAmt = addon?.Rate?.[0]?.INR?.amountAfterTax
-          ? parseFloat(addon.Rate[0].INR.amountAfterTax) * addon.quantity
+          ? parseFloat(addon?.Rate?.[0]?.INR?.amountAfterTax) * addon.quantity
           : 0;
 
         return childAmt + adultAmt + baseAmt;
@@ -618,14 +898,12 @@ const BookingAndPayment = () => {
       const diff =
         (new Date(selectedEndDate) - new Date(selectedStartDate)) /
         (1000 * 60 * 60 * 24);
-      const totalTax = Object.entries(selectedTaxList || {})
-        .filter(([key]) => key !== "ExtraAdultRate" && key !== "ExtraChildRate")
-        .reduce((sum, [_, value]) => sum + parseFloat(value || "0"), 0);
+      const totalTax = Object.entries(selectedTaxList || {})?.filter(([key]) => key !== "ExtraAdultRate" && key !== "ExtraChildRate")
+        ?.reduce((sum, [_, value]) => sum + parseFloat(value || "0"), 0);
 
-      const taxSum = roomTaxes
-        .flatMap((tax) =>
+      const taxSum = roomTaxes?.flatMap((tax) =>
           Object.entries(tax)
-            .filter(
+            ?.filter(
               ([key]) =>
                 ![
                   "ExtraAdultRate",
@@ -654,7 +932,7 @@ const BookingAndPayment = () => {
               totalamountaftertax: totalPrice?.toString(),
               totaltax: (
                 parseFloat(taxSum) + parseFloat(addonTaxTotal)
-              ).toString(),
+              )?.toString(),
               promocode:
                 promoCodeContext && promoCodeContext != ""
                   ? atob(promoCodeContext)
@@ -690,7 +968,7 @@ const BookingAndPayment = () => {
                   : payLaterData?.cvv?.toString(),
                 PaymentRefenceId: Math.floor(
                   Math.random() * 1000000000
-                ).toString(),
+                )?.toString(),
               },
               room: selectedRoom?.map((room) => ({
                 arrival_date: new Date(selectedStartDate)
@@ -720,19 +998,19 @@ const BookingAndPayment = () => {
                     extraGuests: {
                       extraAdult:
                         room.adults > room.applicableAdults
-                          ? (room.adults - room.applicableAdults).toString()
+                          ? (room.adults - room.applicableAdults)?.toString()
                           : "0",
                       extraChild: (room.children > room?.applicableChild
                         ? room?.children - room?.applicableChild
                         : 0
-                      ).toString(),
+                      )?.toString(),
                       extraAdultRate:
-                        room.adults > room.applicableGuest
-                          ? room.adultRate.toString()
+                        room?.adults > room?.applicableGuest
+                          ? room?.adultRate?.toString()
                           : "0",
                       extraChildRate:
                         room?.children - room?.applicableChild > 0
-                          ? room.childRate.toString()
+                          ? room.childRate?.toString()
                           : "0",
                     },
                     fees: [
@@ -771,7 +1049,7 @@ const BookingAndPayment = () => {
                                 addon?.AdultRate,
                                 parseInt(
                                   room.adults * parseInt(addon?.quantity)
-                                ).toString() || "0"
+                                )?.toString() || "0"
                               ),
                             }
                           : {}),
@@ -781,7 +1059,7 @@ const BookingAndPayment = () => {
                                 addon?.ChildRate,
                                 parseInt(
                                   room.children * parseInt(addon?.quantity)
-                                ).toString() || "0"
+                                )?.toString() || "0"
                               ),
                             }
                           : {}),
@@ -789,20 +1067,17 @@ const BookingAndPayment = () => {
                           ? {
                               Base: getAddonRateSection(
                                 addon?.Rate,
-                                addon?.quantity.toString() || "0"
+                                addon?.quantity?.toString() || "0"
                               ),
                             }
                           : {}),
                       })),
                   })
                 ),
-                taxes: roomTaxes
-                  .filter(
-                    (tax) => tax?.RateId === room.rateId && tax?.Id === room.id
-                  )
-                  .flatMap((tax) =>
-                    Object.entries(tax)
-                      .filter(
+                taxes: roomTaxes?.filter(
+                    (tax) => tax?.RateId === room?.rateId && tax?.Id === room?.id
+                  )?.flatMap((tax) =>
+                    Object.entries(tax)?.filter(
                         ([key]) =>
                           key !== "ExtraAdultRate" &&
                           key !== "ExtraChildRate" &&
@@ -816,7 +1091,7 @@ const BookingAndPayment = () => {
                         name: key,
                         value: (
                           (parseFloat(value) || 0) * parseInt(diff)
-                        ).toString(),
+                        )?.toString(),
                       }))
                   ),
                 amountaftertax: (
@@ -847,7 +1122,7 @@ const BookingAndPayment = () => {
                       let childAddonRate =
                         room?.children > 0 &&
                         addon?.ChildRate?.[0]?.INR?.amountAfterTax
-                          ? parseFloat(addon.ChildRate[0].INR.amountAfterTax)
+                          ? parseFloat(addon?.ChildRate?.[0]?.INR?.amountAfterTax)
                           : 0;
 
                       let addonRate = 0;
@@ -899,17 +1174,17 @@ const BookingAndPayment = () => {
         formData,
         totalPrice,
         selectedRoom: selectedRoom.map((room) => ({
-          roomName: room.roomName,
-          roomId: room.roomId,
-          roomImage: room.roomImage,
-          roomPackage: room.roomPackage,
-          adults: room.adults,
-          children: room.children,
+          roomName: room?.roomName,
+          roomId: room?.roomId,
+          roomImage: room?.roomImage,
+          roomPackage: room?.roomPackage,
+          adults: room?.adults,
+          children: room?.children,
         })),
         selectedStartDate,
         selectedEndDate,
-        selectedAddonList: selectedAddonList.map((addon) => ({
-          AddonName: addon.AddonName,
+        selectedAddonList: selectedAddonList?.map((addon) => ({
+          AddonName: addon?.AddonName,
         })),
         cancellationPolicyState,
         termsAndConditions,
@@ -924,9 +1199,9 @@ const BookingAndPayment = () => {
         property_id: selectedPropertyId.toString(),
         property_name: property?.PropertyName,
         property_tel: selectedPropertyPhone,
-        cust_name: `${formData.firstName} ${formData.lastName}`,
-        cust_email: formData.email,
-        cust_phone: formData.phone,
+        cust_name: `${formData?.firstName} ${formData?.lastName}`,
+        cust_email: formData?.email,
+        cust_phone: formData?.phone,
         cust_address: "N/A",
         cust_city: "N/A",
         cust_state: "N/A",
@@ -937,6 +1212,10 @@ const BookingAndPayment = () => {
         currency: "INR",
         BookingDetailsJson: bookingData,
         ReservationJson: JSON.stringify(payload),
+        SessionId: sessionId,
+        Ip: guestInfo?.ip,
+        Room: selectedRoom.map(room => room?.roomName).join(", "),
+        Package: selectedRoom.map(room => room?.roomPackage).join(", ")
       };
       const jsonString = JSON.stringify(payload);
 
@@ -949,7 +1228,7 @@ const BookingAndPayment = () => {
       );
 
       const resp = await fetch(
-        "https://cinbe.cinuniverse.com/api/th-payment-request",
+        `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/th-payment-request`,
         {
           method: "POST",
           headers: {
@@ -960,24 +1239,66 @@ const BookingAndPayment = () => {
           body: JSON.stringify({ finalRequestData2, keyData }),
         }
       );
+      
+    if (!resp.ok) {
+      apiStatusData= resp?.status;
+      apiErrorCodeData= resp?.status;
+      apiMessageData= "Data not found";
+      throw new Error("Reservation ID generation failed");
+    }
+    else{
       const data = await resp.json();
+      apiStatusData= resp?.status;
+      apiErrorCodeData= resp?.status;
+      apiMessageData= "Success";
       return data;
+    }
     } catch (err) {
+       apiStatusData= err;
+       apiErrorCodeData= "1166";
+       apiMessageData= err;
       setError(err.message);
+      return err;
+    }finally {
+      setTimeout(() => {
+      postBookingWidged(roomsData,mappingData, isCloseData,ctaNameData, 
+      apiNameData,apiUrlData,apiStatusData,apiErrorCodeData,apiMessageData);
+    }, 200);
+
     }
   };
 
   const handleSubmit = async (e) => {
+   
+  //router.replace("?pay-now");
+  replaceAction("pay-now");
+  window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'virtualPageview',
+      page_path: '/?pay-now',
+      page_location: `${window.location.pathname}/?pay-now`,
+      page_title: 'BE Steps - pay-now Page',
+    });
     e.preventDefault();
+   const isProceedToPay = proceedToPay(selectedRoom);
+    if(isProceedToPay != "success"){
+      
+  postBookingWidged("","", false,isProceedToPay);
+    //setIsLoading(false);
+     return;
+    }
     if (!validateForm()) {
-      const firstError = Object.values(errors)[0];
-      toast.error(firstError, { position: "top-right", autoClose: 3000 });
+      //const firstError = Object.values(errors)[0];
+      //postBookingWidged("","", false,firstError);
+      //toast.error(firstError, { position: "top-right", autoClose: 3000 });
       return;
     }
     setIsLoading(true);
     setError(null);
 
     try {
+      
+      postBookingWidged("","", false,"Pay Now Click");
       const newReservationId = await generateReservationIdFromAPI(
         selectedPropertyId
       );
@@ -988,9 +1309,9 @@ const BookingAndPayment = () => {
           property_id: selectedPropertyId,
           property_name: selectedPropertyName,
           property_tel: selectedPropertyPhone,
-          cust_name: `${formData.firstName} ${formData.lastName}`,
-          cust_email: formData.email,
-          cust_phone: formData.phone,
+          cust_name: `${formData?.firstName} ${formData?.lastName}`,
+          cust_email: formData?.email,
+          cust_phone: formData?.phone,
           cust_address: "N/A",
           cust_city: "N/A",
           cust_state: "N/A",
@@ -1000,18 +1321,74 @@ const BookingAndPayment = () => {
           amount: totalPrice,
           keyData: keyData,
         };
-        setHiddenInputValue(JSON.stringify(finalRequestData));
-        setTimeout(() => {
-          hiddenFormRef.current.submit();
-        }, 100);
+        // setHiddenInputValue(JSON.stringify(finalRequestData));
+         redirectWithPost(JSON.stringify(finalRequestData), keyData);
+           //hiddenFormRef.current.submit();
+          // setTimeout(() => {
+          //   hiddenFormRef.current.submit();
+          // }, 100);
+        
+    //      if(srilankaProperties.includes(parseInt(finalRequestData?.property_id))){
+    //     const responseJson = {        
+    //     amount: "0.0",
+    //     currency: "USD",
+    //     error_msg: "Transaction failed!",
+    //     hash_key:"",
+    //     ipn_flag: "0",
+    //     partner_id: "7",
+    //     pg_transaction_id: "00",
+    //     property_id: finalRequestData?.property_id?.toString(),
+    //     reservation_id: newReservationId?.toString(),
+    //     status: "error",
+    //     status_code: "1111"
+    //     };
+    //     const GuidIdString = {
+    //      GuidIdString: JSON.stringify(responseJson),
+    //    };
+    //     const apiResponse = await fetch(
+    //   // "https://staahbe.cinuniverse.com/GetGuidToken",
+    //   "https://staahbe.cinuniverse.com/GetGuidToken",
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(GuidIdString),
+    //   }
+    // );
+    // if(apiResponse.ok){
+    //    const result = await apiResponse.json();
+    //    const  queryParams = new URLSearchParams({
+    //     tokenKey: result?.result?.[0]?.tokenKey || "",
+    //     status: "success",
+    //     }).toString();
+
+    //    const redirectUrl = `${result?.result?.[0]?.demoLandingUrl}?${queryParams}`;
+    //      window.location.href = redirectUrl;
+    //    }
+
+
+    //      } else {
+    //       setHiddenInputValue(JSON.stringify(finalRequestData));
+    //      setTimeout(() => {
+    //        hiddenFormRef.current.submit();
+    //      }, 100);
+    //     }
       } else {
-        toast.error(data?.errorMessage);
+      postBookingWidged("","", false,data?.errorMessage);
+       // toast.error(data?.errorMessage);
       }
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+      postBookingWidged("","", false,err?.message);
+      setError(err?.message);
+
+    } 
+     finally {
+       
+    setTimeout(()=>{
+    setIsLoading(false);
+    }, 2000);
+     }
   };
 
   const handlePayLaterSubmit = async (dataFromPayLater) => {
@@ -1034,7 +1411,7 @@ const BookingAndPayment = () => {
         //setHiddenInputValue(JSON.stringify(finalRequestData));
         const paymentJson = {
           partner_id: 7,
-          property_id: selectedPropertyId.toString(),
+          property_id: selectedPropertyId?.toString(),
           reservation_id: newReservationId,
           pg_transaction_id: newReservationId,
           status_code: "0000",
@@ -1042,7 +1419,7 @@ const BookingAndPayment = () => {
           error_msg: "paylater",
           hash_key:
             "2dfb397de4e378cbae23a0e112905162ee48gs45j23d32ff214139091ef5e0ef3",
-          amount: totalPrice.toString(),
+          amount: totalPrice?.toString(),
           currency: "INR",
           ipn_flag: "0",
         };
@@ -1070,12 +1447,11 @@ const BookingAndPayment = () => {
       country: matched?.name || "",
     }));
   };
+  
   return (
     <div className="booking-payment-form detail-stepp-for-booking">
       <div className="wizard-step-global-padding">
-        <h4 className="wizard-title-main">Personal Details</h4>
-
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} ref={formRef}>
           {/* User Detail Fields */}
           {/* <div className="mb-3">
             <select
@@ -1111,51 +1487,77 @@ const BookingAndPayment = () => {
               <div className="invalid-feedback">{errors.phone}</div>
             )}
           </div> */}
-          <div className="mb-3 input-group">
-            <select
-              name="countryCode"
-              value={formData.countryCode}
-              onChange={handleCountryChange}
-              className={`form-select ${
-                errors.countryCode ? "is-invalid" : ""
-              }`}
-              style={{ maxWidth: "100px" }}
-            >
-              {/* <option value="">select</option> */}
-              {countryList.map((country) => (
-                <option key={country.name} value={country.code}>
-                  {country.code}
-                </option>
-              ))}
-            </select>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              minLength={7}
-              maxLength={12}
-              onChange={handleChange}
-              onBlur={handlePhoneBlur}
-              className={`form-control ${errors.phone ? "is-invalid" : ""}`}
-              placeholder="Phone Number"
-            />
-          </div>
+     
+        <div className="upper-detail-card">
+           {/* {room?.roomId && room?.roomName && (
+            <>
+            <h4 className="wizard-title-main">{room.roomName}</h4>
+                <div className="d-flex">
+                    <p className="f-12-new d-flex flex-column">
+                        <span className="small">Check In</span>
+                        <span>{formatDate(selectedStartDate)} </span> 
+                      </p>
+                      <p className="f-12-new d-flex flex-column">
+                        <span className="small">Check Out</span>
+                      <span>{formatDate(selectedEndDate)}</span> 
+                      </p>
+                </div>
+            </>
+          )} */}
+              
 
-          <div className="mb-3">
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`form-control ${errors.email ? "is-invalid" : ""}`}
-              placeholder="Email"
-            />
-            {errors.email && (
-              <div className="invalid-feedback">{errors.email}</div>
-            )}
-          </div>
-
-          <div className="mb-3">
+          <div className="row">
+             <div className="col-md-12">
+                  <h4 className="wizard-title-main">Guest Details</h4>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-3 input-group">
+                    <select
+                      name="countryCode"
+                      value={formData.countryCode}
+                      onChange={handleCountryChange}
+                      className={`form-select ${
+                        errors.countryCode ? "is-invalid" : ""
+                      }`}
+                      style={{ maxWidth: "62px" }}
+                    >
+                      {/* <option value="">select</option> */}
+                      {countryList.map((country) => (
+                        <option key={country.name} value={country.code}>
+                          {country.code}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      minLength={7}
+                      maxLength={12}
+                      onChange={handleChange}
+                      onBlur={handlePhoneBlur}
+                      className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+                      placeholder="Phone Number"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="mb-3">
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                        placeholder="Email"
+                      />
+                      {errors.email && (
+                        <div className="invalid-feedback">{errors.email}</div>
+                      )}
+                    </div>
+                </div>
+            <div className="col-md-6">
+               <div className="mb-3">
             <select
               name="title"
               value={formData.title}
@@ -1174,7 +1576,9 @@ const BookingAndPayment = () => {
               <div className="invalid-feedback">{errors.title}</div>
             )}
           </div>
-          <div className="mb-3">
+            </div>
+            <div className="col-md-6">
+               <div className="mb-3">
             <input
               type="text"
               name="firstName"
@@ -1187,8 +1591,9 @@ const BookingAndPayment = () => {
               <div className="invalid-feedback">{errors.firstName}</div>
             )}
           </div>
-
-          <div className="mb-3">
+            </div>
+            <div className="col-md-6">
+              <div className="mb-3">
             <input
               type="text"
               name="lastName"
@@ -1201,6 +1606,9 @@ const BookingAndPayment = () => {
               <div className="invalid-feedback">{errors.lastName}</div>
             )}
           </div>
+            </div>
+            <div className="col-md-6">
+               
           <div className="mb-3">
             <input
               name="gstNumber"
@@ -1210,6 +1618,8 @@ const BookingAndPayment = () => {
               onChange={handleChange}
               className="form-control"
             />
+          </div>
+            </div>
           </div>
 
           <div className="mb-3">
@@ -1221,47 +1631,68 @@ const BookingAndPayment = () => {
               className="form-control"
             ></textarea>
           </div>
-          <div className="form-check mb-3">
-            <input
-              type="checkbox"
-              name="agreeToTerms"
-              checked={formData.agreeToTerms}
-              onChange={handleChange}
-              className={`form-check-input ${
-                errors.agreeToTerms ? "is-invalid" : ""
-              }`}
-            />
-            <label className="form-check-label">
-              I agree to the terms & conditions
-            </label>
-            {errors.agreeToTerms && (
-              <div className="invalid-feedback">{errors.agreeToTerms}</div>
-            )}
-          </div>
-          <div className="wizard-bottom-fixed">
-            <div className="wizard-bottom-fixed-0">
-              <button
-                type="submit"
-                className="btn btn-primary w-100"
-                disabled={isLoading}
-              >
-                {isLoading ? "Processing..." : "Pay Now"}
-              </button>
-            </div>
-          </div>
+
+            <div className="col-md-12">
+                    <div className="form-check mb-3 d-flex align-items-center gap-2">
+                      <input
+                          type="checkbox"
+                          name="agreeToTerms"
+                          checked={formData.agreeToTerms}
+                          onChange={handleChange}
+                          className={`form-check-input ${
+                            errors.agreeToTerms ? "is-invalid" : ""
+                          }`}
+                        />
+                        <label className="form-check-label">
+                          I agree to the <Link target="_blank" href="/privacy-policy">privacy policy</Link>
+                        </label>
+                        {errors.agreeToTerms && (
+                          <div className="invalid-feedback">{errors.agreeToTerms}</div>
+                        )}
+                      </div>
+                </div>
+
+                <div className="wizard-bottom-fixed">
+                  <div className="wizard-bottom-fixed-0">
+                    <button
+                      type="submit"
+                      className="btn btn-success w-100"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Processing..." : "Confirm & Pay"}
+                    </button>
+                  </div>
+                </div>
+
+                <p className="d-flex justify-content-between align-items-center font-bold text-center mt-3 txt-pyment-form">
+                 <span className="d-flex align-items-center justify-content-between gap-2"><SquareCheck size={16} /> Best Price guaranteed</span> 
+                 <span className="d-flex align-items-center justify-content-between gap-2"><ShieldCheck size={18} /> 100% secure payment</span> 
+                 <span className="d-flex align-items-center justify-content-between gap-2"><CalendarCheck size={18} /> Instant Confirmation</span> 
+                </p>
+
+
+
+        
+        </div>
+
+        
+         
+
+
+
         </form>
 
         {error && <div className="alert alert-danger mt-3">Error: {error}</div>}
 
-        <form
+        {/* <form
           method="POST"
-          action="https://cinbe.cinuniverse.com/api/th-payment-redirect"
+          action="https://cindemo.cinuniverse.com/api/th-payment-redirect"
           ref={hiddenFormRef}
           style={{ display: "none" }}
         >
           <input type="hidden" name="paramvalues" value={hiddenInputValue} />
           <input type="hidden" name="keydata" value={keyData} />
-        </form>
+        </form> */}
 
         {/* {isOpenPayLater && (
           <div className="pay-later-pop-up">
@@ -1281,6 +1712,6 @@ const BookingAndPayment = () => {
       </div>
     </div>
   );
-};
+});
 
 export default BookingAndPayment;

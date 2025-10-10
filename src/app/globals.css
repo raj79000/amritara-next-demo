@@ -266,3 +266,171 @@ border-radius: 0;
 text-align: justify;
 font-size: 14px;
 }
+
+@media (max-width:767px){
+  .global-heading {
+    font-size: 25px !important;
+}
+.swiper-slide.swiper-slide-active .child-slider-content {
+    opacity: 1!important;
+    width: 100%!important;
+    margin-top: -35px!important;
+    background-color: #ffffffc9!important;
+    margin-left: 0%!important;
+    margin-bottom: 1rem!important;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding-bottom: 17px!important;
+}
+.child-slider-content .child-slider-content-btm {
+    
+    gap: 6px!important;
+    margin-left: 6px!important;
+}
+.child-slider-content .child-sl-title {
+    font-size: 18px!important;
+}
+.child-sl-btn {
+  
+    padding: 5px 6px!important;
+    font-size: 11px!important;
+}
+.main-parent-slider-experience .child-slider-rel .visit-hotel-nested {
+    padding: 7px 6px!important;
+    font-size: 11px!important;
+    margin-left: 4px!important;
+}
+.right-nested-box .child-sl-price {
+    font-size:12px!important;
+}
+.next-boxx-parent-div {
+    margin-top: 1rem!important;
+}
+
+}
+
+@media (min-width: 768px) {
+
+	.pushed-image {
+		height: 70vh;
+		width: 60% !important;
+	}
+
+	.pushed-content {
+		border-radius: 0px 20px;
+		min-height: 200px;
+		border: 3px solid #225476;
+		box-shadow: 2px 4px 12px 0px rgba(0, 0, 0, 0.42);
+	}
+
+	.pushed-box {
+		position: absolute;
+		left: 55% !important;
+		top: 50% !important;
+		max-width: 45% !important;
+		transform: translateY(-50%);
+	}
+ 
+
+}
+
+
+
+
+.nearbyplaces-table table tbody tr td svg{
+    display:inline-block;
+  }
+  .right-nested-box .child-sl-price {
+    margin-bottom:0!important;
+}
+.main-section-title {
+    z-index: 99;
+}
+@media (max-width:767px){
+  .footer h5{
+        font-size: 1.2rem;
+  }
+  .nearbyplaces-table table tbody tr td svg{
+    display:inline-block;
+  }
+  .roomacomo .winter-box-content {
+   
+    min-height: auto;
+}
+  .pushed-box {
+    padding: 0.3rem;
+}
+   .container-fluid.p-sm-0.padding-mob-0 {
+    padding: 0 !important;
+}
+.untold-stories-hotel-image .main-new-hotel-box .price-show {
+    font-size: 12px!important;
+}
+ .heading-style-1 .global-heading{
+    font-size: 25px !important;
+}
+.career-form {
+    margin-left: 0rem!important;
+}
+.signin-section {
+    padding: 0px!important;
+}
+.signin-card {
+    padding: 30px 11px;
+}
+.signin-tab {
+    
+    padding: 10px 10px;
+    font-size: 0.8rem;
+}
+.signin-select {
+    width: 70px !important;
+}
+.signin-input-group {
+    gap: 0px;
+}
+.signin-checkbox label{
+  font-size:14px;
+  text-align:left;
+}
+.members-main-top-nav {
+    padding: 0rem;
+}
+.right_col .top-nav {
+    padding-left: 0rem;
+    padding-right: 0rem;
+}
+.right_col .top-nav .am-menu .am-link {
+    font-size: 12px;
+}
+.member-data-box-main h1{
+  font-size:20px!important;
+}
+.edit-profile-page-main-sec select[name="MobilePrifix"] { 
+  width: 70px !important; 
+}
+.edit-profile-page-main-sec button[type="submit"] { 
+  padding:7px 10px!important;
+  font-size:12px;
+}
+.edit-profile-page-main-sec button[type="button"] { 
+  padding:7px 10px!important;
+  font-size:12px;
+}
+.member-program-page-main-data .member-data-box-main .card{
+display:block!important;
+}
+.member-program-page-main-data .member-data-box-main p,
+  .member-program-page-main-data .member-data-box-main li{
+  font-size:14px;
+}
+.member-program-page-main-data .member-data-box-main ul{
+  padding-left:0!important;
+}
+.member-program-page-main-data .member-data-box-main .m-text-white,
+.member-program-page-main-data .member-data-box-main .m-text-white p,
+.member-program-page-main-data .member-data-box-main .m-text-white h4{
+color:#fff;
+}
+
+
+}

@@ -81,7 +81,10 @@
     margin-left: 6px;
 }
 .SocialLinkFooter{
-    margin-bottom: 1rem;;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 .socialLink{
     margin-left: 8px;
@@ -89,5 +92,26 @@
 .footerContactData {
     text-align: right;
         margin-top: 4rem;
+
+}
+@media(max-width:767px){
+    .linkstyle2{
+    font-size: 14px;
+}
+.footerLogoD{
+    display:none;
+}
+
+.footerContactData {
+    text-align: left;
+        margin-top: 1rem;
+
+}
+.SocialLinkFooter{
+    justify-content:flex-start;
+    margin-top:1rem;
+}
+
+
 
 }

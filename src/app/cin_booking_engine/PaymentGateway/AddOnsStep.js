@@ -33,6 +33,8 @@ const AddOnsStep = ({ onClose, goNext }) => {
     currentStep,
     isAddOnns,
     setIsAddOnns,
+    isMemberRate,
+    setIsMemberRate,
   } = useBookingEngineContext();
   const [amountToatal, setAmountTotal] = useState(0);
   const [activeRoomIndex, setActiveRoomIndex] = useState(
@@ -263,6 +265,48 @@ const AddOnsStep = ({ onClose, goNext }) => {
         setAmountTotal(totalPrice - parseInt(price));
       }
     }
+    setTimeout(()=>{
+  window.dataLayer = window.dataLayer || [];
+  window._lastBookingContext = window?._lastBookingContext || null;
+
+  // function trackAddonAddToCart({ id, name, price, quantity = 1 }) {
+  //   if (!window._lastBookingContext) {
+  //     console.warn("No booking context found — select a room first!");
+  //     return;
+  //   }
+
+    const { hotelName, roomName, rateName, rateBeforeTax, context } = window?._lastBookingContext;
+
+    window.dataLayer.push({
+      event: "add_to_cart",
+      propertyName: hotelName,
+      selectedStartDate: context?.startDate,
+      selectedEndDate: context?.endDate,
+      totalAdults: context?.adults,
+      totalChildren: context?.children,
+      totalRooms: context?.rooms,
+      promoCode: context?.promoCode || "",
+      rackRate: rateBeforeTax,
+      RateBeforeTax: rateBeforeTax,
+      RoomName: roomName,
+      ecommerce: {
+        currency: "INR",
+        value: price,
+        items: [
+          {
+            item_id: id,
+            item_name: hotelName,     // ✅ Hotel Name (same mapping as room add_to_cart)
+            item_category: roomName,  // ✅ Room Name
+            item_variant: rateName,   // ✅ Rate Plan
+            addon_name: name,         // ✅ Addon name (custom param)
+            price: price,
+            quantity: quantity
+          }
+        ]
+      }
+    });
+  //}
+    })
   };
 
   const getNZDPrice = (addon) => {
@@ -270,29 +314,29 @@ const AddOnsStep = ({ onClose, goNext }) => {
       if (!rateArray || rateArray.length === 0) return null;
       //const nzdRate = rateArray.find((r) => r.NZD)?.NZD;
       const nzdRate = rateArray.find((r) => r.INR)?.INR;
-      return nzdRate ? `${nzdRate.amountAfterTax}` : "0";
+      return nzdRate ? `${nzdRate?.amountAfterTax}` : "0";
     };
 
     return (
-      extractRate(addon.Rate) ||
-      extractRate(addon.AdultRate) ||
-      extractRate(addon.ChildRate) ||
+      extractRate(addon?.Rate) ||
+      extractRate(addon?.AdultRate) ||
+      extractRate(addon?.ChildRate) ||
       "0"
     );
   };
 
   const getAddonUnitPrice = (addon) => {
     const extractRate = (rateArray) => {
-      if (!rateArray || rateArray.length === 0) return null;
+      if (!rateArray || rateArray?.length === 0) return null;
       //const nzdRate = rateArray.find((r) => r.NZD)?.NZD;
       const nzdRate = rateArray.find((r) => r.INR)?.INR;
       return nzdRate ? `${nzdRate.tax}` : "0";
     };
 
     return (
-      extractRate(addon.Rate) ||
-      extractRate(addon.AdultRate) ||
-      extractRate(addon.ChildRate) ||
+      extractRate(addon?.Rate) ||
+      extractRate(addon?.AdultRate) ||
+      extractRate(addon?.ChildRate) ||
       "0"
     );
   };
@@ -303,7 +347,7 @@ const AddOnsStep = ({ onClose, goNext }) => {
         <div className="addon-d-flex">
           <h4 className="wizard-title-main">Add-Ons</h4>
           <p className="f-12-new">
-            Total<b>: {amountToatal}</b>
+            Total<b>: {Math.round(amountToatal)}</b>
           </p>
         </div>
         <div style={{ marginTop: "10px", marginBottom: "15px" }}>
@@ -380,7 +424,7 @@ const AddOnsStep = ({ onClose, goNext }) => {
                       </div>
                       <div className="addon-price-button-end">
                         <p style={{ margin: 0 }} className="f-12-new">
-                          ₹{getNZDPrice(addon)}
+                          INR {getNZDPrice(addon)}
                         </p>
                         {selectedAddOns[activeRoomIndex]?.[addon.AddonId] ? (
                           <div

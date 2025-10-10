@@ -106,7 +106,7 @@ setBannerImages(validImageUrls);
         id={propertyData.propertyId}
         onSubmit={() => {}}
       />
-     <section className="position-relative inner-banner-section-slider">
+     <section className="position-relative inner-banner-section-slider d-none">
           {bannerImages.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination, Autoplay]}
@@ -159,7 +159,7 @@ setBannerImages(validImageUrls);
         </div>
       </section>
 
-      <section className="main-contactus-section-inner pt-5 pb-5">
+      <section className="main-contactus-section-inner inner-no-banner-sec">
         <div className="container">
           <div className="global-heading-sec text-center">
             <div className="row justify-content-center mb-2">

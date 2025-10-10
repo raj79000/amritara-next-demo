@@ -209,7 +209,7 @@ export default function RoomHotelClient() {
       /> */}
       <PropertyMainHeader></PropertyMainHeader>
 
-      <section className="position-relative inner-banner-section-slider">
+      <section className="position-relative inner-banner-section-slider d-none">
       
         {bannerImages.length > 0 ? (
           <Swiper
@@ -294,7 +294,7 @@ export default function RoomHotelClient() {
       </section>
 
 
-      <section className="inner-no-banner-sec-old">
+      <section className="inner-no-banner-sec">
         <div className="container-fluid">
           <div className="winter-sec">
             <div className="row">

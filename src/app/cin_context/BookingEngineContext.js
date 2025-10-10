@@ -31,7 +31,7 @@ export const BookingEngineProvider = ({ children }) => {
   const [selectedTaxList, setSelectedTaxList] = useState([]);
   const [isRoomsChange, setRoomsChange] = useState(false);
 
-  const [rateResponse, setRateResponse] = useState();
+  const [rateResponse, setRateResponse] = useState(null);
   const [addOnsresponse, setAddOnsResponse] = useState();
 
   const [totalRoomPrice, setTotalRoomPrice] = useState(0);
@@ -41,13 +41,24 @@ export const BookingEngineProvider = ({ children }) => {
 
   const [promoCodeContext, setPromoCodeContext] = useState(null);
   const [addonTaxTotal, setAddonTaxTotal] = useState(0);
-  //const [rateresponse, setRateresponse] = useState();
-  // Store user details
 
   const [termsAndConditions, setTermsAndConditions] = useState(null);
   const [property, setProperty] = useState(null);
   const [isAddOnns, setIsAddOnns] = useState(false);
-  const [keyData, setkeyData] = useState("dbKey=Dbconn");
+ // const [keyData, setkeyData] = useState("dbKey=Dbconn");
+ // const [keyData, setkeyData] = useState("dbKey=cinbe_pg");
+  const [keyData, setkeyData] = useState(`dbKey=${process.env.NEXT_PUBLIC_TOKEN_DB_KEY}`);
+  const [isMemberRate, setIsMemberRate] = useState(false);
+  
+    const [defaultOffer, setDefaultOffer] = useState(null);
+    const [isTokenKey, setTokenKey] = useState(false);
+  const [cancellationPolicyPackage, setCancellationPolicyPackage] = useState([]);
+    const [isDateChanged, setIsDateChanged] = useState(false);
+    const [isInventoryAvailable, setInventoryAvailable] = useState(true);
+    
+      const [totalTax, setTotalTax] = useState(0);
+      const [offerTagIndex, setOfferTagIndex] = useState(null);
+      const [storedIndex, setStoredIndex] = useState(null);
   const [userDetails, setUserDetails] = useState({
     title: "",
     firstName: "",
@@ -170,6 +181,16 @@ export const BookingEngineProvider = ({ children }) => {
         setLoggedUserDetails,
         keyData,
         setkeyData,
+        isMemberRate,
+        setIsMemberRate,defaultOffer, setDefaultOffer,
+        isTokenKey, setTokenKey,
+        cancellationPolicyPackage,
+        setCancellationPolicyPackage,
+        isDateChanged, setIsDateChanged,
+        isInventoryAvailable, setInventoryAvailable,
+        totalTax, setTotalTax,
+        offerTagIndex, setOfferTagIndex,
+      storedIndex, setStoredIndex
       }}
     >
       {children}

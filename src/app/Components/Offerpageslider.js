@@ -8,7 +8,7 @@ export default function Offerpagesslider({ offers }) {
 
   return (
     <div className="roomacomo hotellist new-hotel-lists">
-      <div className="row">
+      <div className="row justify-content-center">
         {offers.map((offer, index) => {
     
           const imageUrl =
@@ -21,7 +21,7 @@ export default function Offerpagesslider({ offers }) {
 const text = rawText.replace(/<[^>]+>/g, "");
 
           return (
-            <div key={offer.propertyOfferId || index} className="col-md-6 mb-4">
+            <div key={offer.propertyOfferId || index} className="col-lg-4 mb-4">
               <div className="winter-box hotel-box no-image-bg">
                 <img
                   src={imageUrl}

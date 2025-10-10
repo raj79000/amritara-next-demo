@@ -6,11 +6,15 @@ import '../app/Styles/HeaderStyle.css'
 import '../app/Styles/inner-hero.css'
 import '../app/Styles/style.css'
 import '../app/Styles/styleblog.css'
-import '../app/Styles/globals.css'
+
 import '../app/Styles/responsive.css'
-import "./globals.css";
+
+
 import Footer from './Common/Footer';
 import { AuthProvider } from '@/context/AuthContext';
+import '../app/Styles/globals.css'
+import "./globals.css"
+// import VisitTracker from './Common/VisitTracker';
 
 const elsie = Elsie({
   weight: ['400', '900'],
@@ -36,6 +40,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${elsie.variable} ${montserrat.variable}`}>
       <body>
         <AuthProvider>
+        {/* <VisitTracker /> */}
           {children}
         </AuthProvider>
         <Footer />

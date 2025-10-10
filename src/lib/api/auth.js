@@ -1,8 +1,9 @@
-const BASE_URL = "http://loyaltypulsedemo.ownyourcustomers.in/Members";
+const BASE_URL = `${process.env.NEXT_PUBLIC_MEMBERS_API}/Members`;
 
 const jpost = async (url, body, token) => {
   const headers = { "Content-Type": "application/json" };
   if (token) headers.Authorization = `Bearer ${token}`;
+
 
   // DEV: log what we’re sending so you can confirm the payload
   console.log("[signup/jpost] POST", url, { hasToken: !!token, body });

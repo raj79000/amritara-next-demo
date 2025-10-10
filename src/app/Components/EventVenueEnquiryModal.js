@@ -81,7 +81,7 @@ export default function VenueEventEnquiryModal({
 
     try {
       const response = await fetch(
-        "http://loyaltypulsedemo.ownyourcustomers.in/cmsapi//common/EnquireNow",
+        `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/common/EnquireNow`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

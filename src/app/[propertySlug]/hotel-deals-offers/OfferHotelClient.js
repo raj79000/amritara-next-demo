@@ -14,7 +14,6 @@ import { X } from "lucide-react";
 import PropertyMainHeader from "@/app/Common/PropertyMainHeader";
 
 export default function OfferHotelClient({ propertySlug }) {
-    const [propertyData, setPropertyData] = useState(null);
   const [offers, setOffers] = useState([]);
   const [propertyId, setPropertyId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,107 +30,104 @@ export default function OfferHotelClient({ propertySlug }) {
     openFilterBar(!isOpenFilterBar);
     setShowFilterBar(!showFilterBar);
   };
-  useEffect(() => {
-    if (!propertySlug) return;
 
-    async function fetchData() {
-      setLoading(true);
-      try {
-        // Step 1: Get propertyId
-        const propRes = await fetch(
-          `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`
-        );
-        const propJson = await propRes.json();
-        const property = propJson.data.find(
-          (p) => p.propertySlug?.toLowerCase() === propertySlug.toLowerCase()
-        );
-        const id = property?.propertyId || null;
+useEffect(() => {
+  if (!propertySlug) return;
 
-        const label = property?.cityName;
-        const value = property?.cityId;
-        const property_Id = property?.staahPropertyId;
-        setCityDetails({ label, value, property_Id });
-        setStaahPropertyId(property?.staahPropertyId);
+  async function fetchData() {
+    setLoading(true);
+    try {
+      // Step 1: Get propertyId
+      const propRes = await fetch(
+        `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`
+      );
+      const propJson = await propRes.json();
+      const property = propJson.data.find(
+        (p) => p.propertySlug?.toLowerCase() === propertySlug.toLowerCase()
+      );
+      const id = property?.propertyId || null;
 
-        setPropertyId(id);
+      const label = property?.cityName;
+      const value = property?.cityId;
+      const property_Id = property?.staahPropertyId;
+      setCityDetails({ label, value, property_Id });
+      setStaahPropertyId(property?.staahPropertyId);
 
-        if (!id) {
-          setOffers([]);
-          setLoading(false);
-          return;
-        }
+      setPropertyId(id);
 
-        // ✅ Step 2: Fetch banner images from GetPropertyByFilter
-        const bannerRes = await fetch(
-          `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyByFilter?PropertyId=${id}`
-);
-const bannerJson = await bannerRes.json();
-const fetchedPropertyData = bannerJson?.data?.[0];
-setPropertyData(fetchedPropertyData);
-
-const images = fetchedPropertyData?.images || [];
-const bannerImgs = images
-  .map((img) => img.propertyImage)
-  .filter(Boolean);
-setBannerImages(bannerImgs);
-
-        // Step 3: Fetch offers (optional)
-        const offerRes = await fetch(
-          `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/offers/GetOffersByProperty?propertyId=${id}`
-        );
-        const offerJson = await offerRes.json();
-        const offerData = offerJson?.data?.[0]?.offersInfo || [];
-        setOffers(offerData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      if (!id) {
         setOffers([]);
-      } finally {
+        setBannerImages([]);
         setLoading(false);
+        return;
       }
-    }
 
-    fetchData();
-  }, [propertySlug]);
+      // Step 2: Fetch offers
+      const offerRes = await fetch(
+        `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/offers/GetOffersByProperty?propertyId=${id}`
+      );
+      const offerJson = await offerRes.json();
+      const offerData = offerJson?.data?.[0]?.offersInfo || [];
+      setOffers(offerData);
+
+      // ✅ Collect ALL offer images for banner
+      const offerImgs = offerData
+        .flatMap((offer) => offer.offersImages || []) // flatten nested arrays
+        .map((img) => img.offerImages) // take image path
+        .filter(Boolean); // remove null/empty
+
+      setBannerImages(offerImgs);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setOffers([]);
+      setBannerImages([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchData();
+}, [propertySlug]);
+
 
   if (loading) return <div>Loading offers...</div>;
 
   return (
     <>
-      <PropertyMainHeader></PropertyMainHeader>
+      <PropertyMainHeader />
 
-       <section className="position-relative inner-banner-section-slider">
-          {bannerImages.length > 0 ? (
-            <Swiper
-              modules={[Navigation, Pagination, Autoplay]}
-              navigation
-              autoplay={{ delay: 4000 }}
-              loop
-              className="w-100 slider-banner-inner"
-            >
-              {bannerImages.map((imgUrl, index) => (
-                <SwiperSlide key={index}>
-                  <Image
-                    src={imgUrl}
-                    alt={`Banner ${index + 1}`}
-                    width={1920}
-                    height={1080}
-                    className="w-100 object-cover"
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          ) : (
-            <Image
-              src="/images/banner_img.png"
-              alt="Default Banner"
-              width={1920}
-              height={1080}
-              className="w-100 object-cover"
-            />
-          )}
+      <section className="position-relative inner-banner-section-slider d-none">
+        {bannerImages.length > 0 ? (
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            navigation
+            autoplay={{ delay: 4000 }}
+            loop
+            className="w-100 slider-banner-inner"
+          >
+            {bannerImages.map((imgUrl, index) => (
+              <SwiperSlide key={index}>
+                <Image
+                  src={imgUrl}
+                  alt={`Banner ${index + 1}`}
+                  width={1920}
+                  height={1080}
+                  className="w-100 object-cover"
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <Image
+            src="/images/banner_img.png"
+            alt="Default Banner"
+            width={1920}
+            height={1080}
+            className="w-100 object-cover"
+          />
+        )}
 
         <div className="position-absolute bottom-0 start-0 w-100 bg-white shadow">
-          {/* <BookNowForm /> */}
           <div
             className={`absolute left-1/2 transform -translate-x-1/2 home-page-class`}
             style={{ zIndex: 10 }}
@@ -165,16 +161,12 @@ setBannerImages(bannerImgs);
       </section>
 
       {offers.length > 0 ? (
-        <section className="inner-offer-page-sec pt-5 pb-5">
+        <section className="inner-offer-page-sec inner-no-banner-sec">
           <div className="container">
             <div className="global-heading-sec text-center">
               <div className="row justify-content-center mb-2">
                 <div className="col-md-9 md-offset-1">
                   <h2 className="global-heading">OFFERS</h2>
-                  {/* <p className="mb-2">
-                    Discover exclusive offers tailored just for your perfect
-                    stay.
-                  </p> */}
                 </div>
               </div>
             </div>
@@ -189,11 +181,10 @@ setBannerImages(bannerImgs);
           </div>
         </section>
       ) : (
-        <section className="text-center" style={{marginTop: "50px"}}>
+        <section className="text-center" style={{ marginTop: "50px" }}>
           <p>No offers available for this property at the moment.</p>
         </section>
       )}
-
     </>
   );
 }

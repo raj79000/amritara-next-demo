@@ -1,6 +1,5 @@
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/`;
-// const BASE_URL = "http://loyaltypulsedemo.ownyourcustomers.in/cms/property/";
 
 export async function getAPI(endpoint) {
   try {

@@ -36,7 +36,7 @@ export default function PropertyTestimonials({ propertyId }) {
   }
 
   return (
-    <section className="sec-padding bg-lred" data-aos="fade-up">
+    <section className="sec-padding bg-lred mt-4" data-aos="fade-up">
       <div className="container">
         <div className="global-heading-sec text-center">
           <div className="row justify-content-center mb-0">

@@ -58,124 +58,67 @@ export default function Diningpageslider({ dineData = [] }) {
     alert('Enquiry submitted!');
     handleCloseModal();
   };
+  // Utility to strip HTML tags
+  const stripHtml = (html) => html.replace(/<[^>]+>/g, '');
+
   return (
     <>
-
       <div className="property-inner-zigzag-section">
           <div className="container pushed-wrapper">
-            {filteredHotels.map((hotel, index) => (
-              <div className="row align-items-center position-relative mb-4" key={index}>
-                <div
-                  className="pushed-image col-md-6"
-                  style={{
-                    backgroundImage: `url(${hotel.img || "/amritara-dummy-room.jpeg"
-                      })`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    minHeight: "250px",
-                    backgroundColor: '#f0f0f0',
-                  }}
-                ></div>
-                <div className="pushed-box col-md-6">
-                  <div className="pushed-header">
-                    <span className="header-1">{hotel.title}</span>
-                    <span className="display-block mt-2">
-                    {hotel.text.length > 70 ? (
-                      <>
-                        {expandedIndex === index ? hotel.text : hotel.text.slice(0, 70) + "..."}
-                        <span
-                          onClick={() =>
-                            setExpandedIndex(expandedIndex === index ? null : index)
-                          }
-                          style={{ cursor: 'pointer', color: '#000', fontWeight: '600' }}
-                        >
-                          {expandedIndex === index ? ' ❮❮' : ' ❯❯'}
-                        </span>
-                      </>
-                    ) : (
-                      hotel.text
-                    )}
-                  </span>
+            {filteredHotels.map((hotel, index) => {
+              const cleanText = stripHtml(hotel.text);
+              return (
+                <div className="row align-items-center position-relative mb-4" key={index}>
+                  <div
+                    className="pushed-image col-md-6"
+                    style={{
+                      // backgroundImage: `url(${hotel.img || "/amritara-dummy-room.jpeg"
+                      //   })`,
+                        backgroundImage: `url("${encodeURI(hotel.img || "/amritara-dummy-room.jpeg")}")`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      minHeight: "250px",
+                      backgroundColor: '#f0f0f0',
+                    }}
+                  ></div>
+                  <div className="pushed-box col-md-6">
+                    <div className="pushed-header">
+                      <span className="header-1">{hotel.title}</span>
+                      <span className="display-block mt-2">
+                      {cleanText.length > 70 ? (
+                        <>
+                          {expandedIndex === index ? cleanText : cleanText.slice(0, 70) + "..."}
+                          <span
+                            onClick={() =>
+                              setExpandedIndex(expandedIndex === index ? null : index)
+                            }
+                            style={{ cursor: 'pointer', color: '#000', fontWeight: '600' }}
+                          >
+                            {expandedIndex === index ? ' ❮❮' : ' ❯❯'}
+                          </span>
+                        </>
+                      ) : (
+                        cleanText
+                      )}
+                    </span>
 
-                    <div className="flex mt-3 gap-2">
-                      
-                       <button
-                        className="box-btn book-now"
-                        onClick={() => handleOpenModal(hotel)}
-                      >
-                        Book a Table
-                      </button>
-                      
+                      <div className="flex mt-3 gap-2">
+                        
+                         <button
+                          className="box-btn book-now"
+                          onClick={() => handleOpenModal(hotel)}
+                        >
+                          Book a Table
+                        </button>
+                        
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
       </div>
-
-
-      {/* <div className="roomacomo hotellist new-hotel-lists">
-        <div className='row'>
-          {filteredHotels.map((hotel, index) => (
-            <div key={index} className="col-md-6">
-              <div className='winter-box hotel-box no-image-bg'>
-                <Image
-                  src={hotel.img}
-                  alt={hotel.title}
-                  className="w-100"
-                  width={350}
-                  height={220}
-                  quality={75}
-                />
-                <div className="winter-box-content shadow-sm pt-1">
-                  <h3 className="winter-box-heading text-start">{hotel.title}</h3>
-                  <p className="display-block mt-2">
-                    {hotel.text.length > 70 ? (
-                      <>
-                        {expandedIndex === index ? hotel.text : hotel.text.slice(0, 70) + "..."}
-                        <span
-                          onClick={() =>
-                            setExpandedIndex(expandedIndex === index ? null : index)
-                          }
-                          style={{ cursor: 'pointer', color: '#000', fontWeight: '600' }}
-                        >
-                          {expandedIndex === index ? ' ❮❮' : ' ❯❯'}
-                        </span>
-                      </>
-                    ) : (
-                      hotel.text
-                    )}
-                  </p>
-                  <p className="display-block mt-2">
-                    {(hotel.ohrs || hotel.chrs) && (
-                      <span style={{ fontWeight: 600 }}>Open: </span>
-                    )}
-                    {hotel.ohrs}{(hotel.ohrs || hotel.chrs) && " - "}{hotel.chrs || (hotel.ohrs || "")}
-                  </p>
-                
-                  <div className='hotel-slider-box-content mt-2'>
-                   
-                    <div className="winter-box-btn my-0">
-                      <button
-                        className="box-btn book-now me-0 my-0"
-                        onClick={() => handleOpenModal(hotel)}
-                      >
-                        Book a Table
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredHotels.length === 0 && (
-          <div className="text-center text-gray-500 mt-10">No hotels match your filters.</div>
-        )}
-      </div> */}
-    
 
       {showModal && (
         <div className="modal fade show" tabIndex="-1" style={{ display: 'block', background: 'rgba(0,0,0,0.5)' }}>

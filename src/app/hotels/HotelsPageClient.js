@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Search, X } from "lucide-react";
 import axios from "axios";
 import MainHeader from "../Common/MainHeader";
 import "../Styles/inner-hero.css";
 import Image from "next/image";
+import * as ReactDOM from "react-dom";
+import { getUserInfo } from "../../utilities/userInfo";
+import FilterBar from "@/app/cin_booking_engine/Filterbar";
+import { BookingEngineProvider } from "@/app/cin_context/BookingEngineContext";
 
 const NoImagePlaceholder = "/no_image1.jpg";
 
@@ -15,13 +19,54 @@ export default function HotelsPageClient() {
   const [selectedCity, setSelectedCity] = useState(null);
 
   const [properties, setProperties] = useState([]);
-  const [cityHotels, setCityHotels] = useState([]); 
+  const [cityHotels, setCityHotels] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredHotels, setFilteredHotels] = useState([]);
   const [showAll, setShowAll] = useState(false);
+  const [isOpen, setOpen] = useState(false);
+  const [showFilterBar, setShowFilterBar] = useState(false);
+  const filterBarRef = useRef(null);
 
+  async function postBookingWidged(rooms, mapping, isClose, ctaName, selectedPropertyId) {
+    const resp = await getUserInfo();
+    const sessionId = sessionStorage?.getItem("sessionId");
+    const payload = {
+      ctaName: ctaName,
+      urls: window.location.href,
+      cityId: "0",
+      propertyId: selectedPropertyId?.toString() || "0",
+      checkIn: "",
+      checkOut: "",
+      adults: "0",
+      children: "0",
+      rooms: "0",
+      promoCode: "",
+      ip: resp?.ip,
+      sessionId: sessionId,
+      deviceName: resp?.deviceInfo?.deviceName,
+      deviceType: resp?.deviceInfo?.deviceOS == "Unknown" ? resp?.deviceInfo?.platform : resp?.deviceInfo?.deviceOS,
+      roomsName: rooms?.RoomName,
+      packageName: mapping?.MappingName,
+      isCartOpen: mapping?.MappingName ? "Y" : "N",
+      isCartEdit: "N",
+      isCartClick: "N",
+      isClose: isClose ? "Y" : "N",
+    }
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_BASE_URL}/Api/tracker/BookingWidged`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+    const res = await response?.json();
 
+    //console.log("res BookingWidged",res);
+  }
   const fetchData = async () => {
     try {
       const [cityRes, propertyRes] = await Promise.all([
@@ -73,9 +118,27 @@ export default function HotelsPageClient() {
     setFilteredHotels(filtered);
   }, [cityHotels, searchTerm]);
 
+
+
+  const getOverviewSlug = (p) => {
+    const t = (p?.propertyType ?? "").toString().toLowerCase();
+
+    // if your API sends names:
+    if (t.includes("resort")) return "resort-overview";
+    if (t.includes("hotel")) return "hotel-overview";
+    return "property-overview"; // safe fallback
+  };
+
+  const handleBookNowClick2 = async () => {
+    {
+      postBookingWidged("", "", false, "Widget Open");
+    }
+    setOpen(!isOpen);
+    setShowFilterBar(!showFilterBar);
+  };
   return (
     <>
-      <MainHeader />
+      <MainHeader onClick={handleBookNowClick2} />
 
       {/* Hero Section */}
       <section className="hero-section-inner">
@@ -90,21 +153,40 @@ export default function HotelsPageClient() {
           <source src="/img/amritara-new-banner-video.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+        {/* <div className="hero-bottom-part-ab">
+        <Link href="#" onClick={(e) => {
+              e.preventDefault();
+              handleBookNowClick2();
+            }} className="search-icon-banner">
+          {isOpen ? <X /> :<Search />}
+        </Link>
+      </div>  */}
         <div className="inner-hero-content">
           <div className="text-center">
-            <h2 className="inner-banner-heading">Hotels</h2>
-            <nav aria-label="breadcrumb" className="banner-breadcrumb">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <Link href="/">Home</Link> <ChevronRight />
-                </li>
-                <li className="breadcrumb-item active" aria-current="page">
-                  Hotels
-                </li>
-              </ol>
-            </nav>
+            <Link href="#" onClick={(e) => {
+              e.preventDefault();
+              handleBookNowClick2();
+            }} className="search-icon-banner">
+              {isOpen ? <X /> : <Search />}
+            </Link>
           </div>
         </div>
+
+        {showFilterBar && ReactDOM.createPortal(
+          <section className="filter-bar-hotels-cin">
+            <BookingEngineProvider>
+              <FilterBar
+                selectedProperty={0}
+                openBookingBar={showFilterBar}
+                onClose={() => {
+                  setShowFilterBar(false);
+                  setOpen(false);
+                }}
+              />
+            </BookingEngineProvider>
+          </section>,
+          document.body
+        )}
       </section>
 
       {/* Intro Section */}
@@ -156,15 +238,15 @@ export default function HotelsPageClient() {
                 <div key={hotel.propertyId} className="col-md-6 mb-4">
                   <div className="hotel-card h-100 border-0 ">
                     <div className="hotel-card-body">
-                        <Image
-                            // src={NoImagePlaceholder}
-                            src={hotel?.images?.[0]?.propertyImage || NoImagePlaceholder}
-                            alt={hotel.propertyName}
-                            className="card-img-top"
-                            width={800}
-                            height={250}
-                            style={{ objectFit: "cover" }}
-                        />
+                      <Image
+                        // src={NoImagePlaceholder}
+                        src={hotel?.images?.[0]?.propertyImage || NoImagePlaceholder}
+                        alt={hotel.propertyName}
+                        className="card-img-top"
+                        width={800}
+                        height={250}
+                        style={{ objectFit: "cover" }}
+                      />
                       <h5 className="card-title mt-3">{hotel.propertyName}</h5>
                       <p
                         className="card-text"
@@ -174,29 +256,25 @@ export default function HotelsPageClient() {
                               "No description available") + "...",
                         }}
                       />
-                      <div className="cta-buttons-box">
-                       
-                       <Link
-  href={{
-    pathname: `/${hotel.propertySlug}/hotel-overview`
-    // ,
-    // query: {
-    //   id: hotel.propertyId,
-    //   name: hotel.propertyName,
-    //   slug: hotel.propertySlug, // optional (the path already has it)
-    // },
-  }}
-  className="explore-more-btn"
->
-  Explore More
-</Link>
+                      <div className="hotel-bottom-box-cta-n-content">
+                        <div className="cta-buttons-box">
 
+                          <Link href={{
+                            pathname: `/${hotel.propertySlug}/${getOverviewSlug(hotel)}`,
+                          }}
+                            className="explore-more-btn"
+                          >
+                            Explore More
+                          </Link>
 
-                       
-                        
-                        <Link href="#" className="book-now-btn">
-                          Book Now
-                        </Link>
+                          <Link href="#" className="book-now-btn">
+                            Book Now
+                          </Link>
+                        </div>
+                        <div className="price-content-hotel-boxx">
+                          <p className="price-starts-hotel">Starting From</p>
+                          <p className="price-starts-rate-here">INR <strong>{hotel.staahPropertyPrice}</strong>/Night </p>
+                        </div>
                       </div>
                     </div>
                   </div>

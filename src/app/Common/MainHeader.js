@@ -3,16 +3,16 @@
 import "../Styles/HeaderStyle.css";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Tally2, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-const MainHeader = () => {
+const MainHeader = ({onClick}) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
-
+const filterBarRef = useRef(null);
   const isLoggedIn = !!user;
 
   // Scroll event for navbar background change
@@ -28,6 +28,17 @@ const MainHeader = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
+  const handlePropertyBookNow = async () => {
+    if (filterBarRef.current) {
+      filterBarRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      const firstInput = filterBarRef.current.querySelector("input, select, button");
+      if (firstInput) firstInput.focus();
+    }
+    //handleBookNow();
+    if (typeof onClick === "function") {
+    onClick();
+  }
+  };
   return (
     <>
       <header className="header-section">
@@ -89,7 +100,8 @@ const MainHeader = () => {
 
                   <Link
                     className="me-3 header-btnn-top book-menu-header"
-                    href="/"
+                    href="#"
+                    onClick={handlePropertyBookNow}
                   >
                     Book Now
                   </Link>

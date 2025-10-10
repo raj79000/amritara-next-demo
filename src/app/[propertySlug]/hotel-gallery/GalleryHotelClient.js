@@ -276,14 +276,6 @@ export default function GalleryHotelClient({ propertySlug, id }) {
           <div className="global-heading-sec text-center">
             <h2 className="global-heading">Our Gallery</h2>
           </div>
-
-          {/* {loading ? (
-            <p className="text-center">Loading gallery...</p>
-          ) : galleryData?.length > 0 ? (
-            <HotelGallery galleryData={galleryData} />
-          ) : (
-            <p className="text-center">No gallery data found.</p>
-          )} */}
           <HotelGallery galleryData={galleryData} />
         </div>
       </section>

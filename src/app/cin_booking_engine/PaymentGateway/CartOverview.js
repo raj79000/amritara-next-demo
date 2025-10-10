@@ -53,6 +53,8 @@ const CartOverview = ({ goNext, onClose }) => {
     setRoomTaxes,
     setAddonTaxTotal,
     addonTaxTotal,
+    isMemberRate,
+    setIsMemberRate,
   } = useBookingEngineContext();
 
   const [totalAddOns, setTotalAddOns] = useState(0);
@@ -65,8 +67,8 @@ const CartOverview = ({ goNext, onClose }) => {
   );
   const totalRooms = selectedRooms.length;
   const [selectedRoomId, setSelectedRoomId] = useState(null);
-    const [aisOpen, setaIsOpen] = useState(false);
-    const [aisOpen1, setaIsOpen1] = useState(false);
+  const [aisOpen, setaIsOpen] = useState(false);
+  const [aisOpen1, setaIsOpen1] = useState(false);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [isPropertyVisible, setIsPropertyVisible] = useState(false);
   const [isRoomsVisible, setIsRoomsVisible] = useState(false);
@@ -120,7 +122,7 @@ const CartOverview = ({ goNext, onClose }) => {
   const finalAmount = calculateTotalWithTax();
 
   const fetchRateApi = async () => {
-    const dayRate = rateResponse?.Product?.[0]?.Rooms?.flatMap((room) => {
+    const dayRate = rateResponse?.Rooms?.flatMap((room) => {
       const selectedRooms = selectedRoom.filter(
         (sel) => sel.roomId === room?.RoomId
       );
@@ -140,10 +142,32 @@ const CartOverview = ({ goNext, onClose }) => {
             rm?.rateId === selected?.rateId && rm?.roomId === selected?.roomId
               ? {
                   ...rm,
-                  packageRate:
-                    firstRateObj?.OBP?.[rm.adults.toString()]?.RateBeforeTax,
-                  roomRateWithTax:
-                    firstRateObj?.OBP?.[rm.adults.toString()]?.RateAfterTax,
+                  packageRate: isMemberRate
+                    ? (parseFloat(
+                        firstRateObj?.OBP?.[rm.adults.toString()]?.RateBeforeTax
+                      ) || 0.0) * 0.9
+                    : parseFloat(
+                        firstRateObj?.OBP?.[rm.adults.toString()]?.RateBeforeTax
+                      ) || 0.0,
+                  roomRateWithTax: isMemberRate
+                    ? Math.round(
+                        firstRateObj?.OBP?.[rm.adults.toString()]?.RateBeforeTax
+                      ) +
+                      Math.round(
+                        Math.round(
+                          firstRateObj?.OBP?.[rm.adults.toString()]
+                            ?.RateBeforeTax
+                        ) *
+                          (Math.round(
+                            firstRateObj?.OBP?.[rm.adults.toString()]
+                              ?.RateBeforeTax
+                          ) <= 7500
+                            ? 1.2
+                            : 1.8)
+                      )
+                    : Math.round(
+                        firstRateObj?.OBP?.[rm.adults.toString()]?.RateAfterTax
+                      ),
                   childRate:
                     parseFloat(firstRateObj?.ExtraChildRate?.RateAfterTax) ||
                     0.0,
@@ -198,6 +222,12 @@ const CartOverview = ({ goNext, onClose }) => {
               firstRateObj?.ExtraAdultRate?.RateBeforeTax || 0.0
             );
           }
+          if (isMemberRate) {
+            taxObject["GST2"] = Math.round(
+              selected.packageRate *
+                (selected.packageRate <= 7500 ? 0.12 : 0.18)
+            );
+          }
         }
 
         return {
@@ -220,7 +250,7 @@ const CartOverview = ({ goNext, onClose }) => {
     const fetchPrices = async () => {
       if (!selectedPropertyId && currentStep !== 2) return;
       try {
-        const dayRate = rateResponse?.Product[0]?.Rooms?.map((room) => ({
+        const dayRate = rateResponse?.Rooms?.map((room) => ({
           RoomId: room?.RoomId,
           MinInventory: room?.MinInventory,
           RateAfterTax:
@@ -327,16 +357,28 @@ const CartOverview = ({ goNext, onClose }) => {
             }
 
             setRoomTaxes(updatedRooms);
+            // const taxList = {};
+            // allTaxKeys.forEach((key) => {
+            //   taxList[key] = updatedRooms
+            //     .filter((room) => room !== undefined && room !== null)
+            //     .reduce(
+            //       (acc, room) => acc + (room[key] * numberOfDays || 0),
+            //       0
+            //     );
+            // });
             const taxList = {};
             allTaxKeys.forEach((key) => {
+              // Skip GST2 entirely
+              if (isMemberRate && key === "GST2") return;
+
+              const actualKey = isMemberRate && key === "GST" ? "GST2" : key;
+
               taxList[key] = updatedRooms
                 .filter((room) => room !== undefined && room !== null)
-                .reduce(
-                  (acc, room) => acc + (room[key] * numberOfDays || 0),
-                  0
-                );
+                .reduce((acc, room) => {
+                  return acc + (room[actualKey] * numberOfDays || 0);
+                }, 0);
             });
-
             setTaxList(taxList);
             setSelectedTaxList(taxList);
 
@@ -535,9 +577,9 @@ const CartOverview = ({ goNext, onClose }) => {
     };
 
     return (
-      extractRate(addon.Rate) ||
-      extractRate(addon.AdultRate) ||
-      extractRate(addon.ChildRate) ||
+      extractRate(addon?.Rate) ||
+      extractRate(addon?.AdultRate) ||
+      extractRate(addon?.ChildRate) ||
       "0"
     );
   };
@@ -553,28 +595,28 @@ const CartOverview = ({ goNext, onClose }) => {
                 <div className="accordion-item" key={room?.id || index}>
                   {room?.roomId && room?.roomName ? (
                     <>
-                      {room?.adults + room?.children > room.maxGuest && (
+                      {room?.adults + room?.children > room?.maxGuest && (
                         <div>
                           <p>
                             <span style={{ color: "red" }}>*</span> Maximum{" "}
-                            {room.maxGuest} guests are allowed
+                            {room?.maxGuest} guests are allowed
                           </p>
                         </div>
                       )}
 
-                      {room?.adults > room.maxAdult && (
+                      {room?.adults > room?.maxAdult && (
                         <div>
                           <p>
                             <span style={{ color: "red" }}>*</span> Maximum{" "}
-                            {room.maxAdult} adults are allowed
+                            {room?.maxAdult} adults are allowed
                           </p>
                         </div>
                       )}
-                      {room?.children > room.maxChildren && (
+                      {room?.children > room?.maxChildren && (
                         <div>
                           <p>
                             <span style={{ color: "red" }}>*</span> Maximum{" "}
-                            {room.maxChildren} children are allowed
+                            {room?.maxChildren} children are allowed
                           </p>
                         </div>
                       )}
@@ -610,22 +652,22 @@ const CartOverview = ({ goNext, onClose }) => {
                           <p className="f-12-new mb-0">Room {index + 1} :</p>
                           <p className="total-member-count f-12-new">
                             &nbsp;{" "}
-                            {`${room.adults} Adults, 
-                                      ${room.children} Children,
+                            {`${room?.adults} Adults, 
+                                      ${room?.children} Children,
                                       `}
                           </p>
                         </div>
                       </div>
                       <div className="col-10 p-0">
-                        <h6 className="h6">{room.roomName}</h6>
+                        <h6 className="h6">{room?.roomName}</h6>
                       </div>
 
                       <div className="package-d-flex-new">
                         <p className="f-12-new">{room?.roomPackage} -</p>
                         <h6 className="f-14-new">
-                          ₹
+                          INR{" "}
                           {isFinite(room?.packageRate)
-                            ? parseInt(room?.packageRate)
+                            ? Math.round(room?.packageRate)
                             : 0}
                         </h6>
                       </div>
@@ -840,7 +882,7 @@ const CartOverview = ({ goNext, onClose }) => {
                               style={{ fontWeight: "bold", margin: 0 }}
                               className="f-12-new text-end mt-1"
                             >
-                              ₹{getNZDPrice(addon)}
+                              INR {getNZDPrice(addon)}
                             </p>
                           </div>
                         </div>
@@ -861,56 +903,62 @@ const CartOverview = ({ goNext, onClose }) => {
                 <div className="price-d-flex-tp">
                   <button
                     className="accordion-button1 f-12-new"
-                  onClick={() => setaIsOpen(!aisOpen)}
-                    >
-                      Price {aisOpen ? <ChevronUp size={10}></ChevronUp> : <ChevronDown size={10}></ChevronDown>}
+                    onClick={() => setaIsOpen(!aisOpen)}
+                  >
+                    Price{" "}
+                    {aisOpen ? (
+                      <ChevronUp size={10}></ChevronUp>
+                    ) : (
+                      <ChevronDown size={10}></ChevronDown>
+                    )}
                   </button>
                   {selectedRoom && (
-                    <p className="amount-in-wizard mb-0">₹ {basePrice}</p>
+                    <p className="amount-in-wizard mb-0">
+                      INR {Math.round(basePrice)}
+                    </p>
                   )}
                   {/* {selectedRoom?.length > 0
                               ? selectedRoom.map((room, index) => (
                                 <div className="accordion-item mt-2" key={room?.id || index}>
                                   {room?.roomId && room?.roomName ? (
-                                    <p className="f-12-new">₹{isFinite(room?.packageRate) ? parseInt(room?.packageRate) : 0}</p>
+                                    <p className="f-12-new">INR{isFinite(room?.packageRate) ? parseInt(room?.packageRate) : 0}</p>
                                   ) : null}
                                 </div>
                               ))
                               : null} */}
                 </div>
                 {aisOpen && (
-                <div id="totalAmountCollapse"
-                  className="accordion-collapse1">
-                  {selectedRoom?.length > 0
-                    ? selectedRoom.map((room, index) => (
-                        <div
-                          className="accordion-item1 mt-2"
-                          key={room?.id || index}
-                        >
-                          {room?.roomId && room?.roomName ? (
-                            <>
-                              <p className="f-12-new">Room {index + 1}</p>
+                  <div id="totalAmountCollapse" className="accordion-collapse1">
+                    {selectedRoom?.length > 0
+                      ? selectedRoom.map((room, index) => (
+                          <div
+                            className="accordion-item1 mt-2"
+                            key={room?.id || index}
+                          >
+                            {room?.roomId && room?.roomName ? (
+                              <>
+                                <p className="f-12-new">Room {index + 1}</p>
 
-                              {selectedRoom && (
-                                <div className="new-d-flex-for-room-p">
-                                  <p className="f-12-new">
-                                    {formatDate(selectedStartDate)}
-                                  </p>
-                                  {/* <p className="f-12-new">₹{room?.roomRate}</p> */}
-                                  <h6 className="f-12-new">
-                                    ₹
-                                    {isFinite(room?.packageRate)
-                                      ? parseInt(room?.packageRate)
-                                      : 0}
-                                  </h6>
-                                </div>
-                              )}
-                            </>
-                          ) : null}
-                        </div>
-                      ))
-                    : null}
-                </div>
+                                {selectedRoom && (
+                                  <div className="new-d-flex-for-room-p">
+                                    <p className="f-12-new">
+                                      {formatDate(selectedStartDate)}
+                                    </p>
+                                    {/* <p className="f-12-new">INR{room?.roomRate}</p> */}
+                                    <h6 className="f-12-new">
+                                      INR{" "}
+                                      {isFinite(room?.packageRate)
+                                        ? Math.round(room?.packageRate)
+                                        : 0}
+                                    </h6>
+                                  </div>
+                                )}
+                              </>
+                            ) : null}
+                          </div>
+                        ))
+                      : null}
+                  </div>
                 )}
               </div>
             </div>
@@ -923,43 +971,52 @@ const CartOverview = ({ goNext, onClose }) => {
                   </h5>
                   <button
                     className="accordion-button1 f-12-new"
-                  onClick={() => setaIsOpen1(!aisOpen1)}
-                    >
-                      Taxes & Fees {aisOpen1 ? <ChevronUp size={10}></ChevronUp> : <ChevronDown size={10}></ChevronDown>}
+                    onClick={() => setaIsOpen1(!aisOpen1)}
+                  >
+                    Taxes & Fees{" "}
+                    {aisOpen1 ? (
+                      <ChevronUp size={10}></ChevronUp>
+                    ) : (
+                      <ChevronDown size={10}></ChevronDown>
+                    )}
                   </button>
 
-                    {aisOpen1 && (
-                  <div
-                    id="totalAmountCollapse1"
-                    className="accordion-collapse1">
-                    <div className="accordion-body1">
-                      {selectedRoom && (
-                        <div className="mt-2">
-                          {/* <p className="amount-in-wizard">₹ {children}</p>   */}
-                          {taxList &&
-                            Object.entries(taxList).map(([taxName, taxValue]) =>
-                              parseFloat(taxValue) > 0.0 ? (
-                                <p key={taxName} className="f-12-new">
-                                  {taxName}: ₹ {taxValue}
-                                </p>
-                              ) : null
-                            )}
+                  {aisOpen1 && (
+                    <div
+                      id="totalAmountCollapse1"
+                      className="accordion-collapse1"
+                    >
+                      <div className="accordion-body1">
+                        {selectedRoom && (
+                          <div className="mt-2">
+                            {/* <p className="amount-in-wizard">INR {children}</p>   */}
+                            {taxList &&
+                              Object.entries(taxList).map(
+                                ([taxName, taxValue]) =>
+                                  Math.round(taxValue) > 0.0 ? (
+                                    <p key={taxName} className="f-12-new">
+                                      {taxName}: INR {taxValue}
+                                    </p>
+                                  ) : null
+                              )}
 
-                          {totalAddOns ? (
-                            <p className="f-12-new">
-                              Add-Ons Price: ₹ {totalAddOns.toFixed(2)}
-                            </p>
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      )}
+                            {totalAddOns ? (
+                              <p className="f-12-new">
+                                Add-Ons Price: INR {Math.round(totalAddOns)}
+                              </p>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                    )}
+                  )}
                 </div>
               </div>
-              <p className="amount-in-wizard">₹ {amountToatal} </p>
+              <p className="amount-in-wizard">
+                INR {Math.round(amountToatal)}{" "}
+              </p>
             </div>
 
             {/* <div className="accordion-body my-2 p-0">
@@ -978,7 +1035,7 @@ const CartOverview = ({ goNext, onClose }) => {
         {/* <div className="cancellation-policy">
           <div className="room-flex">
             <p className="f-12-new">Total Amount Payable </p>
-            <p className="f-12-new">₹{amountToatal}
+            <p className="f-12-new">INR{amountToatal}
             </p>
           </div>
           <p className="m-0 inclusive">*Inclusive of Taxes</p>
@@ -994,7 +1051,7 @@ const CartOverview = ({ goNext, onClose }) => {
               data-bs-toggle="modal"
               data-bs-target="#rateDetailsModal-b"
             >
-              read more
+              more info
             </a>
           </span>
         </div>
@@ -1043,19 +1100,19 @@ const CartOverview = ({ goNext, onClose }) => {
                               <h6 className="py-2">{selectedRoom.roomName}</h6>
                               <h6>{selectedRoom.RoomDescription}</h6>
                               <p>
-                                <strong>Base Price:</strong> ₹ {basePrice}
+                                <strong>Base Price:</strong> INR {basePrice}
                               </p>
       
                               {taxList &&
                                 Object.entries(taxList).map(([taxName, taxValue]) => (
                                   parseFloat(taxValue) > 0.0 ? <p key={taxName}>
-                                    <strong>{taxName}:</strong> ₹ {taxValue}
+                                    <strong>{taxName}:</strong> INR {taxValue}
                                   </p>
                                     : null
                                 ))}
       
                               <p>
-                                <strong>Total Price:</strong> ₹ {finalAmount}
+                                <strong>Total Price:</strong> INR {finalAmount}
                               </p>
                               <p>
                                 <strong>Check-in:</strong> {formatDate(selectedStartDate)}

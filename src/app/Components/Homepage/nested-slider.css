@@ -26,10 +26,17 @@
     text-align: center;
     margin-bottom: 20px;
 }
+.no-data-found-slider {
+    height: 65vh;
+    background-color: #e9e9e9;
+    padding-top: 3rem;
+    text-align: center;
+}
 
 .main-child-slider .child-image {
     height: 65vh;
     object-fit: cover;
+    background-color: #e6e6e6;
 }
 .main-child-slider {
     position: relative;
@@ -60,7 +67,7 @@
 .child-slider-content .child-sl-title {
         color: var(--red);
     text-align: left;
-    font-size: 34px;
+    font-size: 26px;
     font-weight: 500;
         margin-top: 0.7rem;
     text-transform: capitalize;
@@ -71,7 +78,20 @@
     margin-left: 5%;
 }
 .child-slider-content .child-slider-content-btm-left {
-    width: 50%;
+    width: 100%;
+}
+.right-nested-box .child-sl-price{
+    font-weight:600!important;
+}
+.right-nested-box {
+    text-align: right;
+}
+.next-boxx-parent-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-right: 1rem;
 }
 .child-slider-content .child-slider-content-btm-right {
     width: 60%;
@@ -104,10 +124,11 @@
     margin-left: 5%;
         margin-bottom: 1rem;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding-bottom: 17px;
 }
 .child-sl-btn{
     outline: none;
-    border: none;
+    border: 1px solid  var(--red);
     background-color: var(--red);
     color: #fff;
     padding: 5px 14px;
@@ -134,4 +155,19 @@
     height: auto;
     font-size: 20px;
     background: #c99f69;
+}
+
+.main-parent-slider-experience .child-slider-rel .nested-no-image {
+    height: 65vh;
+    background-color: #e6e6e6;
+}
+.main-parent-slider-experience .child-slider-rel .visit-hotel-nested{
+border:1px solid var(--brown);
+    background-color: transparent;
+    color: var(--brown);
+    padding: 7px 14px;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-left:10px;
 }

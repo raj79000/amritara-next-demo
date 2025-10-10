@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
 import ZoneTabs from "./ZoneTabs";
 
 async function getZoneList() {
@@ -5,7 +7,14 @@ async function getZoneList() {
   return response.json();
 }
 
-export default async function ZonesList() {
+export default function ZonesList() {
+  const [zoneList, setZoneList] = useState(null);
+  useEffect(()=>{
+    async function fetchData() {
   const data = await getZoneList();
-  return <ZoneTabs zones={data?.data || []} />;
+  setZoneList(data);}
+  fetchData();
+  },[])
+  
+  return <ZoneTabs zones={zoneList?.data || []} />;
 }

@@ -324,6 +324,8 @@ const TierWiseDataTable = () => {
     border-bottom-right-radius: 0.5rem;
 }
 
+
+
 @media (max-width: 767px) {
   .atithyam-benefits table thead th,
     .atithyam-benefits table tr td {

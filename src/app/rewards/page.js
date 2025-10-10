@@ -13,7 +13,9 @@ export const metadata = {
 export default function Rewards() {
   return (
     <>
-    <MainHeader></MainHeader>
+    
+    <AtithyamClient />
+    {/* <MainHeader></MainHeader> */}
 
     {/* <section className="about-us-page section-padding">
         <div className="container">
@@ -24,13 +26,13 @@ export default function Rewards() {
             </div>
         </div>
     </section> */}
-    <section className="rewards-page section-padding" style={{backgroundColor: '#f3efec'}}>
+    {/* <section className="rewards-page section-padding" style={{backgroundColor: '#f3efec'}}>
         <div className="container-fluid">
 
            <AtithyamClient />
             
         </div>
-    </section>
+    </section> */}
     </>
   );
 }

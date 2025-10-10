@@ -1,5 +1,6 @@
 export async function fetchBlogList() {
-  const response = await fetch('https://amritara.cinuniverse.com/blog-lists.php', {
+  
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BLOG_BASE_URL}/blog-lists.php`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -17,7 +18,7 @@ export async function fetchBlogList() {
 }
 
 export async function fetchBlogDetail(slug) {
-  const response = await fetch('https://amritara.cinuniverse.com/blog-detail.php', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BLOG_BASE_URL}/blog-detail.php`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ export async function fetchBlogDetail(slug) {
 }
 
 export async function fetchCategoryBlogs(slug) {
-  const response = await fetch('https://amritara.cinuniverse.com/category-list.php', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BLOG_BASE_URL}/category-list.php`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

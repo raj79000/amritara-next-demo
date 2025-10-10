@@ -5,7 +5,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import axios from "axios";
-import { createSignature } from "../../utilities/signature";
+import { createSignature } from "../../../utilities/signature";
 
 const styles = {
   input: {
@@ -15,7 +15,7 @@ const styles = {
   },
 };
 
-const DatePicker = ({ selectedStartDate, selectedEndDate }) => {
+const DatePicker = ({ selectedStartDate, selectedEndDate , onClose }) => {
   const { setSelectedDates, selectedPropertyId } = useBookingEngineContext();
   const [pricesMap, setPricesMap] = useState({});
   const dateInputRef = useRef(null);
@@ -37,11 +37,15 @@ const DatePicker = ({ selectedStartDate, selectedEndDate }) => {
     return d.toISOString().split("T")[0];
   };
 
-  const fromDate = useMemo(
-    () => formatDateWithOffset(currentDate, 330), // +5:30 = 330 minutes
-    [currentDate]
-  );
-
+  // const fromDate = useMemo(
+  //   () => formatDateWithOffset(currentDate, 330), // +5:30 = 330 minutes
+  //   [currentDate]
+  // );
+const fromDate = useMemo(() => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;   // real Date object
+}, []);
   const toDate = useMemo(
     () => formatDateWithOffset(sixMonthsLater, 330),
     [sixMonthsLater]
@@ -62,7 +66,7 @@ const DatePicker = ({ selectedStartDate, selectedEndDate }) => {
           secret
         );
         const response = await fetch(
-          "https://cinbe.cinuniverse.com/api/cin-api/rate-et",
+          `${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/cin-api/rate-et`,
           {
             method: "POST",
             headers: {
@@ -97,7 +101,8 @@ const DatePicker = ({ selectedStartDate, selectedEndDate }) => {
 
     flatpickrInstanceRef.current = flatpickr(dateInputRef.current, {
       mode: "range",
-      dateFormat: "Y-m-d",
+      //dateFormat: "Y-m-d",
+      dateFormat: "d-m-Y",
       minDate: fromDate,
       showMonths: 1,
       static: true,
@@ -107,12 +112,24 @@ const DatePicker = ({ selectedStartDate, selectedEndDate }) => {
         selectedStartDate && selectedEndDate
           ? [new Date(selectedStartDate), new Date(selectedEndDate)]
           : null,
-      onChange: (selectedDates) => {
+      onChange: (selectedDates, dateStr, fp) => {
+        if (selectedDates.length === 1) {
+      // ✅ When only check-in is selected → restrict checkout date
+      fp.set("minDate", selectedDates[0]);
+    }
         if (selectedDates.length === 2) {
-          const [startDate, endDate] = selectedDates;
+          let [startDate, endDate] = selectedDates;
+          if (
+            startDate &&
+            endDate &&
+            startDate.toDateString() === endDate.toDateString()
+          ) {
+            endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 1);
+            fp.setDate([startDate, endDate], true); // update flatpickr
+          }
           const startDateFormatted = formatDate(startDate);
           const endDateFormatted = formatDate(endDate);
-
           let priceSum = 0;
           const tempDate = new Date(startDate);
           while (tempDate <= endDate) {
@@ -126,6 +143,36 @@ const DatePicker = ({ selectedStartDate, selectedEndDate }) => {
           setSelectedDates(startDateFormatted, endDateFormatted, priceSum);
         }
       },
+  onClose: (selectedDates, dateStr, fp) => {
+    if (selectedDates.length === 1) {
+      // ✅ User closed after only check-in date → auto-assign next day
+      const startDate = selectedDates[0];
+      const checkOutDate = new Date(startDate);
+      checkOutDate.setDate(checkOutDate.getDate() + 1);
+
+      fp.setDate([startDate, checkOutDate], true);
+
+      const startDateFormatted = formatDate(startDate);
+      const endDateFormatted = formatDate(checkOutDate);
+
+      setIsDateChanged(true);
+
+      let priceSum = 0;
+      const tempDate = new Date(startDate);
+      while (tempDate <= checkOutDate) {
+        const dateKey = formatDate(tempDate);
+        if (pricesMap[dateKey]) {
+              priceSum += pricesMap[dateKey];
+            }
+        tempDate.setDate(tempDate.getDate() + 1);
+      }
+
+      setSelectedDates(startDateFormatted, endDateFormatted, priceSum);
+    }
+  },
+      onClose: () => {
+        if (onClose) onClose();  // ✅ notify parent when closed
+      }
     });
 
     flatpickrInstanceRef.current.open();
@@ -158,7 +205,7 @@ const DatePicker = ({ selectedStartDate, selectedEndDate }) => {
         priceTag.style.bottom = "8px";
         priceTag.style.left = "50%";
         priceTag.style.transform = "translateX(-50%)";
-        priceTag.textContent = `₹${price}`;
+        priceTag.textContent = `${price}`;
         dayElem.appendChild(priceTag);
       }
     });

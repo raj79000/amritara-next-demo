@@ -2,14 +2,19 @@
 import "../Styles/HeaderStyle.css";
 import Link from 'next/link';
 import Image from "next/image";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Tally2, X } from 'lucide-react';
 import { useParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const PropertyMainHeader = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+   const [open, setOpen] = useState(false);
     const { brandSlug, propertySlug } = useParams();
+      const { user } = useAuth();
+    const filterBarRef = useRef(null);
+      const isLoggedIn = !!user;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,6 +35,18 @@ const PropertyMainHeader = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+   const handlePropertyBookNow = async () => {
+    if (filterBarRef.current) {
+      filterBarRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      const firstInput = filterBarRef.current.querySelector("input, select, button");
+      if (firstInput) firstInput.focus();
+    }
+    //handleBookNow();
+    if (typeof onClick === "function") {
+    onClick();
+  }
+  };
+
   return (
     <>
     <header className="header-section">
@@ -43,8 +60,8 @@ const PropertyMainHeader = () => {
           <div className="navbarnav" id="navbarNav">
             {/* <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
             </ul> */}
-            <div className="display-flex">
-              <Link className="me-3 header-btnn-top login-menu-header" href="/" >  
+            {/* <div className="display-flex">
+              <Link className="me-3 header-btnn-top login-menu-header" href="/signin" >  
                 Login/Join
               </Link>
               <Link className="me-3 header-btnn-top book-menu-header" href="/" >  
@@ -54,7 +71,60 @@ const PropertyMainHeader = () => {
                 <Tally2 size={20} className="toggle-image-s" />
               </button>
               
-            </div>
+            </div> */}
+            <div className="display-flex">
+                  {isLoggedIn ? (
+                    <>
+                      <div className="dropdown dropdown-for-logged-in-user">
+                        <button
+                          className="dropdown-toggle profile-btnn-top border-0 bg-transparent me-2"
+                          type="button"
+                          onClick={() => setOpen(!open)}
+                          aria-expanded={open}
+                        >
+                          {user?.FirstName ? user.FirstName : "MY ACCOUNT"}
+                        </button>
+                        <ul className={`dropdown-menu ${open ? "show" : ""}`}>
+                          <li>
+                            <Link className="dropdown-item" href="/members/dashboard">
+                             Dashboard
+                            </Link>
+                          </li>
+                          <li>
+                            <Link className="dropdown-item" href="/logout">
+                              Logout
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        className="me-3 header-btnn-top login-menu-header"
+                        href="/signin"
+                      >
+                        Login/Join
+                      </Link>
+                    </>
+                  )}
+
+                  <Link
+                    className="me-3 header-btnn-top book-menu-header"
+                    href="#"
+                    onClick={handlePropertyBookNow}
+                  >
+                    Book Now
+                  </Link>
+
+                  {/* Sidebar Toggle */}
+                  <button
+                    onClick={toggleSidebar}
+                    className="sidebar-toggle border-0 bg-transparent ms-3"
+                  >
+                    <Tally2 size={20} className="toggle-image-s" />
+                  </button>
+                </div>
           </div>
           </div>
         </div>

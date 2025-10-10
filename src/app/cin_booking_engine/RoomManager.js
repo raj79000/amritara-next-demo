@@ -9,6 +9,8 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 
+import { X } from "lucide-react";
+
 const RoomManager = () => {
   const { selectedRooms, setSelectedRooms, setSelectedRoom } =
     useBookingEngineContext();
@@ -113,7 +115,9 @@ const RoomManager = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+        const closeRoomChange = () => {
+    setIsToggled(false);
+  };
   return (
     <div className="mb-3 mb-md-0">
       <div className="book-room my-0">
@@ -151,7 +155,17 @@ const RoomManager = () => {
 
         {isToggled && (
           <div className="roomsDropdown" id="roomsDropdown">
+            
             <div className="card card-body" ref={containerRef}>
+              <div className="position-relative child-room-cross-btn">
+                <div
+                  className="room-manager-close-icon fw-bold text-center rounded shadow-sm"
+                  onClick={closeRoomChange}
+                >
+                  <X size={20} strokeWidth={2} className="pointer-events-none" />{" "}
+                </div>
+              </div>
+              
               {rooms.map((room, index) => (
                 <div key={room.id} className="room mb-3 border-bottom pb-2">
                   <div className="d-flex justify-content-between align-items-start">

@@ -2027,6 +2027,29 @@ button {
   object-fit: cover!important;
 }
 
+
+
+.our-rewards .cards__desktop .card__content .card__advantages{
+  padding-left:0!important;
+}
+
+.our-rewards .cards__desktop .card__content .card__advantages .card__advantage{
+display:flex;
+}
+.reward-join-now-btn {
+          background-color: var(--red);
+          color: #fff;
+          border: none;
+          padding: 8px 20px;
+          border-radius: 0px;
+          font-size: 14px;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          letter-spacing: 1px;
+        }
+
+
 .complete-profile-section{
 padding-top:8rem;
 }

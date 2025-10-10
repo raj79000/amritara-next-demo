@@ -124,7 +124,7 @@ export default function DineHotelClient({ propertySlug }) {
       /> */}
       <PropertyMainHeader></PropertyMainHeader>
 
-      <section className="position-relative inner-banner-section-slider">
+      <section className="position-relative inner-banner-section-slider d-none">
           {bannerImages.length > 0 ? (
             <Swiper
               modules={[Navigation, Pagination, Autoplay]}
@@ -189,7 +189,7 @@ export default function DineHotelClient({ propertySlug }) {
         </div>
       </section>
 
-      <section className="Dining-Inner-Section mt-5">
+      <section className="Dining-Inner-Section inner-no-banner-sec">
         <div className="container">
           <div className="global-heading-sec text-center">
             <div className="row justify-content-center mb-2">

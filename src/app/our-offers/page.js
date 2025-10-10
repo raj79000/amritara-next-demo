@@ -17,7 +17,8 @@ export const metadata = {
 export default function OfferPage() {
   return (
     <>
-    <MainHeader></MainHeader>
+    <OurOffers></OurOffers>
+    {/* <MainHeader></MainHeader>
     <section className="hero-section-inner">
         <video autoPlay loop muted playsInline className="w-100 inner-hero-image" thumbnail="/img/banner-thumbnail.png"
             poster="/img/banner-thumbnail.png"
@@ -25,7 +26,6 @@ export default function OfferPage() {
             <source src="/img/amritara-new-banner-video.mp4" type="video/mp4" />
             Your browser does not support the video tag.
         </video>
-        {/* <Image src="/img/popular-1.jpeg" alt="About Us Hero Image" height={500} width={1500} className="w-100 inner-hero-image" /> */}
         <div className="inner-hero-content">
             <div className="text-center">
                 <h2 className="inner-banner-heading">Our Offers</h2>
@@ -55,7 +55,7 @@ export default function OfferPage() {
               </div>
           </div>
         </div>
-    </section>
+    </section> */}
 
 
     </>

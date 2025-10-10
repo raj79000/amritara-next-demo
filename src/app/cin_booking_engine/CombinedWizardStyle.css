@@ -1,0 +1,561 @@
+.CombinedWizard.active{
+    width: 100%;
+    transition: width 0.3s ease-in-out;
+    overflow-y: scroll;
+}
+.CombinedWizard .side-overlay::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+	background-color: #F5F5F5;
+}
+.CombinedWizard .side-overlay::-webkit-scrollbar {
+	width: 6px;
+	background-color: #000;
+}
+
+.CombinedWizard .nav-sidebar{
+    display: none;
+}
+.CombinedWizard .side-overlay{
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    background: #eee;
+}
+.CombinedWizard .side-overlay .tab-content {
+    position: relative;
+    float: left;
+    width: 65%;
+}
+.CombinedWizard .side-overlay .tab-content.mobile-order-1{
+    width: 33% !important;
+}
+
+.CombinedWizard.wizard-sidebar.active .wizard-bottom-fixed{
+    position: unset!important;
+    width: 100%;
+}
+.CombinedWizard .credit-card-images-for-new-wizard{
+    text-align: center;
+    margin-top: 1rem;
+}
+.CombinedWizard .credit-card-images-for-new-wizard img {
+    display: inline-block;
+    width: 46px;
+    height: auto;
+}
+.CombinedWizard button.modifytext-new-wizard {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: transparent;
+    border: 1px solid #fff;
+    padding: 1px 6px;
+    font-size: 13px;
+    /* font-weight: 600; */
+}
+
+.CombinedWizard .tab-content .accordion .accordion-item .selectedRoomNameInWizard {
+    font-size: 14px;
+    font-weight: 500;
+}
+.CombinedWizard .f-12-new {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 0!important;
+}
+.CombinedWizard .f-14-new{
+    margin-bottom: 0!important;
+}
+.CombinedWizard .tab-content .accordion .accordion-item .h6 {
+    font-size: 14px;
+}
+/* .CombinedWizard .tab-content:nth-child(1) {
+    padding-left: 0;
+    background-color: #000;
+} */
+.CombinedWizard .booking-payment-form form{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+body.CombinedWizard1:before {
+    content: "";
+    position: fixed;
+        background-color: #3e3e3ecc;
+    height: 100vh;
+    width: 100vw;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.CombinedWizard .SelectedRoomTopInNewWWizard {
+    display: flex;
+    width: 100%;
+    align-content: center;
+    gap: 2px;
+        margin: 5px;
+    padding: 10px 0;
+    padding-right: 10px;
+    background-color: #000;
+    cursor: pointer;
+}
+.SelectedRoomTopInNewWWizard .CheckForSelectedRoomInWizard {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 5px 5px 0;
+    color: #fff;
+    margin-right: 8px;
+}
+.CombinedWizard .SelectedRoomTopInNewWWizardCol1 {
+    flex: 0 0 30%;
+    max-width: 30%;
+}
+
+.CombinedWizard .SelectedRoomTopInNewWWizardCol2 {
+    flex: 0 0 55%;
+    max-width: 55%;
+}
+
+.CombinedWizard .SelectedRoomTopInNewWWizardCol3 {
+    flex: 0 0 15%;
+    max-width: 15%;
+    text-align: right;
+}
+
+.CombinedWizard .SelectedRoomTopInNewWWizardCol1 .InWizardSelectedRoomFlex {
+    display: flex;
+    align-items: center;
+}
+.CombinedWizard .SelectedRoomTopInNewWWizardCol1 .InWizardSelectedRoomFlex .f-12-new {
+    font-size: 15px!important;
+    font-weight: 600!important;
+    display: block!important;
+    margin-bottom: 0!important;
+}
+.CombinedWizard .SelectedRoomTopInNewWWizardCol2 .selectedRoomNameInWizard{
+     font-size: 15px!important;
+    font-weight: 600!important;
+    display: block!important;
+    margin-bottom: 0!important;
+}
+.CombinedWizard .SelectedRoomTopInNewWWizardCol2 .package-d-flex-new .f-12-new span{
+font-size: 15px!important;
+    font-weight: 600!important;
+}
+.CombinedWizard .SelectedRoomTopInNewWWizardCol3 .modifytext-new-wizard {
+    font-size: 15px !important;
+    letter-spacing: 0.3px;
+    margin-right: 8px;
+    padding: 6px 10px;
+}
+.CombinedWizard .SelectedRoomTopInNewWWizardCol3 .modifytext-new-wizard svg{
+    height: 14px;
+    width: 14px;
+}
+
+.dark-mode-cart * {
+    color: #fff;
+}
+
+.dark-mode-cart .SelectedRoomTopInNewWWizard .CheckForSelectedRoomInWizard {
+    background-color: #fff;
+}
+
+.dark-mode-cart .SelectedRoomTopInNewWWizard .CheckForSelectedRoomInWizard svg {
+    color: #000 !important;
+}
+
+.dark-mode-cart .SelectedRoomTopInNewWWizard .CheckForSelectedRoomInWizard svg path{
+    color: #000 !important;
+}
+
+/* .dark-cartsection .wizard-step-global-padding {
+    background: #fff;
+    border-radius: 15px;
+    margin: 25px;
+    box-shadow: 0px 1px 6px 5px #dcdcdc;
+} */
+
+.NewTypeWizard .stay-info h4:first-child{
+    border: none !important;
+}
+
+.NewTypeWizard .stay-info .accordion{
+     border: none !important;
+}
+
+.NewTypeWizard .stay-info .accordion-item {
+    border-bottom: 1px solid #c3c3c3;
+}
+
+.NewTypeWizard .cancellation-policy {
+    border: 1px solid #dcdcdc;
+    background: #f3f3f3;
+}
+
+.room-manager-close-icon{
+        width: 28px !important;
+        height: 28px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        top: -5px;
+        right: 0px;
+        background: #000;
+        color: #fff;
+}
+
+.right-card-data .book-room .room-manager-close-icon{
+    margin-left: 15px;
+    width: 20px;
+}
+
+.inner-room-child .room-manager-close-icon{
+    margin: 0 auto;
+    left: 0;
+}
+
+.inner-room-child.position-relative.child-room-cross-btn {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto !important;
+    text-align: center;
+}
+
+.wizard-title-main {
+    padding: 0px !important;
+    margin-bottom: 15px;
+}
+
+.upper-detail-card{
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.personal-details-card{
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.right-card-data{
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    margin-top: 10px;
+}
+
+.accordion-item{
+    box-shadow:none !important
+}
+
+.upper-detail-card p.f-12-new.d-flex.flex-column {
+    margin-right: 100px;
+}
+
+.upper-detail-card:nth-child(n+2) {
+  margin-top: 18px;
+}
+
+.RepeatedRoomItemInTopWizard:not(:first-child){
+  display: none;
+}
+
+/*** step css ***/
+
+.step-circle {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #666;
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+    font-size: 12px;
+}
+
+.step-circle.active {
+  border-color: #d2d2d2;
+  background-color: #acacac;
+  color: #ffffff;
+  margin: 0 auto;
+}
+
+.step-circle.completed {
+  border-color: #000;
+  background-color: #000;
+  color: #fff;
+  margin: 0 auto;
+}
+
+.step-line {
+  position: absolute;
+  top: 14px; /* middle of circle */
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: #eee;
+  z-index: 1;
+}
+
+.step-line.completed {
+  background: #000;
+}
+
+/*** step css ***/
+
+.amount-and-taxes .amount-in-wizard.total-amount-cart{
+    color: oklch(62.7% 0.194 149.214) !important;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.step-wizard-card-section{
+    margin-top: 80px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.repeated-div-property:nth-child(1){
+    padding-top: 0 !important;
+}
+
+.cart-display-desktopss{
+    display: block;
+}
+
+.cart-display-mobile{
+    display: none;
+}
+
+
+.notshowing-indesktop{
+    display: none;
+}
+
+.position-relative.child-room-cross-btn {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.room-manager-close-icon.child-staystep-inner{
+    margin: 0 auto;
+    left: 0;
+    top: -10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 38%;
+}
+
+@media (min-width: 769px){
+    
+    .NewTypeWizard{
+        width: 85%;
+        margin: 0 auto;
+    }
+
+    .position-relative.child-room-cross-btn{
+        height: 18px;
+    }
+}
+
+
+
+@media (max-width: 768px) {
+    .CombinedWizard .SelectedRoomTopInNewWWizardCol1 {
+    flex: 0 0 60%;
+    max-width: 60%;
+}
+ .CombinedWizard .SelectedRoomTopInNewWWizardCol3 {
+    flex: 0 0 40%;
+    max-width: 40%;
+    order: 2;
+    position: absolute;
+    right: 0;
+    top: 10px;
+}
+.CombinedWizard .SelectedRoomTopInNewWWizardCol3 .modifytext-new-wizard {
+    font-size: 12px !important;
+    letter-spacing: 0.1px;
+    margin-right: 8px;
+    padding: 5px 8px;
+}
+    .CombinedWizard .SelectedRoomTopInNewWWizardCol2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        order: 3;
+        margin-top: 10px;
+        padding-left: 10px;
+    }
+    .CombinedWizard .SelectedRoomTopInNewWWizard{
+        display: block!important;
+        position: relative!important;
+    }
+    .CombinedWizard .SelectedRoomTopInNewWWizardCol2 .selectedRoomNameInWizard {
+    font-size: 13px!important;
+    }
+.CombinedWizard .SelectedRoomTopInNewWWizardCol1 .InWizardSelectedRoomFlex .f-12-new {
+    font-size: 13px !important;
+}
+.SelectedRoomTopInNewWWizard .CheckForSelectedRoomInWizard {
+    width: 28px;
+    height: 26px;
+}
+.SelectedRoomTopInNewWWizard .CheckForSelectedRoomInWizard svg{
+     width: 14px;
+    height: 14px;
+}
+.CombinedWizard .SelectedRoomTopInNewWWizardCol2 .package-d-flex-new .f-12-new span{
+font-size: 12px!important;
+    font-weight: 600!important;
+}
+    .CombinedWizard button.modifytext-new-wizard {
+    font-size: 11px;
+}
+    .CombinedWizard.active{
+    width: 100vw!important;
+    max-width: 100vw!important;
+    min-width: 100vw!important;
+}
+.wizard-sidebar.active .side-overlay.isActive{
+    width: 100vw!important;
+    max-width: 100vw!important;
+    min-width: 100vw!important;
+}
+.CombinedWizard .side-overlay .tab-content.mobile-order-1{
+    width: 95%!important;
+    margin: 0 auto;
+}
+
+ .CombinedWizard .side-overlay .tab-content{
+    width: 100%!important;
+}
+
+.step-circle svg {
+    width: 14px;
+}
+
+.CombinedWizard .NewTypeWizard{
+    display: flex;
+    flex-direction: column-reverse;
+    margin-top: 180px;
+}
+.CombinedWizard.wizard-sidebar.active .wizard-bottom-fixed{
+width: 100%!important;
+min-width: 100%!important;
+max-width: 100%!important;
+}
+.CombinedWizard.wizard-sidebar.active .NewTypeWizard .tab-content .accordion-item{
+    padding: 10px 0;
+}
+.CombinedWizard .f-12-new {
+    font-size: 12px;
+}
+.CombinedWizard .f-14-new{
+    margin-bottom: 0!important;
+}
+.CombinedWizard .tab-content .accordion .accordion-item .h6 {
+    font-size: 12px;
+}
+
+.stepper-wizard{
+    width: 100% !important;
+}
+
+.cart-display-desktopss{
+    display: none;
+}
+
+.CombinedWizard #room-details .SelectedRoomTopInNewWWizardCol1 {
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .step-wizard-card-section{
+        margin-top: 68px;
+        margin-bottom: 0;
+        padding-bottom: 0px;
+        border-bottom: 1px solid #f4f4f4;
+        box-shadow: 3px 3px 2px #ccc;
+        border-top: 1px solid #ccc;
+        padding-top: 7px;
+    }
+
+        .cart-display-mobile{
+            display: block;
+        }
+
+        .notshowing-indesktop{
+            display: block;
+        }
+
+        .child-room-cross-btn{
+            height: 28px;
+            position: fixed !important;
+            right: 0;
+            margin: 0 auto;
+            text-align: center;
+            left: 0;
+            display: flex;
+            width: 100%;
+            text-align: right;
+            justify-content: flex-end;
+        }
+
+.room-manager-close-icon {
+        width: 28px !important;
+        height: 28px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        top: -14px;
+        left: -24px;
+        right: 0;
+        margin: 0 auto;
+        background: #000;
+        color: #fff;
+    }
+
+    .priceText span.text-green-600.font-bold{
+        font-size: 18px !important;
+    }
+
+    .align-mobile-set {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+     .align-mobile-set .room-type-single{
+        margin-top: 0;
+     }
+
+     .align-mobile-set .mobile-hidden-text1{
+        padding: 0 !important;
+     }
+
+
+}

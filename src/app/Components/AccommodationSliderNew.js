@@ -75,7 +75,7 @@ export default function AccommodationSliderNew({
       <div className="global-heading-sec text-center">
         <div className="container">
           <h2 className="global-heading pt-4">{bannerData.title}</h2>
-          <p className="mb-2 whitespace-pre-line">
+          {/* <p className="mb-2 whitespace-pre-line">
             {bannerData?.desc?.length > 150 ? (
               <>
                 {showFullText
@@ -95,7 +95,7 @@ export default function AccommodationSliderNew({
             ) : (
               bannerData?.desc
             )}
-          </p>
+          </p> */}
         </div>
       </div>
 
@@ -103,7 +103,7 @@ export default function AccommodationSliderNew({
           <div className="container pushed-wrapper">
             {rooms.map((room, idx) => (
               <div className="row align-items-center position-relative mb-4" key={idx}>
-                <div
+                {/* <div
                   className="pushed-image col-md-6"
                   style={{
                     backgroundImage: `url(${room.roomImages?.[0]?.roomImage || "/amritara-dummy-room.jpeg"
@@ -113,7 +113,20 @@ export default function AccommodationSliderNew({
                     minHeight: "250px",
                     backgroundColor: '#f0f0f0',
                   }}
+                ></div> */}
+                <div
+                  className="pushed-image col-md-6"
+                  style={{
+                    backgroundImage: `url("${encodeURI(
+                      room.roomImages?.[0]?.roomImage || "/amritara-dummy-room.jpeg"
+                    )}")`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    minHeight: "250px",
+                    backgroundColor: "#f0f0f0",
+                  }}
                 ></div>
+
                 <div className="pushed-box col-md-6">
                   <div className="pushed-header">
                     <span className="header-1">{room.roomName}</span>

@@ -47,7 +47,7 @@ font-size:14px!important;
   background-color:#c99e66!important;
 }
 .edit-profile-page-main-sec{
-  padding-top:6rem!important;
+  padding-top:1rem!important;
   padding-bottom:3rem;
 }
 .edit-profile-page-main-sec .card .card-body{
@@ -152,7 +152,17 @@ font-size:14px!important;
 }
 
 .inner-no-banner-sec {
-	margin-top: 12rem;
+	margin-top: 9rem;
+}
+.pswp__img {
+  opacity: 1 !important;
+  visibility: visible !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  background: none !important;
 }
 
 .property-book-now-header {
@@ -341,26 +351,149 @@ input#agree1 {
 }
 
 
-
-@media (min-width: 768px) {
-
-	.pushed-image {
-		height: 70vh;
-		width: 60% !important;
-	}
-
-	.pushed-content {
-		border-radius: 0px 20px;
-		min-height: 200px;
-		border: 3px solid #225476;
-		box-shadow: 2px 4px 12px 0px rgba(0, 0, 0, 0.42);
-	}
-
-	.pushed-box {
-		position: absolute;
-		left: 55% !important;
-		top: 50% !important;
-		max-width: 45% !important;
-		transform: translateY(-50%);
-	}
+.right_col .top-nav {
+    display: flex;
+    list-style: none;
+    background-color: #c99e66 !important;
+    gap: 0px;
+    border-radius: 10px;
+    padding: 0px;
+    justify-content: space-between;
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
+.right_col .top-nav .am-link.am-active {
+        background-color: #fff;
+    border-radius: 10px 10px 0 0 !important;
+    color: #000 !important;
+    border: 2px solid #c99e66;
+    border-bottom: none;
+}
+.contact-info-members p{
+  margin-bottom:10px!important;
+}
+.contact-info-members p strong{
+  font-weight:600!important;
+}
+.missing-stays-form {
+    padding: 1rem;
+    background-color: #c99e66;
+    border-radius: 10px;
+}
+.right_col .top-nav .am-menu .am-link {
+    display: block;
+    text-decoration: none;
+    border: 1px soild #f0f0f0;
+       padding: 15px 10px;
+    color: #fff;
+    border-radius: 0px;
+    font-size: 14px;
+    position:relative;
+}
+.progress-card-for-member {
+    background-color: #c99e66;
+    margin-top: 1rem !important;
+}
+.progress-card-for-member p,
+.progress-card-for-member h5{
+  color:#fff;
+}
+.untold-stories-hotel-image img{
+  height:250px!important;
+  object-fit:cover!important;
+}
+.untold-stories-hotel-image .no-image-bg {
+    background-color: #f0f0f0 !important;
+    min-height: 250px!important;
+}
+.hero-section img,
+.hero-section video{
+height:100vh!important;
+object-fit:cover;
+}
+
+.main-dashboard-page .progress{
+  height:15px!important;
+  border-radius:20px;
+}
+.main-dashboard-page .progress .bg-success {
+    background-color: #7e2b13 !important;
+}
+ .top-nav .am-link.am-active:after{
+  position:absolute;
+  bottom:0;
+  border-bottom:10px solid #f00;
+  left:50%;
+  transform:translateX(-50%);
+}
+ .top-nav .am-menu:has(.am-active):after{
+  position:absolute;
+  bottom:0;
+  border-bottom:10px solid #f00;
+  left:50%;
+  transform:translateX(-50%);
+}
+ .top-nav .am-menu:has(.am-active):before{
+  position:absolute;
+  bottom:0;
+  border-bottom:10px solid #f00;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.tonexttirertext{
+  margin-bottom:10px!important;
+}
+.tonexttirertext b,
+.tonexttirertext strong{
+font-weight:600!important;
+}
+.members-main-top-nav {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    padding: 1rem;
+}
+.hotel-bottom-box-cta-n-content {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    align-items: center;
+}
+.hotel-bottom-box-cta-n-content .price-starts-hotel{
+margin-bottom:0!important;
+}
+.hotel-bottom-box-cta-n-content .price-starts-rate-here{
+  margin-bottom:0!important;
+}
+.hotel-bottom-box-cta-n-content .price-starts-rate-here strong{
+  font-weight:600!important;
+}
+.hotel-bottom-box-cta-n-content .price-content-hotel-boxx{
+  text-align:right;
+}
+@media (max-width: 1199.98px) {
+    .right_col .top-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+        .right_col .top-nav .am-menu {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+}
+@media only screen and (max-width: 991.98px) {
+    .right_col .top-nav .am-menu .am-link {
+        display: inline-flex;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: keep-all;
+        min-width: 0;
+    }
+}
+
+
+
+
+
+

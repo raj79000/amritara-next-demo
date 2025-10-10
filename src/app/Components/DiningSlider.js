@@ -91,6 +91,9 @@ const DiningSlider = ({ propertyId, hotelName }) => {
 
 // if (loading) return <p>Loading...</p>;
 // if (!slides.length) return null;
+  if (slides.length === 0) {
+    return null;
+  }
 
 const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
 
@@ -101,9 +104,8 @@ const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
             <div className="row justify-content-center mb-4">
               <div className="col-md-9">
                 <div className="global-heading-sec text-center">
-                <h2 className="global-heading pt-4">{bannerData.title || "Dining"}</h2>
-                {bannerData.desc && (
-                      // <p className="mb-2">{bannerData.desc}</p>
+                <h2 className="global-heading pt-5">{bannerData.title || "Dining"}</h2>
+                {/* {bannerData.desc && (
                       <p className="mb-2 whitespace-pre-line">
                             {bannerData?.desc.length > 150 ? (
                               <>
@@ -125,7 +127,7 @@ const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
                               bannerData?.desc
                             )}
                           </p>
-                    )}
+                    )} */}
               </div>
             </div>
             <div className="winter-sec">
@@ -143,7 +145,9 @@ const stripHtml = (html) => html.replace(/<[^>]+>/g, "");
                           <div className="row">
                             <div
                               className="pushed-image"
-                              style={{ backgroundImage: `url(${slide.thumb})`, backgroundColor: '#f0f0f0' }}
+                              style={{ backgroundImage: `url("${encodeURI(slide.thumb || "/amritara-dummy-room.jpeg")}")`, backgroundColor: '#f0f0f0' }}
+
+                              
                             ></div>
                             <div className="pushed-box">
                               <div className="pushed-header">

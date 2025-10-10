@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useBookingEngineContext } from "../../cin_context/BookingEngineContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHouse,
+  faHouse,faCutlery,faPuzzlePiece,
   faFileLines,
   faCreditCard,
   faCheckCircle,
@@ -41,19 +41,23 @@ const WizardSidebar = ({ isVisible, onClose, status }) => {
     currentStep,
     setCurrentStep,
     addonList,
+    isMemberRate,
+    setIsMemberRate,isTokenKey, setTokenKey
   } = useBookingEngineContext();
-  const totalAdults = selectedRooms.reduce((sum, room) => sum + room.adults, 0);
+  const totalAdults = selectedRooms.reduce((sum, room) => sum + room?.adults, 0);
   const totalChildren = selectedRooms.reduce(
-    (sum, room) => sum + room.children,
+    (sum, room) => sum + room?.children,
     0
   );
-  const totalRooms = selectedRooms.length;
+  const totalRooms = selectedRooms?.length;
   const [steps, setsteps] = useState([
     { title: "Stay", icon: <FontAwesomeIcon icon={faHouse} /> },
-    ...(addonList?.length > 0
-      ? [{ title: "AddOns", icon: <FontAwesomeIcon icon={faHouse} /> }]
-      : []),
-    { title: "Overview", icon: <FontAwesomeIcon icon={faFileLines} /> },
+    // ...(addonList?.length > 0
+    //   ? [{ title: "AddOns", icon: <FontAwesomeIcon icon={faPuzzlePiece} /> },
+    //     { title: "Overview", icon: <FontAwesomeIcon icon={faFileLines} /> }
+    //   ]
+    //   : []),
+    
     { title: "Detail", icon: <FontAwesomeIcon icon={faCreditCard} /> },
     { title: "Confirm", icon: <FontAwesomeIcon icon={faCheckCircle} /> },
   ]);
@@ -76,10 +80,11 @@ const WizardSidebar = ({ isVisible, onClose, status }) => {
   useEffect(() => {
     setsteps([
       { title: "Stay", icon: <FontAwesomeIcon icon={faHouse} /> },
-      ...(addonList?.length > 0
-        ? [{ title: "AddOns", icon: <FontAwesomeIcon icon={faHouse} /> }]
-        : []),
-      { title: "Overview", icon: <FontAwesomeIcon icon={faFileLines} /> },
+      // ...(addonList?.length > 0
+      //   ? [{ title: "AddOns", icon: <FontAwesomeIcon icon={faPuzzlePiece} /> },
+      //   { title: "Overview", icon: <FontAwesomeIcon icon={faFileLines} /> }
+      // ]
+      //   : []),
       { title: "Detail", icon: <FontAwesomeIcon icon={faCreditCard} /> },
       { title: "Confirm", icon: <FontAwesomeIcon icon={faCheckCircle} /> },
     ]);
@@ -93,10 +98,8 @@ const WizardSidebar = ({ isVisible, onClose, status }) => {
     if (!isVisible) return;
     const storedData = sessionStorage?.getItem("bookingData");
     const responseData = sessionStorage.getItem("paymentResponse");
-    console.log("responseData Wizard", responseData);
     if (!storedData && !responseData) {
       sessionStorage.removeItem("paymentResponse");
-      console.log("stored bookingData Wizard", storedData);
       setCurrentStep(0);
     }
     let timeout;
@@ -105,24 +108,25 @@ const WizardSidebar = ({ isVisible, onClose, status }) => {
     const resetTimer = () => {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
-        const confirmRefresh = window.confirm(
-          "Session expired due to inactivity."
-        );
-        if (confirmRefresh) {
-          //window.location.reload();
-          window.location.href = "/";
-        }
-      }, 10 * 60 * 1000); // 2 minutes
+        alert("Session expired due to inactivity.");
+        // const confirmRefresh = window.confirm(
+        //   "Session expired due to inactivity."
+        // );
+        // if (confirmRefresh) {
+        //   //window.location.reload();
+        //   window.location.href = "/";
+        // }
+        window.location.href = "/";
+      }, 10 * 60 * 1000); 
     };
 
     events.forEach((event) => window.addEventListener(event, resetTimer));
     resetTimer();
 
     if (storedData || responseData) {
-      console.log("stored bookingData Wizard2", storedData);
       setsteps([
         { title: "Stay", icon: <FontAwesomeIcon icon={faHouse} /> },
-        { title: "AddOns", icon: <FontAwesomeIcon icon={faHouse} /> },
+        { title: "AddOns", icon: <FontAwesomeIcon icon={faPuzzlePiece} /> },
         { title: "Overview", icon: <FontAwesomeIcon icon={faFileLines} /> },
         { title: "Detail", icon: <FontAwesomeIcon icon={faCreditCard} /> },
         { title: "Confirm", icon: <FontAwesomeIcon icon={faCheckCircle} /> },
@@ -166,26 +170,26 @@ const WizardSidebar = ({ isVisible, onClose, status }) => {
         }
         return true;
 
-      case 1: // Add-Ons step
-        if (!selectedRoom || !selectedStartDate || !selectedEndDate) {
-          toast.error("Please select a room and dates.", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-          return false;
-        }
-        return true;
-      case 2: // Overview step
-        if (!selectedRoom || !selectedStartDate || !selectedEndDate) {
-          toast.error("Please select a room and dates.", {
-            position: "top-right",
-            autoClose: 3000,
-          });
-          return false;
-        }
-        return true;
+      // case 1: // Add-Ons step
+      //   if (!selectedRoom || !selectedStartDate || !selectedEndDate) {
+      //     toast.error("Please select a room and dates.", {
+      //       position: "top-right",
+      //       autoClose: 3000,
+      //     });
+      //     return false;
+      //   }
+      //   return true;
+      // case 2: // Overview step
+      //   if (!selectedRoom || !selectedStartDate || !selectedEndDate) {
+      //     toast.error("Please select a room and dates.", {
+      //       position: "top-right",
+      //       autoClose: 3000,
+      //     });
+      //     return false;
+      //   }
+      //   return true;
 
-      case 3: // Detail step
+      case 1: // Detail step
         const {
           title,
           firstName,
@@ -234,17 +238,20 @@ const WizardSidebar = ({ isVisible, onClose, status }) => {
   // Handle next step
   const goNext = () => {
     if (!validateStep()) return;
-    if (addonList?.length > 0 && currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
-    if (
-      addonList?.length == 0 &&
-      currentStep < steps.length - 1 &&
-      currentStep == 0
-    ) {
-      setCurrentStep(currentStep + 2);
-    }
-    if (addonList?.length == 0 && currentStep < steps.length - 1) {
+    // if (addonList?.length > 0 && currentStep < steps?.length - 2) {
+    //   setCurrentStep(currentStep + 1);
+    // }
+    // if (
+    //   addonList?.length == 0 &&
+    //   currentStep < steps?.length - 2 &&
+    //   currentStep == 0
+    // ) {
+    //   setCurrentStep(currentStep + 3);
+    // }
+    // if (addonList?.length == 0 && currentStep < steps?.length - 1) {
+    //   setCurrentStep(currentStep + 1);
+    // }
+    if (currentStep < steps?.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -272,10 +279,10 @@ const WizardSidebar = ({ isVisible, onClose, status }) => {
                 className={`nav-link ${
                   index === currentStep ? "active" : "active1"
                 }`}
-                onClick={() => index != 4 && setCurrentStep(index)}
+                onClick={() => index != (steps.length-1)  && !isTokenKey && setCurrentStep(index)}
               >
                 <span>{step.icon}</span>
-                {step.title}
+                {step.title }
               </button>
             ))}
           </div>
@@ -304,21 +311,21 @@ const WizardSidebar = ({ isVisible, onClose, status }) => {
                 />
               )}
 
-              {steps[currentStep]?.title === "AddOns" && (
+              {/* {steps[currentStep]?.title === "AddOns" && (
                 <AddOnsStep goNext={goNext} onClose={onClose} />
               )}
 
               {steps[currentStep]?.title === "Overview" && (
                 <CartOverview goNext={goNext} onClose={onClose} />
-              )}
+              )} */}
 
-              {steps[currentStep]?.title === "Detail" && (
+              {/* {steps[currentStep]?.title === "Detail" && (
                 <DetailStep
                   formData={formData}
                   handleChange={handleChange}
                   goNext={goNext}
                 />
-              )}
+              )} */}
 
               {steps[currentStep]?.title === "Confirm" && (
                 <ConfirmStep

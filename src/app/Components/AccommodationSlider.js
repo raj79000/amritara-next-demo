@@ -82,8 +82,7 @@ export default function AccommodationSlider({
           <div className="row justify-content-center">
             <div className="col-md-9">
               <h2 className="global-heading pt-4">{bannerData.title}</h2>
-              {/* <p className="mb-2 whitespace-pre-line">{bannerData.desc}</p> */}
-              <p className="mb-2 whitespace-pre-line">
+              {/* <p className="mb-2 whitespace-pre-line">
                   {bannerData?.desc?.length > 150 ? (
                     <>
                       {showFullText
@@ -104,7 +103,7 @@ export default function AccommodationSlider({
                     bannerData?.desc
                   )}
                   
-                </p>
+                </p> */}
             </div>
           </div>
         </div>
@@ -177,7 +176,7 @@ export default function AccommodationSlider({
                         <p className="winter-box-text text-with-rd-mr text-style-none">
                           {(room.roomDesc || "").replace(/<[^>]+>/g, "").slice(0, 80)}...
                           <button
-                            className="read-more-btnn text-style-none"
+                            className="read-more-btnn text-style-none "
                             onClick={() => {
                               setSelectedRoom(room);
                               setShowModal(true);
@@ -193,9 +192,9 @@ export default function AccommodationSlider({
                             INR/Night
                           </span>
                         </p> */}
-                        <div className="d-flex gap-3">
+                        <div className="d-flex gap-3 mt-3">
                           <button
-                            className="border-1 border-black px-3 mt-3 text-black"
+                            className="box-btn know-more"
                             onClick={() => {
                               setSelectedRoom(room);
                               setShowModal(true);

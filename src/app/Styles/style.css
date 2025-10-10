@@ -198,7 +198,7 @@ box2 {
 }
 
 .accordion-title {
-    background-color: #ffffff;
+    background-color: #f6eeeb;
     padding: 10px;
     cursor: pointer;
     display: flex;
@@ -401,12 +401,16 @@ padding: 8px!important;
     text-align:center;
 }
 .experience-category-slider-tabs .category-btn{
-  outline:none;
-  border:none;
-  background-color:#fff;
-  color:#000;
-  font-size:14px;
-  padding:6px 10px;
+      outline: none;
+    border: none;
+    background-color: #fff;
+    color: #000;
+    font-size: 15px;
+    padding: 10px 10px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+    text-transform: capitalize;
+    font-weight: 600;
+    border-radius: 9px;
 }
 .experience-category-slider-tabs .category-btn.active{
   background-color:var(--brown);
@@ -418,7 +422,7 @@ padding: 8px!important;
 }
 .custom-tabs-for-experience .custom-nav-wrapper .custom-prev {
  position: absolute;
-    top: -3px;
+    top: -12px;
     left: -30px;
     right: auto;
     transform: translateY(-100%);
@@ -431,7 +435,7 @@ padding: 8px!important;
 }
 .custom-tabs-for-experience .custom-nav-wrapper .custom-next {
 position: absolute;
-    top: -3px;
+    top: -12px;
     right: -30px;
     left: auto;
     transform: translateY(-100%);
@@ -498,3 +502,5 @@ text-transform:capitalize;
     font-size: 18px!important;
 
 }
+
+

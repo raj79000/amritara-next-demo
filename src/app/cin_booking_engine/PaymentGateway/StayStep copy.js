@@ -744,7 +744,7 @@ const StayStep = ({ goNext, onClose }) => {
                 data-bs-toggle="modal"
                 data-bs-target="#rateDetailsModal-b"
               >
-                read more
+                more info
               </a>
             </span>
           </div>

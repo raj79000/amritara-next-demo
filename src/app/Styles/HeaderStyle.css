@@ -174,6 +174,7 @@ nav.navbar {
 
 .navbarnav .display-flex {
   display: flex;
+      align-items: center;
 }
 
 .header-display-flex {
@@ -187,8 +188,8 @@ nav.navbar {
 .hero-bottom-part-ab {
   position: absolute;
   bottom: 10%;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform:translateX(-50%);
   text-align: center;
   margin: auto;
 }
@@ -213,7 +214,7 @@ nav.navbar {
 
 @media screen and (max-width: 767px) {
   .navbar-brand img {
-    width: 66px;
+    width: 56px;
     margin-top: 0px;
   }
 
@@ -232,5 +233,13 @@ nav.navbar {
     width: 26px !important;
     margin-top: 2px;
   }
+  .navbarnav .display-flex .header-btnn-top:nth-child(2){
+    margin-right:0!important;
+  }
+  .navbarnav .display-flex .sidebar-toggle{
+    margin-left:5px!important;
+  }
+
+  
 
 }

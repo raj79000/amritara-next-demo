@@ -83,7 +83,6 @@ export default function TandCPage() {
                     
                 </div>
             </section>
-            <Footer></Footer>
         </>
     );
 }

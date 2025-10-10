@@ -1,79 +1,52 @@
-
-
-import React from "react";
-
-async function getPropertyIdFromSlug(propertySlug) {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`, {
-      cache: "no-store",
-    });
-    const json = await res.json();
-
-    const matchedProperty = json?.data?.find(
-      (item) => item?.propertySlug?.toLowerCase() === propertySlug?.toLowerCase()
-    );
-
-    return matchedProperty?.propertyId || null;
-  } catch (error) {
-    console.error("Error fetching property list:", error);
-    return null;
-  }
-}
-
+// app/[propertySlug]/hotel-deals-offers/layout.js
 export async function generateMetadata({ params }) {
-  const { brandSlug, propertySlug } = params;
-
-  if (!propertySlug) {
-    console.error("No propertySlug found in params.");
-    return {
-      title: "Amritara Hotels And Resorts | Offer",
-      description: "Amritara Hotels And Resorts | Offer Description",
-    };
-  }
-
-  const propertyId = await getPropertyIdFromSlug(propertySlug);
-
-  if (!propertyId) {
-    console.error("No property ID found for propertySlug:", propertySlug);
-    return {
-     title: "Amritara Hotels And Resorts | Offer",
-      description: "Amritara Hotels And Resorts | Offer Description",
-    };
-  }
+  const { propertySlug } = params;
 
   try {
-    const metaRes = await fetch(`${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
+   
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyList`,
       { cache: "no-store" }
     );
-    const metaJson = await metaRes.json();
 
-    const offerMeta = metaJson?.data?.find((item) => {
-      const pageType = item.pageType?.toLowerCase();
-      return (
-        pageType === "Offer".toLowerCase() || pageType === "hotel-deals-offers".toLowerCase()
-      );
-    });
+    const { data, errorMessage } = await res.json();
+    if (errorMessage !== "success") throw new Error("Failed to fetch property list");
+
+    const propertyId = data.find((p) => p.propertySlug === propertySlug)?.propertyId;
+    if (!propertyId) throw new Error("Property not found");
+
+    const metaRes = await fetch(
+      `${process.env.NEXT_PUBLIC_CMS_API_Base_URL}/property/GetPropertyMetaTags?propertyId=${propertyId}`,
+      { cache: "no-store" }
+    );
+
+    const { data: metaData, errorMessage: metaError } = await metaRes.json();
+    if (metaError !== "success") throw new Error("Failed to fetch metadata");
+
+    const offersMeta = metaData.find((item) => item.pageType === "4");
+
+    const title = offersMeta?.metaTitle || "Offers | Amritara Hotels";
+    const description = offersMeta?.metaDescription || "Discover exclusive offers and packages.";
+    const keywords = offersMeta?.metaKeywords || "";
 
     return {
-      title: offerMeta?.metaTitle || "Amritara Hotels And Resorts | Offer",
-      description: offerMeta?.metaDescription || "Amritara Hotels And Resorts | Offer Description",
+      title,
+      description,
+      keywords,
       openGraph: {
-        title: offerMeta?.metaTitle || "Amritara Hotels And Resorts | Offer",
-        description: offerMeta?.metaDescription || "Amritara Hotels And Resorts | Offer Description",
-      },
-      alternates: {
-        canonical: `/${propertySlug}/hotel-deals-offers`, // plural matches folder name
+        title,
+        description,
       },
     };
-  } catch (error) {
-    console.error("Error fetching metadata:", error);
+  } catch (err) {
+    console.error("Offers page metadata fetch error:", err);
     return {
-      title: "Amritara Hotels And Resorts | Offer",
-      description: "Amritara Hotels And Resorts | Offer Description",
+      title: "Offers | Amritara Hotels",
+      description: "Discover exclusive offers and packages at Amritara Hotels.",
     };
   }
 }
 
-export default function Layout({ children }) {
-  return <>{children}</>;
+export default function OffersLayout({ children }) {
+  return children;
 }

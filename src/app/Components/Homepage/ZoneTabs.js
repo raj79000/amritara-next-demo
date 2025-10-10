@@ -9,7 +9,8 @@ import styles from "./zone.module.css";
 import Link from "next/link";
 
 export default function ZoneTabs({ zones }) {
-  const [activeZone, setActiveZone] = useState(zones?.[0]?.zoneId);
+  const [activeZone, setActiveZone] = useState(() => zones?.[0]?.zoneId || null);
+
   const [properties, setProperties] = useState([]);
 
   useEffect(() => {
@@ -21,6 +22,21 @@ export default function ZoneTabs({ zones }) {
       });
     }
   }, [activeZone]);
+
+  useEffect(() => {
+  if (zones?.length > 0 && !activeZone) {
+    setActiveZone(zones[0].zoneId);
+  }
+}, [zones, activeZone]);
+
+  const getOverviewSlug = (p) => {
+  const t = (p?.propertyType ?? "").toString().toLowerCase();
+
+  // if your API sends names:
+  if (t.includes("resort")) return "resort-overview";
+  if (t.includes("hotel")) return "hotel-overview";
+  return "property-overview"; // safe fallback
+};
 
   return (
     <>
@@ -34,16 +50,17 @@ export default function ZoneTabs({ zones }) {
             <ul className={`nav nav-tabs ${styles.ZonetabHome}`}>
               {zones.map((zone) => (
                 <li className="nav-item" key={zone.zoneId}>
-                  <button
-                    className={`nav-link ${styles.InActiveTab} ${
-                      activeZone === zone.zoneId
-                        ? `active ${styles.ActiveTab}`
-                        : ""
-                    }`}
-                    onClick={() => setActiveZone(zone.zoneId)}
-                  >
-                    {zone.zoneName}
-                  </button>
+             <button
+  className={`nav-link ${
+    activeZone === zone.zoneId
+      ? `active ${styles.ActiveTab}`
+      : styles.InActiveTab
+  }`}
+  onClick={() => setActiveZone(zone.zoneId)}
+>
+  {zone.zoneName}
+</button>
+
                 </li>
               ))}
             </ul>
@@ -87,7 +104,10 @@ export default function ZoneTabs({ zones }) {
                           </h5>
                           <div className={styles.TabContentBtn}>
                             <Link
-                              href={`/${property.propertySlug}/hotel-overview`}
+                              href={{
+    pathname: `/${property.propertySlug}/${getOverviewSlug(property)}`,
+    // query: { id: hotel.propertyId, name: hotel.propertyName },
+  }}
                               className="explore-more-btn"
                             >
                               Explore

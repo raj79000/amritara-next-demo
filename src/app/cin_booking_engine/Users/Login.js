@@ -7,7 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import CryptoJS from "crypto-js";
 import md5 from "md5";
 import { useBookingEngineContext } from "../../cin_context/BookingEngineContext";
-import { createSignature } from "../../utilities/signature";
+import { createSignature } from "../../../utilities/signature";
 import crypto from "crypto";
 import ForgotPassword from "./ForgotPassword";
 
@@ -21,7 +21,8 @@ const Login = ({ onSubmit }) => {
   const [forgotMessage, setForgotMessage] = useState(null);
   const [isForgotPassword, setForgotPassword] = useState(null);
 
-  const keyData = "dbKey=Dbconn";
+  //const keyData = "dbKey=Dbconn";
+  const keyData = `dbKey=${process.env.NEXT_PUBLIC_TOKEN_DB_KEY}`;
   const handleDetailsChange = (e) => {
     const { name, value } = e.target;
     setLoginDetails((prev) => ({ ...prev, [name]: value }));
@@ -42,7 +43,7 @@ const Login = ({ onSubmit }) => {
           secret
         );
 
-        const resp = await fetch("https://cinbe.cinuniverse.com/api/login", {
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -63,7 +64,6 @@ const Login = ({ onSubmit }) => {
         // }
         // return data;
       } catch (err) {
-        console.log("Login Error:", err);
         setError(err.message);
       }
     }
@@ -110,10 +110,10 @@ const Login = ({ onSubmit }) => {
         }?${keyData?.replace(/^"(.*)"$/, "$1").trim()}`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          // headers: {
+          //   "Content-Type": "application/json",
+          //   Authorization: `Bearer ${token}`,
+          // },
         }
       );
 
@@ -122,9 +122,6 @@ const Login = ({ onSubmit }) => {
       }
 
       const data = await response.json();
-      console.log("Forgot Password Response:", data);
-
-      console.log(data);
       if (data.errorMessage == "success") {
         setForgotMessage("Password reset link sent to your mobile/email.");
         setForgotPassword(true);
@@ -168,7 +165,7 @@ const Login = ({ onSubmit }) => {
         <h4 className="mb-3">User Login</h4>
         {error && <div className="alert alert-danger mt-3">Error: {error}</div>}
         {isForgotPassword && (
-          <div className="alert alert-success mt-3">Error: {forgotMessage}</div>
+          <div className="alert alert-success mt-3">{forgotMessage}</div>
         )}
 
         <form onSubmit={handleSubmit}>

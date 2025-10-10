@@ -74,6 +74,7 @@ function HotelGallery({ galleryData }) {
         </div>
       </Gallery>
     </div>
+    
   );
 }
 

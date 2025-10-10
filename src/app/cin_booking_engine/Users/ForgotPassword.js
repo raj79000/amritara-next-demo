@@ -1,7 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+
+import toast, { Toaster } from "react-hot-toast";
 //import "react-toastify/dist/ReactToastify.css";
-import { createSignature } from "../../utilities/signature";
+import CryptoJS from "crypto-js";
+import md5 from "md5";
+import { useBookingEngineContext } from "../../cin_context/BookingEngineContext";
+import { createSignature } from "../../../utilities/signature";
+import crypto from "crypto";
 
 const ForgotPassword = ({ onSubmit }) => {
   const [loginDetails, setLoginDetails] = useState({
@@ -23,7 +30,8 @@ const ForgotPassword = ({ onSubmit }) => {
       //  onSubmit(loginDetails);
 
       try {
-        const keyData = "dbKey=Dbconn";
+       // const keyData = "dbKey=Dbconn";
+        const keyData = `dbKey=${process.env.NEXT_PUBLIC_TOKEN_DB_KEY}`;
         const timestamp = Date.now().toString();
         const secret = "ABDEFGHJKLMOPQRSTUVWXYZ123456789";
         const signature = await createSignature(
@@ -32,7 +40,7 @@ const ForgotPassword = ({ onSubmit }) => {
           secret
         );
 
-        const resp = await fetch("https://cinbe.cinuniverse.com/api/login", {
+        const resp = await fetch(`${process.env.NEXT_PUBLIC_STAAH_BASE_URL}/api/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -53,7 +61,6 @@ const ForgotPassword = ({ onSubmit }) => {
         // }
         // return data;
       } catch (err) {
-        console.log("Login Error:", err);
         setError(err.message);
       }
     }

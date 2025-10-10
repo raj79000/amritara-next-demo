@@ -7,8 +7,9 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-
-const StayStepRoomManager = () => {
+import { X } from "lucide-react";
+const StayStepRoomManager = (
+    {onRoomChange,onClose}) => {
   const {
     selectedRooms,
     setSelectedRooms,
@@ -33,6 +34,7 @@ const StayStepRoomManager = () => {
 
   const addRoom = () => {
     if (rooms.length < 10) {
+      onRoomChange();
       const id = uuidv4();
       setRoomsChange(!isRoomsChange);
       setSelectedRooms((prev) => [...prev, { id: id, adults: 1, children: 0 }]);
@@ -113,6 +115,7 @@ const StayStepRoomManager = () => {
   }, []);
 
   const closeRoomChange = () => {
+    onClose();
     setIsRoomsClose(false);
   };
   return (
@@ -121,21 +124,27 @@ const StayStepRoomManager = () => {
         <div className="mb-3 mb-md-0">
           <div className="book-room my-0">
             <div className="row">
-              <div
+              {/*<div
                 className="room-manager-close-icon"
                 onClick={closeRoomChange}
               >
                 CLOSE{" "}
-                {/* <Image
+                 <Image
                   alt="close icon"
                   width="25"
                   height="25"
                   src="../images/white_close_icon.svg"
                   style={{ width: "25px", height: "25px" }}
-                /> */}
-              </div>
+                />
+              </div> */}
               <div className="roomsDropdown" id="roomsDropdown">
                 <div className="card card-body" ref={containerRef}>
+                   <div
+                      className="room-manager-close-icon child-staystep-inner"
+                      onClick={closeRoomChange}
+                    >
+                      <X size={20} strokeWidth={2} className="pointer-events-none" />{" "}
+                    </div>
                   {rooms.map((room, index) => (
                     <div key={room.id} className="room mb-3 border-bottom pb-2">
                       <div className="d-flex justify-content-between align-items-start">

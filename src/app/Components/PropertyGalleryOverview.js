@@ -1,10 +1,12 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Grid } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/grid";
+
+import "photoswipe/dist/photoswipe.css";
+import { Gallery, Item } from "react-photoswipe-gallery";
+
 import Image from "next/image";
 
 const PropertyGalleryOverview = ({ propertyId }) => {
@@ -44,57 +46,71 @@ const PropertyGalleryOverview = ({ propertyId }) => {
 
   return (
     <>
-    <section className="gallery-slider my-10 overvie-gallery-slider-sec">
-       <div className="global-heading-sec text-center">
-            <div className="row justify-content-center mb-4">
-              <div className="col-md-9 md-offset-1">
-                <h2 className="global-heading pt-4">Gallery</h2>
-              </div>
+      <section className="gallery-slider my-10 overvie-gallery-slider-sec">
+        <div className="global-heading-sec text-center">
+          <div className="row justify-content-center mb-4">
+            <div className="col-md-9 md-offset-1">
+              <h2 className="global-heading pt-5">Gallery</h2>
             </div>
           </div>
-      <Swiper
-        modules={[Autoplay, Grid]}
-        loop={true}
-        speed={3000}
-        autoplay={{
-          delay: 0,
-          disableOnInteraction: false,
-        }}
-        freeMode={true}
-        grid={{ rows: 2, fill: "row" }} // ✅ now Swiper will split into 2 rows
-        slidesPerView={2}
-        spaceBetween={20}
-        breakpoints={{
-          640: { slidesPerView: 3 },
-          1024: { slidesPerView: 4 },
-        }}
-        className="mySwiper" // important for custom CSS
-      >
-        {images.map((img) => (
-          <SwiperSlide key={img.galleryImageId}>
-            <div className="relative w-full h-56 rounded-xl overflow-hidden shadow-md">
-              <Image
-                src={img.image}
-                alt="Gallery Image"
-                width={600}
-                height={200}
-                className="object-cover w-full h-full"
-              />
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </section>
-    <style jsx>
-      {`
-
-      .overvie-gallery-slider-sec .swiper-wrapper {
-      display: grid !important;
-  grid-template-rows: repeat(2, 1fr) !important;
-      }
-       
+        </div>
+        <Gallery>
+          <Swiper
+            modules={[Autoplay, Grid]}
+            loop={true}
+            speed={3000}
+            autoplay={{
+              delay: 0,
+              disableOnInteraction: false,
+            }}
+            freeMode={true}
+            grid={{ rows: 2, fill: "row" }}
+            slidesPerView={2}
+            spaceBetween={20}
+            breakpoints={{
+              640: { slidesPerView: 3 },
+              1024: { slidesPerView: 4 },
+            }}
+            className="mySwiper"
+          >
+            {images.map((img) => (
+              <SwiperSlide key={img.galleryImageId}>
+                <Item
+                  original={img.image}
+                  thumbnail={img.image}
+                  width={1200}
+                  height={800}
+                  title="Gallery Image"
+                >
+                  {({ ref, open }) => (
+                    <div
+                      ref={ref}
+                      className="relative w-full h-56 rounded-xl overflow-hidden shadow-md cursor-pointer"
+                      onClick={open}
+                    >
+                      <Image
+                        src={img.image}
+                        alt="Gallery Image"
+                        width={600}
+                        height={200}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  )}
+                </Item>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Gallery>
+      </section>
+      <style jsx>
+        {`
+          .overvie-gallery-slider-sec .swiper-wrapper {
+            display: grid !important;
+            grid-template-rows: repeat(2, 1fr) !important;
+          }
         `}
-    </style>
+      </style>
     </>
   );
 };
